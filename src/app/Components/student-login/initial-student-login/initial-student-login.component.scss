@@ -1,0 +1,30 @@
+@import "../../../../styles.scss";
+
+.Caption{
+    font-size: 1em;
+    color: color(primary);
+    font-weight: bold;
+}
+
+.CaptionValue{
+    font-size: 1.2em;
+    color: color(primary);
+    font-weight: bold;
+}
+
+.StudentImg{
+    min-width: 50%;
+    max-width: 50%;
+}
+
+.StudentCaption{
+    font-size: 1.3em;
+    color: color(primary);
+    font-weight: bold;
+}
+
+.StudentCaptionValue{
+    font-size: 1.5em;
+    color: color(accent);
+    font-weight: bold;
+}
