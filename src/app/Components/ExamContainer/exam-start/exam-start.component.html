@@ -1,0 +1,104 @@
+<mat-sidenav-container class="sidenav-container">
+    <mat-sidenav #sidenav position="end" class="SideNav" mode="side" [(opened)]="sideNav">
+        <!-- Timer -->
+        <div class="col-sm-12 mt-3 Time d-flex justify-content-center">
+            <countdown #cd1 [config]="timerConfig" (event)="handleEvent($event)"></countdown>
+        </div>
+
+        <!-- explanation about status -->
+        <div class="col-sm-12">
+            <div class="row p-2">
+                <button class="NotVisited" mat-mini-fab>!</button>
+                <span class="mt-2 pl-2 QuestionNo">Marked as Not Visited</span>
+            </div>
+
+            <div class="row p-2">
+                <button class="Visited" mat-mini-fab>!</button>
+                <span class="mt-2 pl-2 QuestionNo">Marked as Visited</span>
+            </div>
+
+            <div class="row p-2">
+                <button class="Answered" mat-mini-fab>!</button>
+                <span class="mt-2 pl-2 QuestionNo">Marked as Answered</span>
+            </div>
+            <div class="row p-2">
+                <button class="Review" mat-mini-fab>!</button>
+                <span class="mt-2 pl-2 QuestionNo">Marked as Review</span>
+            </div>
+        </div>
+
+        <!-- Question Navigation -->
+        <div class="col-sm-12 mt-4 QuestionPagination">
+            <div class="row p-2">
+                <div class="col-sm-3 p-2" *ngFor="let exam of examinationData; let i=index">
+                    <button
+                        [matTooltip]="exam?.status==0?'Not Visited':(exam?.status==1?'Visited':exam?.status==2?'Answered':'Marked For Review')"
+                        [ngClass]="{'NotVisited': exam?.status==0, 'Visited': exam?.status==1, 
+                'Answered': (exam?.status==2), 'Review': (exam?.status==3)}" (click)="GotoQuestion(i)"
+                        mat-mini-fab>{{i+1}}</button>
+                </div>
+
+            </div>
+        </div>
+
+        <!-- submit button -->
+        <div class="col-sm-12">
+            <button mat-raised-button class=" col-sm-12 Submit">Submit</button>
+        </div>
+
+
+    </mat-sidenav>
+    <mat-sidenav-content>
+        <div class="container">
+            <div class="col-sm-12"
+                *ngFor="let exam of examinationData; let i=index; let first = first; let last = last">
+                <div class="row mt-3 QuestionNo" *ngIf="i==activeIndex">
+                    Question No: {{i+1}}
+                </div>
+                <div class="row mt-4 Question" *ngIf="i==activeIndex">
+                    <div [ngClass]="{'col-sm-12': !exam?.isImage, 'col-sm-8': exam?.isImage}"
+                        [innerHtml]="exam?.question">
+                        <!-- Questions available here -->
+                    </div>
+                    <div class="col-sm-4">
+                        <img class="rounded QuestionImage" [src]="exam?.imageUrl" alt="">
+                    </div>
+                </div>
+                <div class="row mt-5" *ngIf="i==activeIndex">
+                    <div class="col-sm-3" *ngFor="let options of exam?.options; let j=index">
+                        <mat-radio-button color="primary" [checked]="options?.marked" (change)="Answer(i, j, exam?.questionId, options?.optionId, $event)" [value]="options?.optionId">
+                            <span *ngIf="!options?.isImage" [innerHtml]="options?.option">
+                                <!-- Options available here -->
+                            </span>
+                            <img *ngIf="options?.isImage" class="rounded AnswerImage" [src]="options?.option" alt="">
+                        </mat-radio-button>
+                    </div>
+                </div>
+                <div class="row" *ngIf="i==activeIndex">
+                    <div class="col-sm-10">
+                        <button (click)="MarkASReview(i)" class="MarkReview" mat-raised-button>Mark as review</button>
+                    </div>
+                    <div class="col-sm-1">
+                        <button matTooltip="Previous" *ngIf="!first" (click)="Navigate('previous', i, first, last)"
+                            class="Submit" mat-icon-button>
+                            <mat-icon *ngIf="!first">
+                                keyboard_arrow_left
+                            </mat-icon>
+                        </button>
+                    </div>
+                    <div class="col-sm-1">
+                        <button [matTooltip]="last?'Save':'Save and Next'" (click)="Navigate('next', i, first, last)"
+                            class="Submit" mat-icon-button>
+                            <mat-icon *ngIf="!last">
+                                keyboard_arrow_right
+                            </mat-icon>
+                            <mat-icon *ngIf="last">
+                                save
+                            </mat-icon>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </mat-sidenav-content>
+</mat-sidenav-container>

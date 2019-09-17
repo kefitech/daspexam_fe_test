@@ -1,0 +1,23 @@
+@import '../../../styles.scss';
+
+
+.ToolBar{
+    background-color: color(primary);
+    color: color(basic);
+    font-weight: bold;
+
+    .LogoImg{
+        height: 70%;
+        width: auto;
+    }
+    .userImg{
+        min-width: 5%;
+        max-width: 5%;
+    }
+    .userName{
+        font-size: 0.5em;
+    }
+}
+
+
+

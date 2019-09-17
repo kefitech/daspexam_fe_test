@@ -1,0 +1,94 @@
+<div class="container mt-4 mb-3">
+    <div class="col-sm-12">
+        <div style="height: 91%; width: 100%; overflow: auto;">
+            <div style="text-align: center;"><span style="font-size:22px;"><strong><u>Paper Specific
+                            Instructions</u></strong></span></div> <br>
+            <br>
+            <div style="text-align: center;"><strong><span style="background-color:#FFFF00;">
+                        {{user?.courseCode}}: {{user?.courseName}}
+                    </span></strong></div>
+            <p style="text-align:left;"><em>Duration</em> : <strong>{{user?.duration}} minutes </strong><span
+                    style="float:right;"><em>Total Marks</em> : <strong>{{user?.totalMark}}</strong></span></p> <strong>Read the
+                following instructions carefully</strong><br>
+            <ol>
+                <li>Go through various question palette symbols and understand their meanings before starting the
+                    examination.</li>
+            </ol>
+            <ol>
+                <li value="2">After the start of the examination, you can view all the questions by clicking on the
+                    <strong>Question Paper</strong> button on the screen.</li>
+            </ol>
+            <ol>
+                <li value="3">This question paper consists of <strong>2 sections,</strong> General Aptitude (GA) section
+                    for<strong> 15 marks</strong> and the subject specific section <strong><span
+                            style="background-color:#FFFF00;">({{user?.courseCode}})</span></strong> for<strong> 85
+                        marks</strong>. Both
+                    these sections are compulsory.</li>
+            </ol>
+            <ol>
+                <li value="4">The GA section consists of<strong> 10 </strong>questions. Question numbers 1 to 5 are of 1
+                    mark each, while question numbers 6 to 10 are of 2 marks each.</li>
+            </ol>
+            <ol>
+                <li value="5">The subject specific<strong> <span
+                            style="background-color:#FFFF00;">{{user?.courseCode}}</span></strong>
+                    section consists of <strong>55</strong> questions, out of which question numbers 1 to 25 are of 1
+                    mark each, while question numbers 26 to 55 are of 2 marks each.</li>
+            </ol>
+            <ol>
+                <li value="6">Use the data given in the question while answering that question. If such data are not
+                    given, and the paper has useful data, then the same can be viewed by clicking on the <strong>Useful
+                        Data</strong> button that appears at the top, right-hand side of the screen.</li>
+            </ol>
+            <ol>
+                <li value="7">The question paper consists of<strong> Multiple Choice Questions (MCQ)</strong> and
+                    <strong>Numerical Answer Type (NAT)</strong>.<br> <br> a) Multiple choice type questions have four
+                    choices A, B, C, D, out of which only <strong>ONE</strong> is the correct answer. Select the answer
+                    by clicking on the radio button placed before the choice, with the help of the mouse.<br> b) For
+                    numerical answer type questions, a numerical answer should be entered with the help of the mouse and
+                    the virtual numeric keypad, which will appear below the question.</li>
+            </ol>
+            <ol>
+                <li value="8">All those questions that are not attempted will carry zero marks. However, wrong answers
+                    for multiple choice type questions (MCQ) will carry <strong>NEGATIVE </strong>marks. For multiple
+                    choice type questions, a wrong answering will lead to deduction of <strong><em>⅓</em></strong> marks
+                    for a 1-mark question and <strong><em>⅔</em></strong> marks for a 2-mark question. There is no
+                    negative marking for NAT questions.</li>
+            </ol>
+            <ol>
+                <li value="9">Your answers will be saved on the server periodically and also at the end of the
+                    examination. The examination will <strong>stop automatically</strong> at the end of <strong>{{user?.duration}}
+                        minutes.</strong></li>
+            </ol>
+            <ol>
+                <li value="10">You are not allowed to leave the examination hall until the completion of the
+                    examination.</li>
+            </ol>
+            <ol>
+                <li value="11">Charts, graph sheets, calculators and mathematical tables are NOT allowed in the
+                    examination hall. You must use the scribble pad provided to you in the examination hall for your
+                    rough work, which must be returned at the end of the examination.</li>
+            </ol>
+        </div>
+        <button (click)="Previous()" matTooltip="Previous" mat-mini-fab color="accent" class="bottomButton">
+            <mat-icon>arrow_back</mat-icon>
+        </button>
+        <div class="row">
+            <mat-card>
+            <small class="font-weight-bold"><mat-checkbox [(ngModel)]="checked" color="primary">
+                </mat-checkbox> I have read and understood the instructions. 
+                    All computer hardware allotted to me are in proper
+                    working condition. I declare that I am not in possession of / not wearing / not carrying any
+                    prohibited gadget like mobile phone, bluetooth devices etc. /any prohibited material with me into
+                    the Examination Hall.I agree that in case of not adhering to the instructions, I shall be liable to
+                    be debarred from this Test and/or to disciplinary action, which may include ban from future Tests /
+                    Examinations.</small>
+                </mat-card>
+        </div>
+        <div class="row p-2 d-flex justify-content-center">
+        <button [disabled]="!checked" (click)="Proceed()" matTooltip="Start Examination" mat-raised-button class="Submit">
+               I am ready to begin 
+            </button>
+        </div>
+    </div>
+</div>

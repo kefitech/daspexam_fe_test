@@ -1,0 +1,66 @@
+@import '../../../../styles.scss';
+
+.sidenav-container{
+    // position: fixed;
+    // z-index: -1;
+    height: 100vh;
+    width: 100%;
+    .SideNav{
+        width: 50%;
+        @include desktop{
+            width: 20%;
+        }
+        .Time{
+            font-size: 2em;
+        }
+        .QuestionPagination{
+            overflow: auto;
+            height: 38vh; 
+        }
+    }
+    .QuestionNo{
+        font-size: 1em;
+        font-weight: bold;
+        color: color(primary);
+    }
+    .bottomButton{
+        position:fixed;
+        bottom:10%;
+        right:3%;
+        z-index: 300;
+    }
+    .Question{
+        text-align: justify;
+        overflow: auto;
+        height: 45vh; 
+    }
+    .AnswerImage{
+        min-width: 60%;
+        max-width: 60%;
+    }
+    .QuestionImage{
+        min-width: 100%;
+        max-width: 100%;
+    }
+    .NotVisited{
+        background-color: color(basic);
+        color: color(basicDark);
+    }
+    .Visited{
+        background-color: color(warn);
+        color: color(basic);
+    }
+    .Review{
+        background-color: color(primary);
+        color: color(basic);
+    }
+    .Answered{
+        background-color: color(success);
+        color: color(basicDark);
+    }
+    .MarkReview{
+        background-color: color(accent);
+        color: color(basicDark);
+    }
+}
+
