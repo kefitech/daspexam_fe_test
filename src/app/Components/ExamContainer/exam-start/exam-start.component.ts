@@ -32,12 +32,12 @@ export class ExamStartComponent implements OnInit {
     // 3 Review
 
     this.examinationData = [
-      {question: "<p>A computer is a machine or</p> <p>device that performs processes</p>", 
-      imageUrl: "https://homepages.cae.wisc.edu/~ece533/images/boat.png", questionId: 123, status: 0, isImage: true, options: [
-        {option: "https://homepages.cae.wisc.edu/~ece533/images/arctichare.png", optionId: 1, isImage: true, marked: false},
-        {option: "https://homepages.cae.wisc.edu/~ece533/images/baboon.png", optionId: 2, isImage: true, marked: false},
-        {option: "https://homepages.cae.wisc.edu/~ece533/images/boat.png", optionId: 3, isImage: true, marked: false},
-        {option: "https://homepages.cae.wisc.edu/~ece533/images/airplane.png", optionId: 4, isImage: true, marked: false},
+      {question: "<p>A computer is a machine or device that performs processes A computer is a machine or device that performs processes A computer is a machine or device that performs processesA computer is a machine or device that performs processesA computer is a machine or device that performs processesA computer is a machine or device that performs processesA computer is a machine or device that performs processesA computer is a machine or device that performs processesA computer is a machine or device that performs processesA computer is a machine or device that performs processesA computer is a machine or device that performs processesA computer is a machine or device that performs processesA computer is a machine or device that performs processesA computer is a machine or device that performs processes</p>", 
+      imageUrl: "", questionId: 123, status: 0, isImage: false, options: [
+        {option: "val1", optionId: 1, isImage: false, marked: false},
+        {option: "val2", optionId: 2, isImage: false, marked: false},
+        {option: "val3", optionId: 3, isImage: false, marked: false},
+        {option: "val4", optionId: 4, isImage: false, marked: false},
       ]},
       {question: "<p>A computer is a machine or</p> <p>device that performs processes</p>", 
       imageUrl: "https://homepages.cae.wisc.edu/~ece533/images/boat.png", questionId: 123, status: 0, isImage: true, options: [
@@ -96,7 +96,9 @@ export class ExamStartComponent implements OnInit {
   }
 
   Answer(Qindex: number, Aindex: number, questionNo: number, answerNo: number, event: any): void{
-    console.log(questionNo, answerNo, event.source.checked);
+    for(var i=0; i<this.examinationData[Qindex]["options"].length; i++){
+      this.examinationData[Qindex]["options"][i]["marked"] = false;
+    }
     this.examinationData[Qindex]["options"][Aindex]["marked"] = event.source.checked;
     this.examinationData[Qindex]["status"] = 2;
   }
@@ -112,7 +114,7 @@ export class ExamStartComponent implements OnInit {
       if(this.examinationData[index]["status"]==0)
       this.examinationData[index]["status"] = 1;
     }
-    else if(!last && type.toLowerCase() == 'previous'){
+    else if(!first && type.toLowerCase() == 'previous'){
       index = index-1;
     this.activeIndex = index;
     if(this.examinationData[index]["status"]==0)
