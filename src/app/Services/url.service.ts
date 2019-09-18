@@ -15,8 +15,10 @@ export class URLService {
   }
 
   public baseURL = "";
-  public studentInfo = "api/student_exam_info";
+  public studentInfo = "api/student_info";
+  public hallTicketVerification = "api/hall_ticket_verification";
   public examDetails = "api/student_exam_info";
+  public questionFetch = "api/student_question_fetch";
 
   private url = new BehaviorSubject<string>('');
 

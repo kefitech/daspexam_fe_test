@@ -6,7 +6,7 @@ import { AngularMaterial } from 'src/app/CommonModules/MaterialModules';
 import { ExamComponentContainer } from './exam-component-container';
 import { DeviceDetectorModule } from 'ngx-device-detector';
 import { CountdownModule } from 'ngx-countdown';
-
+import { WarningComponent } from 'src/app/Popup/warning/warning.component';
 
 @NgModule({
   declarations: [
@@ -18,6 +18,7 @@ import { CountdownModule } from 'ngx-countdown';
     CountdownModule,
     ExamContainerRoutingModule,
     DeviceDetectorModule.forRoot()
-  ]
+  ],
+  entryComponents: [WarningComponent]
 })
 export class ExamContainerModule { }

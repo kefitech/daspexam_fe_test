@@ -5,23 +5,7 @@
             <mat-card>
                 <div class="row">
                     <div class="col-sm-8">
-                        <div *ngIf="studentData?.examCenter" class="row p-3">
-                            <div class="col-sm-4">
-                                <span class="Caption">{{caption?.examCenter}}</span>
-                            </div>
-                            <div class="col-sm-8">
-                                <span class="CaptionValue">{{studentData?.examCenter}}</span>
-                            </div>
-                        </div>
-                        <div *ngIf="studentData?.examDuration" class="row p-3">
-                            <div class="col-sm-4">
-                                <span class="Caption">{{caption?.examDuration}}</span>
-                            </div>
-                            <div class="col-sm-8">
-                                <span class="CaptionValue">{{studentData?.examDuration}}</span>
-                            </div>
-                        </div>
-                        <div *ngIf="studentData?.examName" class="row p-3">
+                        <div *ngIf="studentData?.examName" class="row p-2">
                             <div class="col-sm-4">
                                 <span class="Caption">{{caption?.exam}}</span>
                             </div>
@@ -29,7 +13,31 @@
                                 <span class="CaptionValue">{{studentData?.examName}}</span>
                             </div>
                         </div>
-                        <div *ngIf="studentData?.programmeName" class="row p-3">
+                        <div *ngIf="studentData?.examDate" class="row p-2">
+                            <div class="col-sm-4">
+                                <span class="Caption">{{caption?.examDate}}</span>
+                            </div>
+                            <div class="col-sm-8">
+                                <span class="CaptionValue">{{studentData?.examDate}}</span>
+                            </div>
+                        </div>
+                        <div *ngIf="studentData?.examTime" class="row p-2">
+                            <div class="col-sm-4">
+                                <span class="Caption">{{caption?.examTime}}</span>
+                            </div>
+                            <div class="col-sm-8">
+                                <span class="CaptionValue">{{studentData?.examTime}}</span>
+                            </div>
+                        </div>
+                        <div *ngIf="studentData?.examDuration" class="row p-2">
+                            <div class="col-sm-4">
+                                <span class="Caption">{{caption?.examDuration}}</span>
+                            </div>
+                            <div class="col-sm-8">
+                                <span class="CaptionValue">{{studentData?.examDuration}}</span>
+                            </div>
+                        </div>
+                        <div *ngIf="studentData?.programmeName" class="row p-2">
                             <div class="col-sm-4">
                                 <span class="Caption">{{caption?.programme}}</span>
                             </div>
@@ -37,7 +45,15 @@
                                 <span class="CaptionValue">{{studentData?.programmeName}}</span>
                             </div>
                         </div>
-                        <div *ngIf="studentData?.courseName" class="row p-3">
+                        <div *ngIf="studentData?.batchName" class="row p-2">
+                            <div class="col-sm-4">
+                                <span class="Caption">{{caption?.batchName}}</span>
+                            </div>
+                            <div class="col-sm-8">
+                                <span class="CaptionValue">{{studentData?.batchName}}</span>
+                            </div>
+                        </div>
+                        <div *ngIf="studentData?.courseName" class="row p-2">
                             <div class="col-sm-4">
                                 <span class="Caption">{{caption?.course}}</span>
                             </div>
@@ -45,19 +61,27 @@
                                 <span class="CaptionValue">{{studentData?.courseName}}</span>
                             </div>
                         </div>
+                        <div *ngIf="studentData?.examCenter" class="row p-2">
+                            <div class="col-sm-4">
+                                <span class="Caption">{{caption?.studyCenter}}</span>
+                            </div>
+                            <div class="col-sm-8">
+                                <span class="CaptionValue">{{studentData?.studyCenter}}</span>
+                            </div>
+                        </div>
                     </div>
                     <div class="col-sm-4">
-                        <div *ngIf="studentData?.studentName" class="row">
+                        <div *ngIf="studentData?.fullName" class="row">
                             <div class="col-sm-12 d-flex justify-content-center">
-                                    <span *ngIf="studentData?.studentName"
+                                    <span *ngIf="studentData?.fullName"
                                         class="StudentCaption">{{caption?.studentName}}</span>&nbsp;
                             </div>
                             <div class="col-sm-12 d-flex justify-content-center">
-                                    <span class="StudentCaptionValue">{{studentData?.studentName}}</span>
+                                    <span class="StudentCaptionValue">{{studentData?.fullName}}</span>
                             </div>
                         </div>
                         <div class="row d-flex justify-content-center">
-                            <img class="StudentImg rounded-circle" [src]="studentData?.img" alt="profile image">
+                            <img *ngIf="studentData?.photo" class="StudentImg rounded-circle" [src]="studentData?.photo" alt="profile image">
                         </div>
                     </div>
 
@@ -71,7 +95,7 @@
                         <div class="col-sm-10">
                             <mat-form-field appearance="outline" class="FormField">
                                 <mat-label>{{formCaption}}</mat-label>
-                                <input formControlName="hallticket" matInput [placeholder]="formCaption">
+                                <input (keypress)="_keyPress($event)" formControlName="hallticket" matInput [placeholder]="formCaption">
                                 <mat-error *ngIf="hallticketForm.get('hallticket').hasError('required')">
                                     {{error?.required}}
                                 </mat-error>

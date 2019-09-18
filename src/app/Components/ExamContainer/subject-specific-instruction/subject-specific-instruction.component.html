@@ -7,8 +7,9 @@
             <div style="text-align: center;"><strong><span style="background-color:#FFFF00;">
                         {{user?.courseCode}}: {{user?.courseName}}
                     </span></strong></div>
-            <p style="text-align:left;"><em>Duration</em> : <strong>{{user?.duration}} minutes </strong><span
-                    style="float:right;"><em>Total Marks</em> : <strong>{{user?.totalMark}}</strong></span></p> <strong>Read the
+            <p style="text-align:left;"><em>Duration</em> : <strong>{{user?.examDuration}} </strong><span
+                    style="float:right;"><em>Total Marks</em> : <strong>{{user?.totalMark}}</strong></span></p>
+            <strong>Read the
                 following instructions carefully</strong><br>
             <ol>
                 <li>Go through various question palette symbols and understand their meanings before starting the
@@ -57,8 +58,9 @@
             </ol>
             <ol>
                 <li value="9">Your answers will be saved on the server periodically and also at the end of the
-                    examination. The examination will <strong>stop automatically</strong> at the end of <strong>{{user?.duration}}
-                        minutes.</strong></li>
+                    examination. The examination will <strong>stop automatically</strong> at the end of
+                    <strong>{{user?.examDuration}}
+                        .</strong></li>
             </ol>
             <ol>
                 <li value="10">You are not allowed to leave the examination hall until the completion of the
@@ -75,19 +77,22 @@
         </button>
         <div class="row">
             <mat-card>
-            <small class="font-weight-bold"><mat-checkbox [(ngModel)]="checked" color="primary">
-                </mat-checkbox> I have read and understood the instructions. 
+                <small class="font-weight-bold">
+                    <mat-checkbox [(ngModel)]="checked" color="primary">
+                    </mat-checkbox> I have read and understood the instructions.
                     All computer hardware allotted to me are in proper
                     working condition. I declare that I am not in possession of / not wearing / not carrying any
                     prohibited gadget like mobile phone, bluetooth devices etc. /any prohibited material with me into
                     the Examination Hall.I agree that in case of not adhering to the instructions, I shall be liable to
                     be debarred from this Test and/or to disciplinary action, which may include ban from future Tests /
-                    Examinations.</small>
-                </mat-card>
+                    Examinations.
+                </small>
+            </mat-card>
         </div>
         <div class="row p-2 d-flex justify-content-center">
-        <button [disabled]="!checked" (click)="Proceed()" matTooltip="Start Examination" mat-raised-button class="Submit">
-               I am ready to begin 
+            <button [disabled]="!checked" (click)="Proceed()" matTooltip="Start Examination" mat-raised-button
+                class="Submit">
+                I am ready to begin
             </button>
         </div>
     </div>

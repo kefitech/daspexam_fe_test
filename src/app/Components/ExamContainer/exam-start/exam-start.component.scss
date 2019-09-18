@@ -15,19 +15,29 @@
         }
         .QuestionPagination{
             overflow: auto;
-            height: 38vh; 
+            height: 50vh; 
         }
     }
+    .my-fab {
+        width: 20px;
+        height: 20px;
+        line-height: 14px;
+        font-size: 14px;
+   
+        ::ng-deep .mat-button-wrapper{
+            line-height: 14px;
+            padding: 0;
+       }
+   }
+   .Info{
+       font-size: 0.8em;
+       font-weight: bold;
+       color: color(primary);
+   }
     .QuestionNo{
         font-size: 1em;
         font-weight: bold;
         color: color(primary);
-    }
-    .bottomButton{
-        position:fixed;
-        bottom:10%;
-        right:3%;
-        z-index: 300;
     }
     .Question{
         text-align: justify;
@@ -51,7 +61,7 @@
         color: color(basic);
     }
     .Review{
-        background-color: color(primary);
+        background-color: color(review);
         color: color(basic);
     }
     .Answered{

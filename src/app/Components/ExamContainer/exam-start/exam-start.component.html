@@ -7,35 +7,37 @@
 
         <!-- explanation about status -->
         <div class="col-sm-12">
-            <div class="row p-2">
-                <button class="NotVisited" mat-mini-fab>!</button>
-                <span class="mt-2 pl-2 QuestionNo">Marked as Not Visited</span>
+            <div class="row px-4 py-1">
+                <button class="NotVisited my-fab" mat-mini-fab>!</button>
+                <span class="pl-2 Info">Marked as Not Visited</span>
             </div>
 
-            <div class="row p-2">
-                <button class="Visited" mat-mini-fab>!</button>
-                <span class="mt-2 pl-2 QuestionNo">Marked as Visited</span>
+            <div class="row px-4 py-1">
+                <button class="Visited my-fab" mat-mini-fab>!</button>
+                <span class="pl-2 Info">Marked as Visited</span>
             </div>
 
-            <div class="row p-2">
-                <button class="Answered" mat-mini-fab>!</button>
-                <span class="mt-2 pl-2 QuestionNo">Marked as Answered</span>
+            <div class="row px-4 py-1">
+                <button class="Answered my-fab" mat-mini-fab>!</button>
+                <span class="pl-2 Info">Marked as Answered</span>
             </div>
-            <div class="row p-2">
-                <button class="Review" mat-mini-fab>!</button>
-                <span class="mt-2 pl-2 QuestionNo">Marked as Review</span>
+            <div class="row px-4 py-1">
+                <button class="Review my-fab" mat-mini-fab>!</button>
+                <span class="pl-2 Info">Marked as Review</span>
             </div>
         </div>
 
         <!-- Question Navigation -->
         <div class="col-sm-12 mt-4 QuestionPagination">
+            <div class="row px-3 QuestionNo">
+                Choose a Question
+            </div>
             <div class="row p-2">
                 <div class="col-sm-3 p-2" *ngFor="let exam of examinationData; let i=index">
-                    <button
-                        [matTooltip]="exam?.status==0?'Not Visited':(exam?.status==1?'Visited':exam?.status==2?'Answered':'Marked For Review')"
-                        [ngClass]="{'NotVisited': exam?.status==0, 'Visited': exam?.status==1, 
-                'Answered': (exam?.status==2), 'Review': (exam?.status==3)}" (click)="GotoQuestion(i)"
-                        mat-mini-fab>{{i+1}}</button>
+                    <button [matTooltip]="exam?.question?.status==0?'Not Visited':(exam?.question?.status==1?
+                        'Visited':exam?.question?.status==2?'Answered':'Marked For Review')" [ngClass]="{'NotVisited': exam?.question?.status==0, 'Visited': exam?.question?.status==1, 
+                'Answered': (exam?.question?.status==2), 'Review': (exam?.question?.status==3)}"
+                        (click)="GotoQuestion(i)" mat-mini-fab>{{i+1}}</button>
                 </div>
 
             </div>
@@ -43,7 +45,7 @@
 
         <!-- submit button -->
         <div class="col-sm-12">
-            <button mat-raised-button class=" col-sm-12 Submit">Submit</button>
+            <button (click)="Submit()" mat-raised-button class=" col-sm-12 Submit">Submit</button>
         </div>
 
 
@@ -56,17 +58,19 @@
                     Question No: {{i+1}}
                 </div>
                 <div class="row mt-4 Question" *ngIf="i==activeIndex">
-                    <div [ngClass]="{'col-sm-12': !exam?.isImage, 'col-sm-8': exam?.isImage}"
-                        [innerHtml]="exam?.question">
+                    <div [ngClass]="{'col-sm-12': !exam?.question?.isImage, 'col-sm-8': exam?.question?.isImage}"
+                        [innerHtml]="exam?.question?.question">
                         <!-- Questions available here -->
                     </div>
                     <div class="col-sm-4">
-                        <img class="rounded QuestionImage" [src]="exam?.imageUrl" alt="">
+                        <img class="rounded QuestionImage" [src]="exam?.question?.imageUrl" alt="">
                     </div>
                 </div>
                 <div class="row mt-5" *ngIf="i==activeIndex">
                     <div class="col-sm-3" *ngFor="let options of exam?.options; let j=index">
-                        <mat-radio-button color="primary" [checked]="options?.marked" (change)="Answer(i, j, exam?.questionId, options?.optionId, $event)" [value]="options?.optionId">
+                        <mat-radio-button color="primary" [checked]="options?.marked"
+                            (change)="Answer(i, j, exam?.question?.questionId, options?.optionId, $event)"
+                            [value]="options?.optionId">
                             <span *ngIf="!options?.isImage" [innerHtml]="options?.option">
                                 <!-- Options available here -->
                             </span>
@@ -75,26 +79,32 @@
                     </div>
                 </div>
                 <div class="row mt-5" *ngIf="i==activeIndex">
-                    <div class="col-sm-10">
-                        <button (click)="MarkASReview(i)" class="MarkReview" mat-raised-button>Mark as review</button>
-                    </div>
-                    <div class="col-sm-1">
-                        <button matTooltip="Previous" *ngIf="!first" (click)="Navigate('previous', i, first, last)"
-                            class="Submit" mat-icon-button>
-                            <mat-icon *ngIf="!first">
-                                keyboard_arrow_left
-                            </mat-icon>
+                    <div class="col-sm-8">
+                        <button (click)="MarkASReview(i, exam?.question?.status)" class="MarkReview" mat-raised-button>
+                            <span *ngIf="exam?.question?.status!=3">Mark as review</span>
+                            <span *ngIf="exam?.question?.status==3">Reviewed</span>
                         </button>
                     </div>
-                    <div class="col-sm-1">
+                    <div class="col-sm-2">
+                        <button matTooltip="Previous" *ngIf="!first" (click)="Navigate('previous', i, first, last)"
+                            class="Submit" mat-flat-button>
+                            <span>Previous</span>
+                            <!-- <mat-icon *ngIf="!first">
+                                keyboard_arrow_left
+                            </mat-icon> -->
+                        </button>
+                    </div>
+                    <div class="col-sm-2">
                         <button [matTooltip]="last?'Save':'Save and Next'" (click)="Navigate('next', i, first, last)"
-                            class="Submit" mat-icon-button>
-                            <mat-icon *ngIf="!last">
+                            class="Submit" mat-flat-button>
+                            <span *ngIf="!last">Save and Next</span>
+                            <span *ngIf="last">Save</span>
+                            <!-- <mat-icon *ngIf="!last">
                                 keyboard_arrow_right
                             </mat-icon>
                             <mat-icon *ngIf="last">
                                 save
-                            </mat-icon>
+                            </mat-icon> -->
                         </button>
                     </div>
                 </div>

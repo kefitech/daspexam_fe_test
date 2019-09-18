@@ -2,7 +2,6 @@ import { Component, OnInit, HostListener } from '@angular/core';
 import { DataService } from 'src/app/Services/data.service';
 import { Router } from '@angular/router';
 import { DeviceDetectorService } from 'ngx-device-detector';
-import { MatDialog } from '@angular/material';
 
 @Component({
   selector: 'app-landing',
@@ -22,6 +21,7 @@ export class LandingComponent implements OnInit {
 
 
   ngOnInit() {
+    this.dataService.sideNavButton.next(false);
   }
 
   @HostListener('contextmenu', ['$event'])
