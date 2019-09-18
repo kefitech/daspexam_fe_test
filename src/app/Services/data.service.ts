@@ -20,9 +20,11 @@ export class DataService {
 
   public isNotLoginScreen = new BehaviorSubject<boolean>(false);
 
-  public examData = new BehaviorSubject<any>([]);
+  public questionsData = new BehaviorSubject<any>([]);
 
   public sideNav = new BehaviorSubject<boolean>(true);
+
+  public sideNavButton = new BehaviorSubject<boolean>(false);
 
   toggleFullScreen() {
     let elem =  docElmWithBrowsersFullScreenFunctions; 
@@ -30,6 +32,15 @@ export class DataService {
      elem.webkitRequestFullscreen || elem['mozRequestFullscreen'] || 
      elem['msRequestFullscreen']; 
     if(methodToBeInvoked) methodToBeInvoked.call(elem);
+}
+
+NumberOnly(event: any) {
+  const pattern = /^[0-9]*$/;
+  let inputChar = String.fromCharCode(event.charCode);
+  if (!pattern.test(inputChar)) {
+    event.preventDefault();
+
+  }
 }
 
 }

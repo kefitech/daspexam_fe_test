@@ -8,8 +8,8 @@ import { HallticketAuthGuard } from 'src/app/Authguard/hallticket-auth.guard';
 const routes: Routes = [
   { path: '', component: StudentLoginComponent, children: [
     { path: 'initial/:uid/:sessionid/:examid', component: InitialStudentLoginComponent },
-    { path: 'exam', loadChildren: () => import("../exam-container/exam-container.module").then(m => m.ExamContainerModule),},
-    // canActivate: [HallticketAuthGuard]},
+    { path: 'exam', loadChildren: () => import("../exam-container/exam-container.module").then(m => m.ExamContainerModule),//},
+    canActivate: [HallticketAuthGuard]},
     { path: '', redirectTo: 'initial/' + 
     localStorage.getItem("userId") + "/" +
     localStorage.getItem("sessionId") + "/" +

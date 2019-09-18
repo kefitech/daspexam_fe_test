@@ -15,7 +15,7 @@ import { DeviceDetectorModule } from 'ngx-device-detector';
     CommonModule,
     LandingRoutingModule,
     AngularMaterial,
-    DeviceDetectorModule.forRoot()
+    DeviceDetectorModule.forRoot(),
   ]
 })
 export class LandingModule { }
