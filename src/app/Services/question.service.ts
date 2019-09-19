@@ -12,7 +12,6 @@ export class QuestionService {
 
   questionFetch(): any{
     var body = this.dataService.body;
-    debugger
     this.dataService.studentData.subscribe()
     body["batchId"] = this.dataService.studentData.value["batchId"];
     body["programmeId"] = this.dataService.studentData.value["programmeId"];

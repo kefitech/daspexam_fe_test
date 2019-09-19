@@ -1,0 +1,25 @@
+@import '../../../styles.scss';
+
+
+.NotVisited{
+    background-color: color(basic) !important;
+    color: color(basicDark) !important;
+}
+.Visited{
+    background-color: color(warn) !important;
+    color: color(basic) !important;
+}
+.Review{
+    background-color: color(review) !important;
+    color: color(basic) !important;
+}
+.Answered{
+    background-color: color(success) !important;
+    color: color(basicDark) !important;
+}
+
+.Info{
+    font-size: 1em;
+    font-weight: bold;
+    color: color(primary);
+}

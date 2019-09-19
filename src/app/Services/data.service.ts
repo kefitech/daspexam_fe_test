@@ -12,6 +12,8 @@ export class DataService {
 
   public body = {};
 
+  public examStatus = {};
+
   public loader = false;
 
   public studentData = new BehaviorSubject<object>(null);

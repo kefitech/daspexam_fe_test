@@ -1,0 +1,30 @@
+<div class="col-sm-12">
+    <div class="row d-flex justify-content-center">
+        <u>Examination Summary</u> 
+    </div>
+    <div class="row p-1">
+            <button class="NotVisited my-fab" mat-mini-fab>{{result?.notVisited}}</button>
+            <span class="pl-2 pt-2 Info">Questions Not Visited</span>
+            <!-- <span></span>  -->
+    </div>
+    <div class="row p-1">
+            <button class="Visited my-fab" mat-mini-fab>{{result?.visitedNotAnswered}}</button>
+            <span class="pl-2 pt-2 Info">Questions Visited But Not Answered</span>
+            <!-- <span>{{result?.visitedNotAnswered}}</span>  -->
+    </div>
+    <div class="row p-1">
+            <button class="Answered my-fab" mat-mini-fab>{{result?.answered}}</button>
+            <span class="pl-2 pt-2 Info">Questions Answered</span>
+            <!-- <span>{{result?.answered}}</span>  -->
+    </div>
+    <div class="row p-1">
+            <button class="Review my-fab" mat-mini-fab>{{result?.reviewed}}</button>
+            <span class="pl-2 pt-2 Info">Questions Marked As Review</span>
+            <!-- <span>{{result?.reviewed}}</span>  -->
+    </div>
+    <div class="row d-flex justify-content-center">
+            <button (click)="MoveToMarkList()" mat-raised-button class="Submit">Move To MarkList</button>
+    </div>
+</div>
+
+
