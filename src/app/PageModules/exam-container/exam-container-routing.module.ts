@@ -4,7 +4,6 @@ import { CommonPanelComponent } from 'src/app/Components/ExamContainer/common-pa
 import { CommonInstructionsComponent } from 'src/app/Components/ExamContainer/common-instructions/common-instructions.component';
 import { SubjectSpecificInstructionComponent } from 'src/app/Components/ExamContainer/subject-specific-instruction/subject-specific-instruction.component';
 import { ExamStartComponent } from 'src/app/Components/ExamContainer/exam-start/exam-start.component';
-import { ExamSummaryComponent } from 'src/app/Components/ExamContainer/exam-summary/exam-summary.component';
 import { MarkListComponent } from 'src/app/Components/ExamContainer/mark-list/mark-list.component';
 
 
@@ -13,7 +12,6 @@ const routes: Routes = [
     {path: "commoninstructions", component: CommonInstructionsComponent},
     {path: "subjectspecificinstructions", component: SubjectSpecificInstructionComponent},
     {path: "progress", component: ExamStartComponent},
-    {path: "summary", component: ExamSummaryComponent},
     {path: "marklist", component: MarkListComponent},
     { path: '', redirectTo: 'commoninstructions', pathMatch: 'full' },
     { path: '**', redirectTo: 'commoninstructions', pathMatch: 'full' }

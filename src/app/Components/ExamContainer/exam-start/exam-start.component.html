@@ -69,7 +69,7 @@
                 <div class="row mt-5" *ngIf="i==activeIndex">
                     <div class="col-sm-3" *ngFor="let options of exam?.options; let j=index">
                         <mat-radio-button color="primary" [checked]="options?.marked"
-                            (change)="Answer(i, j, exam?.question?.questionId, options?.optionId, $event)"
+                            (change)="Answer(i, j, exam?.question?.questionId, options?.option, $event)"
                             [value]="options?.optionId">
                             <span *ngIf="!options?.isImage" [innerHtml]="options?.option">
                                 <!-- Options available here -->

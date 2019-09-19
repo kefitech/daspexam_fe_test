@@ -4,8 +4,8 @@ import { CommonPanelComponent } from 'src/app/Components/ExamContainer/common-pa
 import { SubjectSpecificInstructionComponent } from 'src/app/Components/ExamContainer/subject-specific-instruction/subject-specific-instruction.component';
 import { ExamStartComponent } from 'src/app/Components/ExamContainer/exam-start/exam-start.component';
 import { WarningComponent } from 'src/app/Popup/warning/warning.component';
-import { ExamSummaryComponent } from 'src/app/Components/ExamContainer/exam-summary/exam-summary.component';
 import { MarkListComponent } from 'src/app/Components/ExamContainer/mark-list/mark-list.component';
+import { ExamSummaryComponent } from 'src/app/Popup/exam-summary/exam-summary.component';
 
 export const ExamComponentContainer = [
     CommonInstructionsComponent, 
@@ -13,6 +13,6 @@ export const ExamComponentContainer = [
     SubjectSpecificInstructionComponent,
     ExamStartComponent,
     WarningComponent,
-    ExamSummaryComponent,
-    MarkListComponent
+    MarkListComponent,
+    ExamSummaryComponent
 ];

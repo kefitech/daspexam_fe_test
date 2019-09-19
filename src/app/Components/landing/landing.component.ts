@@ -47,10 +47,10 @@ export class LandingComponent implements OnInit {
   //   this.dataService.warning.next(false);
   // }
   
-  toggleFullScreen() {
-   this.dataService.toggleFullScreen()
-    this.dataService.warning.next(false);
-}
+//   toggleFullScreen() {
+//    this.dataService.toggleFullScreen()
+//     this.dataService.warning.next(false);
+// }
 
 @HostListener('window:resize', ['$event'])
   onResize(event){

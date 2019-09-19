@@ -5,6 +5,7 @@ import { ToastrService } from 'ngx-toastr';
 import { ExamAPIService } from 'src/app/Services/exam-api.service';
 import { MatDialog } from '@angular/material';
 import { WarningComponent } from 'src/app/Popup/warning/warning.component';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-common-panel',
@@ -14,7 +15,8 @@ import { WarningComponent } from 'src/app/Popup/warning/warning.component';
 export class CommonPanelComponent implements OnInit {
 
   constructor(private dataService: DataService, private deviceService: DeviceDetectorService,
-    private toastrService: ToastrService, private apiService: ExamAPIService, private dialog: MatDialog) { }
+    private toastrService: ToastrService, private apiService: ExamAPIService, private dialog: MatDialog,
+    private router: Router) { }
 
   fullScr: boolean = false;
   winHeight: number;
@@ -58,6 +60,10 @@ export class CommonPanelComponent implements OnInit {
 
   sendWarning(): void{
     this.dataService.warning.next(true);
+    this.router.navigate(['/initial/' + 
+    localStorage.getItem("userId") + "/" +
+    localStorage.getItem("sessionId") + "/" +
+    localStorage.getItem("examId")]);
     this.dialog.open(WarningComponent, 
       { 
         minWidth: '35%',
