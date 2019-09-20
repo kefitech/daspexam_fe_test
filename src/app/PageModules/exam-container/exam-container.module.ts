@@ -8,6 +8,7 @@ import { DeviceDetectorModule } from 'ngx-device-detector';
 import { CountdownModule } from 'ngx-countdown';
 import { WarningComponent } from 'src/app/Popup/warning/warning.component';
 import { ExamSummaryComponent } from 'src/app/Popup/exam-summary/exam-summary.component';
+import { ExamSubmitComponent } from 'src/app/Popup/exam-submit/exam-submit.component';
 
 @NgModule({
   declarations: [
@@ -20,6 +21,6 @@ import { ExamSummaryComponent } from 'src/app/Popup/exam-summary/exam-summary.co
     ExamContainerRoutingModule,
     DeviceDetectorModule.forRoot()
   ],
-  entryComponents: [WarningComponent, ExamSummaryComponent]
+  entryComponents: [WarningComponent, ExamSummaryComponent, ExamSubmitComponent]
 })
 export class ExamContainerModule { }

@@ -1,11 +1,12 @@
-import { Component, OnInit, HostListener } from '@angular/core';
+import { Component, OnInit, ViewChild, ElementRef, HostListener, OnDestroy } from '@angular/core';
 import { ToastrService } from 'ngx-toastr';
 import { Router } from '@angular/router';
 import { DataService } from 'src/app/Services/data.service';
-import { THIS_EXPR } from '@angular/compiler/src/output/output_ast';
 import { NgxUiLoaderService } from 'ngx-ui-loader';
 import { MatDialog } from '@angular/material';
 import { ExamSummaryComponent } from 'src/app/Popup/exam-summary/exam-summary.component';
+import { CountdownComponent } from 'ngx-countdown';
+import { ExamSubmitComponent } from 'src/app/Popup/exam-submit/exam-submit.component';
 
 @Component({
   selector: 'app-exam-start',
@@ -15,21 +16,38 @@ import { ExamSummaryComponent } from 'src/app/Popup/exam-summary/exam-summary.co
 export class ExamStartComponent implements OnInit {
 
   constructor(private toastrService: ToastrService, private router: Router, private dataService: DataService,
-    private ngxLoader: NgxUiLoaderService, private dialog: MatDialog) { }
+    private dialog: MatDialog) { }
   timerConfig: any;
-  time: number;
+  // time: number;
   sideNav: boolean = false;
   examinationData: any;
   activeIndex: number = 0;
   answers: any = [];
 
+  submitDisable: boolean = true;
+
+  @ViewChild('cd1', { static: false }) private countdown: CountdownComponent;
+  
   ngOnInit() {
     this.dataService.sideNavButton.next(true);
 
     this.dataService.studentData.subscribe(response => {
       var time = response["examDuration"].replace('Minutes', '');
-      this.time = parseInt(time);
-      this.timerConfig = { leftTime: this.time * 60, notify: [2 * 60, 9 * 60] };
+      // this.time = parseInt(time);
+      this.timerConfig = { leftTime: time * 60, notify: [2 * 60, 9 * 60] };
+    })
+
+    this.dataService.warning.subscribe(response => {
+      
+      if(response != null){
+        if(response){
+          localStorage.setItem("freq", this.countdown["left"])
+        }
+        else if(!response){
+          this.dataService.studentData.value["examDuration"] = parseInt(localStorage.getItem("freq"))/60000 + " Minutes";
+        }
+      }
+
     })
 
     // var time = new Date("09-13-2019 18:00:00");
@@ -78,11 +96,9 @@ export class ExamStartComponent implements OnInit {
       this.toastrService.warning("You have " + timeLeft + " minutes left");
     }
     else if (event.action == "done") {
+      this.submitDisable = true;
       this.toastrService.success("Examination completed");
-      this.router.navigate(["landing/student/initial/" +
-        localStorage.getItem("userId") + "/" +
-        localStorage.getItem("sessionId") + "/" +
-        localStorage.getItem("examId")]);
+      this.examSubmit();
     }
   }
 
@@ -178,6 +194,14 @@ export class ExamStartComponent implements OnInit {
     localStorage.getItem("sessionId") + "/" +
     localStorage.getItem("examId")]);
     this.dialog.open(ExamSummaryComponent, 
+      { 
+        minWidth: '35%',
+        disableClose: true
+      });
+  }
+
+  examSubmit(): void{
+    this.dialog.open(ExamSubmitComponent, 
       { 
         minWidth: '35%',
         disableClose: true
