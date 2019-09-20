@@ -35,6 +35,7 @@ export class WarningComponent implements OnInit {
   Submit(): void{
     try{
       if(this.lockForm.valid){
+        this.dataService.warning.next(false);
         this.dataService.toggleFullScreen();
         this.dialogScreen.close();
         this.toastrService.success("Unlocked successfully");

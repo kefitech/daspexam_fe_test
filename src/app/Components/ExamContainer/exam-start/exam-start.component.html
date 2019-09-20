@@ -45,7 +45,7 @@
 
         <!-- submit button -->
         <div class="col-sm-12">
-            <button (click)="Submit()" mat-raised-button class=" col-sm-12 Submit">Submit</button>
+            <button [disabled]="submitDisable" (click)="Submit()" mat-raised-button class=" col-sm-12 Submit">Submit</button>
         </div>
 
 

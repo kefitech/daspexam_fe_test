@@ -6,6 +6,7 @@ import { ExamStartComponent } from 'src/app/Components/ExamContainer/exam-start/
 import { WarningComponent } from 'src/app/Popup/warning/warning.component';
 import { MarkListComponent } from 'src/app/Components/ExamContainer/mark-list/mark-list.component';
 import { ExamSummaryComponent } from 'src/app/Popup/exam-summary/exam-summary.component';
+import { ExamSubmitComponent } from 'src/app/Popup/exam-submit/exam-submit.component';
 
 export const ExamComponentContainer = [
     CommonInstructionsComponent, 
@@ -14,5 +15,6 @@ export const ExamComponentContainer = [
     ExamStartComponent,
     WarningComponent,
     MarkListComponent,
-    ExamSummaryComponent
+    ExamSummaryComponent,
+    ExamSubmitComponent
 ];

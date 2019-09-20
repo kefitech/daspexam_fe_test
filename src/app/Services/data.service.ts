@@ -18,7 +18,7 @@ export class DataService {
 
   public studentData = new BehaviorSubject<object>(null);
 
-  public warning = new BehaviorSubject<boolean>(false);
+  public warning = new BehaviorSubject<boolean>(null);
 
   public isNotLoginScreen = new BehaviorSubject<boolean>(false);
 
@@ -27,6 +27,8 @@ export class DataService {
   public sideNav = new BehaviorSubject<boolean>(true);
 
   public sideNavButton = new BehaviorSubject<boolean>(false);
+
+  public timer = new BehaviorSubject<number>(null);
 
   toggleFullScreen() {
     let elem =  docElmWithBrowsersFullScreenFunctions; 
