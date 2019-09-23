@@ -60,10 +60,7 @@ export class CommonPanelComponent implements OnInit {
 
   sendWarning(): void{
     this.dataService.warning.next(true);
-    this.router.navigate(['/initial/' + 
-    localStorage.getItem("userId") + "/" +
-    localStorage.getItem("sessionId") + "/" +
-    localStorage.getItem("examId")]);
+    this.router.navigate(['/initial']);
     this.dialog.open(WarningComponent, 
       { 
         minWidth: '35%',

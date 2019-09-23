@@ -14,10 +14,7 @@ export class MarkListComponent implements OnInit {
   }
 
   Submit(): void{
-    this.router.navigate(["landing/student/initial/" +
-    localStorage.getItem("userId") + "/" +
-    localStorage.getItem("sessionId") + "/" +
-    localStorage.getItem("examId")]);
+    this.router.navigate(["landing/student/initial"]);
   }
 
 }

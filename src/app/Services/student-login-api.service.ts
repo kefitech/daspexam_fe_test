@@ -14,7 +14,7 @@ export class StudentLoginAPIService {
     return this.http.post(this.URLService.baseURL + this.URLService.studentInfo, this.dataService.body);
   }
 
-  hallTicketVerification(body: object): any{
-    return this.http.post(this.URLService.baseURL + this.URLService.hallTicketVerification, body);
+  hallTicketVerification(hallticket: string): any{
+    return this.http.post(this.URLService.baseURL + this.URLService.hallTicketVerification, hallticket);
   }
 }
