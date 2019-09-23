@@ -189,10 +189,7 @@ export class ExamStartComponent implements OnInit {
     this.dataService.examStatus["answered"] = answered.length;
     this.dataService.examStatus["reviewed"] = reviewed.length;
 
-    this.router.navigate(['/initial/' + 
-    localStorage.getItem("userId") + "/" +
-    localStorage.getItem("sessionId") + "/" +
-    localStorage.getItem("examId")]);
+    this.router.navigate(['/initial']);
     this.dialog.open(ExamSummaryComponent, 
       { 
         minWidth: '35%',

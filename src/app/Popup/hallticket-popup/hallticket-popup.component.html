@@ -1,0 +1,22 @@
+<div class="col-sm-12">
+    <div class="row d-flex justify-content-center Heading">
+        Enter Hallticket Number
+    </div>
+    <form [formGroup]="hallticketForm" (ngSubmit)="Submit()">
+        <div class="row">
+                <mat-form-field appearance="outline" class="FormField">
+                    <mat-label>{{formCaption}}</mat-label>
+                    <input (keypress)="_keyPress($event)" formControlName="hallticket" matInput
+                        [placeholder]="formCaption">
+                    <mat-error *ngIf="hallticketForm.get('hallticket').hasError('required')">
+                        {{error?.required}}
+                    </mat-error>
+                </mat-form-field>
+        </div>
+        <div class="row">
+            <div class="col-sm-2 pt-2">
+                <button [disabled]="hallticketForm?.invalid" class="Submit" mat-raised-button>Submit</button>
+            </div>
+        </div>
+    </form>
+</div>
