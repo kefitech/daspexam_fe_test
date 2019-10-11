@@ -13,6 +13,11 @@ export class StudentLoginComponent implements OnInit {
 
 
   ngOnInit() {
+    localStorage.removeItem("controllerId");
+    localStorage.removeItem("controllerSessionId");
+    localStorage.removeItem("controllerMail");
+    this.dataService.controllerLogin.next(false);
+    this.dataService.controllerData.next(null);
   }
 
 }
