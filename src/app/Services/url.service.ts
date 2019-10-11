@@ -19,6 +19,8 @@ export class URLService {
   public hallTicketVerification = "api/hall_ticket_verification";
   public examDetails = "api/student_exam_info";
   public questionFetch = "api/student_question_fetch";
+  public checkValidController = "api/check";
+  public controllerLogin = "api/controller_login";
 
   private url = new BehaviorSubject<string>('');
 

@@ -16,7 +16,6 @@ export class ExamSummaryComponent implements OnInit {
   result: any;
 
   ngOnInit() {
-    debugger
     this.result = this.dataService.examStatus;
   }
 

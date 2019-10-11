@@ -10,7 +10,15 @@ export class DataService {
   constructor() { 
   }
 
+  public PATTERN = {
+    email: "[a-z0-9._%+-]+@[a-z0-9.-]+\\.[a-z]{2,3}$",
+    mobilePattern: '[6-9]\\d{9}',
+    telephonePattern: '\\s*(?:\\+?\\d{1,3})?[- (]*\\d{3}(?:[- )]*\\d{3})?[- ]*\\d{1,6}(?: *[x/#]\\d+)?\\s*$'
+  }
+
   public body = {};
+
+  public controllerCredentials = {};
 
   public examStatus = {};
 
@@ -29,6 +37,10 @@ export class DataService {
   public sideNavButton = new BehaviorSubject<boolean>(false);
 
   public timer = new BehaviorSubject<number>(null);
+
+  public controllerLogin = new BehaviorSubject<boolean>(false);
+
+  public controllerData = new BehaviorSubject<any>(null);
 
   toggleFullScreen() {
     let elem =  docElmWithBrowsersFullScreenFunctions; 
