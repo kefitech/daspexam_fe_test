@@ -84,7 +84,7 @@ export class LandingComponent implements OnInit {
       this.dataService.controllerData.next(controller);
       this.auth.controllerLoginAuth();
       this.ngxLoader.stop();
-      this.router.navigate(["/landing/controller/dashboard"]);
+      this.router.navigate(["/landing/controller/instruction"]);
       }
       else
       this.router.navigate(["/landing/controller/login"]);
@@ -117,7 +117,8 @@ export class LandingComponent implements OnInit {
     this.dataService.controllerLogin.next(false);
     this.dataService.controllerData.next(null);
     this.auth.controllerLogoutAuth();
-    this.router.navigate(["/landing/controller/login"]);
+    // this.router.navigate(["/landing/controller/login"]);
+    window.location.reload();
   }
 
 

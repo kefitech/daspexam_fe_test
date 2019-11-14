@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, AfterViewInit } from '@angular/core';
 import { DataService } from 'src/app/Services/data.service';
 import { StudentLoginAPIService } from 'src/app/Services/student-login-api.service';
 import { FormControl, Validators, FormGroup, FormBuilder } from '@angular/forms';
@@ -14,7 +14,7 @@ import { HallticketPopupComponent } from 'src/app/Popup/hallticket-popup/halltic
   templateUrl: './initial-student-login.component.html',
   styleUrls: ['./initial-student-login.component.scss']
 })
-export class InitialStudentLoginComponent implements OnInit {
+export class InitialStudentLoginComponent implements OnInit, AfterViewInit {
 
   constructor(private dataService: DataService, private apiService: StudentLoginAPIService,
     private dialog: MatDialog, private route: ActivatedRoute, private formBuilder: FormBuilder,
@@ -29,9 +29,12 @@ export class InitialStudentLoginComponent implements OnInit {
 
   ngOnInit() {
     // this.showPopup();
+    // this.Interval();
+  }
+
+  ngAfterViewInit(){
     this.EnterHallticket();
     this.loadData();
-    // this.Interval();
   }
 
   // ngAfterViewInit() {

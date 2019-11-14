@@ -4,8 +4,8 @@ import { MatTableModule, MatPaginatorModule, MatSortModule, MatInputModule,
     MatDatepickerModule, MatRadioModule, MatSliderModule, MatSlideToggleModule, 
     MatMenuModule, MatSidenavModule, MatToolbarModule, MatCardModule, MatDividerModule, 
     MatExpansionModule, MatGridListModule, MatStepperModule, MatAutocompleteModule, MatTabsModule, 
-    MatButtonModule, MatButtonToggleModule, MatChipsModule, MatIconModule, MatProgressSpinnerModule, 
-    MatProgressBarModule, MatRippleModule, MatDialogModule, MatSnackBarModule, MatTooltipModule, MatNativeDateModule } 
+    MatButtonToggleModule, MatChipsModule, MatIconModule, MatProgressSpinnerModule, 
+    MatProgressBarModule, MatRippleModule, MatDialogModule, MatSnackBarModule, MatTooltipModule, MatNativeDateModule, MatBottomSheetModule, MatButtonModule } 
     from "@angular/material";
 import { FormsModule, ReactiveFormsModule } from "@angular/forms";
 
@@ -14,6 +14,7 @@ import { FormsModule, ReactiveFormsModule } from "@angular/forms";
     ],
     exports: [
         MatListModule,
+        MatBottomSheetModule,
         MatInputModule,
         FormsModule,
         ReactiveFormsModule,

@@ -14,6 +14,8 @@ export class URLService {
     })
   }
 
+  // public captchaVerificationURL = "https://www.google.com/recaptcha/api/siteverify";
+
   public baseURL = "";
   public studentInfo = "api/student_info";
   public hallTicketVerification = "api/hall_ticket_verification";
