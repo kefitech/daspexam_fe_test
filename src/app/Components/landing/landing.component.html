@@ -3,7 +3,7 @@
         <mat-toolbar class="ToolBar">
             <mat-toolbar-row>
                 <img class="LogoImg" [src]="logo?.img" alt="logo?.alt">
-                <span class="ml-3 w-100">DASP Examination</span>
+                <span class="ml-3 w-100 col-sm-9">DASP Examination</span>
                 <span *ngIf="(dataService?.isNotLoginScreen | async)" class="d-flex justify-content-end p-3">
                     <img class="userImg rounded-circle" [src]="(dataService?.studentData | async)?.photo"
                         alt="user avatar">
@@ -16,16 +16,15 @@
                     (click)="sideNavToggle()" mat-icon-button color="primary">
                     <mat-icon>menu</mat-icon>
                 </button>
-                <span *ngIf="(dataService?.controllerLogin | async)">
-                    {{(dataService?.controllerData | async)?.controllerMail}}
-                </span>
 
-                <button matTooltip="More" *ngIf="(dataService?.controllerLogin | async)" mat-icon-button [matMenuTriggerFor]="menu">
-                        <mat-icon>more_vert</mat-icon>
-                    </button>
-                <mat-menu #menu="matMenu">
-                    <button (click)="LogoutController()" mat-menu-item>Logout</button>
-                </mat-menu>
+                
+                     <span *ngIf="(dataService?.controllerLogin | async)">
+                         {{(dataService?.controllerData | async)?.controllerMail}} 
+                         <button matTooltip="Logout" color="warn" (click)="LogoutController()" mat-icon-button>
+                             <mat-icon>power_settings_new</mat-icon>
+                            </button>
+                         </span>  
+                
             </mat-toolbar-row>
         </mat-toolbar>
     </div>

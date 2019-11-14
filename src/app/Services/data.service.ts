@@ -42,6 +42,8 @@ export class DataService {
 
   public controllerData = new BehaviorSubject<any>(null);
 
+  public captchaSecretKey = '6LcQosIUAAAAAL7Nz-WSiW1EgrxmvPDHEnKdGAM9';
+
   toggleFullScreen() {
     let elem =  docElmWithBrowsersFullScreenFunctions; 
     let methodToBeInvoked = elem.requestFullscreen || 
