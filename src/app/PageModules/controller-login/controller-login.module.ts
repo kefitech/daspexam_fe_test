@@ -5,6 +5,7 @@ import { ControllerLoginRoutingModule } from './controller-login-routing.module'
 import { ControllerLoginComponentContainer } from './controller-login-container';
 import { AngularMaterial } from 'src/app/CommonModules/MaterialModules';
 import { InvigilatorOTPPopupComponent } from 'src/app/Popup/invigilator-otppopup/invigilator-otppopup.component';
+import { InvigilatorPageStudentVerificationPopupComponent } from 'src/app/Popup/invigilator-page-student-verification-popup/invigilator-page-student-verification-popup.component';
 
 
 @NgModule({
@@ -16,6 +17,6 @@ import { InvigilatorOTPPopupComponent } from 'src/app/Popup/invigilator-otppopup
     ControllerLoginRoutingModule,
     AngularMaterial
   ],
-  entryComponents: [InvigilatorOTPPopupComponent]
+  entryComponents: [InvigilatorOTPPopupComponent, InvigilatorPageStudentVerificationPopupComponent]
 })
 export class ControllerLoginModule { }
