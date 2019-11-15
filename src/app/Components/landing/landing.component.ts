@@ -74,7 +74,8 @@ export class LandingComponent implements OnInit {
   checkValidUser(): void {
     try{
       this.ngxLoader.start();
-      if(localStorage.getItem("controllerId")){
+      var acceptInstruction = localStorage.getItem('AcceptInstruction');
+      if(localStorage.getItem("controllerId") && !acceptInstruction){
         var controller = {
           controllerId: localStorage.getItem("controllerId"),
           controllerSessionId: localStorage.getItem("controllerSessionId"),
@@ -85,6 +86,18 @@ export class LandingComponent implements OnInit {
       this.auth.controllerLoginAuth();
       this.ngxLoader.stop();
       this.router.navigate(["/landing/controller/instruction"]);
+      }
+      else if(localStorage.getItem("controllerId") && (acceptInstruction && acceptInstruction == 'true')){
+        var controller = {
+          controllerId: localStorage.getItem("controllerId"),
+          controllerSessionId: localStorage.getItem("controllerSessionId"),
+          controllerMail: localStorage.getItem("controllerMail"),
+        }
+      this.dataService.controllerLogin.next(true);
+      this.dataService.controllerData.next(controller);
+      this.auth.controllerLoginAuth();
+      this.ngxLoader.stop();
+      this.router.navigate(["/landing/controller/dashboard"]);
       }
       else
       this.router.navigate(["/landing/controller/login"]);
@@ -114,6 +127,7 @@ export class LandingComponent implements OnInit {
     localStorage.removeItem("controllerId");
     localStorage.removeItem("controllerSessionId");
     localStorage.removeItem("controllerMail");
+    localStorage.removeItem("AcceptInstruction");
     this.dataService.controllerLogin.next(false);
     this.dataService.controllerData.next(null);
     this.auth.controllerLogoutAuth();

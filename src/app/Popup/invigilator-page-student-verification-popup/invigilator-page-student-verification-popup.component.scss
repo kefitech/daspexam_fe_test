@@ -1,0 +1,20 @@
+@import '../../../styles.scss';
+
+.Title{
+    font-size: 1.6em;
+    font-weight: bold;
+    color: color(primary);
+}
+
+.SubTitle{
+    font-size: 1.3em;
+    font-weight: bold;
+    ::ng-deep .mat-slide-toggle.mat-checked .mat-slide-toggle-thumb {
+        background-color: color(success);
+    }
+}
+
+.Caption{
+    font-size: 1em;
+    font-weight: bold;
+}

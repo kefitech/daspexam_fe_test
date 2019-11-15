@@ -1,0 +1,44 @@
+<div class="col-sm-12">
+    <div class="row pb-3 d-flex justify-content-center Title">
+        Student Verification
+    </div>
+    <div class="row">
+        <div class="col-sm-5">
+            <div class="row SubTitle d-flex justify-content-center">
+                {{data?.student?.hallTicketNumber}}
+            </div>
+            <div class="row">
+                <img [src]="data?.student?.image" class="rounded-circle w-100 h-100">
+            </div>
+            <div class="row SubTitle d-flex justify-content-center">
+                    {{data?.student?.name}}
+            </div>
+        </div>
+        <div class="col-sm-7">
+            <div class="row d-flex justify-content-end Caption p-2">
+                    {{data?.student?.programme}}
+            </div>
+            <div class="row d-flex justify-content-end Caption p-2">
+                    {{data?.student?.batch}}
+            </div>
+            <div class="row d-flex justify-content-end Caption p-2">
+                    {{data?.student?.semesterType}} : {{data?.student?.semester}}
+            </div>
+            <div class="row text-right Caption p-2">
+                    {{data?.student?.address}}
+            </div>
+            <div class="row d-flex justify-content-center SubTitle pt-3">
+                <mat-slide-toggle [(ngModel)]="data.student.verified" 
+                [matTooltip]="data?.student?.verified ? 'Verified' : 'Not Verified'"></mat-slide-toggle>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-sm-6 mt-2">
+            <button class="SecondaryButton w-100" mat-raised-button>Face recognition</button>
+        </div>
+        <div class="col-sm-6 p-2">
+            <button [disabled]="!data?.student?.verified" (click)="Submit()" class="Submit w-100" mat-raised-button>Submit</button>
+        </div>
+    </div>
+</div>

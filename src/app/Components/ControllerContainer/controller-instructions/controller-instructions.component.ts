@@ -16,6 +16,7 @@ export class ControllerInstructionsComponent implements OnInit {
   }
 
   Accept(): void{
+    localStorage.setItem('AcceptInstruction', 'true');
     this.auth.controllerLoginAuth();
     this.router.navigate(['landing/controller/dashboard']);
   }
