@@ -39,7 +39,7 @@
                                 <div #recaptcha ></div>
                               </div>
                         <div class="col-sm-12 p-2 d-flex justify-content-center">
-                            <button mat-raised-button class="Submit">Login</button>
+                            <button [disabled]="loginForm?.invalid || !captchaValid" mat-raised-button class="Submit">Login</button>
                         </div>
                 </form>
                 </mat-card-content>

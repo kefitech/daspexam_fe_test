@@ -1,7 +1,7 @@
 <mat-horizontal-stepper [linear]="true" #stepper>
 
     <!-- Student Verification -->
-    <mat-step [completed]="stepper1Valid">
+    <mat-step [completed]="stepper1Valid && !(!questionCount) && questionShuffled == 'true'">
         <ng-template matStepLabel>Verification</ng-template>
         <div class="container">
                 <div class="col-sm-12 p-2 Table" *ngFor="let exam of examDetails; let index=index">
@@ -60,10 +60,12 @@
                     
                                 <!-- action Column -->
                                 <ng-container [matColumnDef]="displayedColumns[4]">
-                                  <mat-header-cell class="tableHeader" *matHeaderCellDef mat-sort-header>
+                                  <mat-header-cell class="tableHeader" *matHeaderCellDef>
                                     {{headerCaption?.caption5}} </mat-header-cell>
                                   <mat-cell *matCellDef="let element; let i=index">
-                                    <button (click)="SingleStudentVerification(element, index, i + (myPaginator.pageIndex * myPaginator.pageSize))" [disabled]="element?.verified" mat-flat-button class="Submit">
+                                    <button 
+                                    (click)="SingleStudentVerification(element, index, i + (myPaginator.pageIndex * myPaginator.pageSize))" 
+                                    [disabled]="element?.verified" mat-flat-button class="Submit">
                                        <span *ngIf="!element?.verified">Verify</span> 
                                        <span *ngIf="element?.verified">Verified</span> 
                                     </button>    
@@ -87,8 +89,22 @@
                     </mat-expansion-panel>
             </mat-accordion>
         </div>
-        <div class="col-sm-12 d-flex justify-content-end">
-            <button [disabled]="!stepper1Valid" mat-raised-button (click)="SubmitStepper1(stepper)" class="Submit">Save and Next</button>
+        <div class="row m-4">
+          <div class="col-sm-10">
+            <mat-form-field class="w-100">
+              <mat-label>Question Shuffle Count</mat-label>
+              <input (keypress)="dataService?.NumberOnly($event)" [disabled]="!stepper1Valid" maxlength="1" 
+               [(ngModel)]="questionCount" matInput placeholder="Question Shuffle Count">
+            </mat-form-field>
+          </div>
+          <div class="col-sm-1">
+              <button [disabled]="!questionCount || !stepper1Valid || questionShuffled == 'true'" mat-raised-button 
+              (click)="SubmitStepper1()" class="Submit">Submit</button>
+          </div>
+          <div class="col-sm-1">
+              <button [disabled]="!(questionShuffled == 'true') || !questionCount || !stepper1Valid" mat-raised-button 
+              color="primary" matStepperNext>Next</button>
+          </div>
         </div>
         </div>
     </mat-step>

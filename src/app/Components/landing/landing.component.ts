@@ -128,6 +128,7 @@ export class LandingComponent implements OnInit {
     localStorage.removeItem("controllerSessionId");
     localStorage.removeItem("controllerMail");
     localStorage.removeItem("AcceptInstruction");
+    localStorage.removeItem("questionShuffled");
     this.dataService.controllerLogin.next(false);
     this.dataService.controllerData.next(null);
     this.auth.controllerLogoutAuth();

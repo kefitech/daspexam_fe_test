@@ -22,6 +22,7 @@ export class ControllerDashboardComponent implements OnInit, AfterViewInit {
     private dialog: MatDialog) {
   }
 
+
   examDetails: Array<object>;// stepper 1
   displayedColumns: any = ['sno', 'name', 'hallTicketNumber', 'systemNo', 'action'];// stepper 1
   headerCaption: object = JSON.parse(JSON.stringify({// stepper 1
@@ -42,42 +43,50 @@ export class ControllerDashboardComponent implements OnInit, AfterViewInit {
 
 
   stepper1Valid: boolean = false;
-  
+
+  questionShuffled: string = "false";
+
   ngOnInit() {
     window.onpopstate = function (e) { window.history.forward(); }
-    
+
     this.FetchStudents();// stepper 1
   }
 
-  ngAfterViewInit(){
+  ngAfterViewInit() {
+    this.questionShuffled = localStorage.getItem('questionShuffled');
+
   }
 
-  FetchStudents(): void{// stepper 1
+  FetchStudents(): void {// stepper 1
     try {
       this.ngxLoader.start();
       // this.service.FetchStudents().subscribe(response => {
       //   if (response.success) {
-            this.examDetails = JSON.parse(JSON.stringify([
-              {examId: 1, examName: "Certificate In Water Harvesting and Management System Exam for November 2019", studentList: [
-                {studentId: 1, name: "Student1", hallTicketNumber: "HALL765446546", programme: "Programme1", batch: "batch1", semesterType: "Semester", semester: '1', systemNo: "SYS200765", image: "https://homepages.cae.wisc.edu/~ece533/images/airplane.png", address: "asddssdfsdf, asdasdasdasd, asdasdasdasd, asdasdasdasd, 654564"},
-                {studentId: 2, name: "Student2", hallTicketNumber: "HALL765867ghd7627", programme: "Programme2", batch: "batch2", semesterType: "Weekly", semester: '1', systemNo: "SYS200765"},
-              ]},
-              {examId: 2, examName: "Exam Name 2", studentList: [
-                {name: "Student1", hallTicketNumber: "HALL765446546", programme: "Programme1", batch: "batch1", semesterType: "Semester1", semester: '1', systemNo: "SYS200765"},
-                {name: "Student2", hallTicketNumber: "HALL765867ghd7627", programme: "Programme2", batch: "batch2", semesterType: "Weekly", semester: '1', systemNo: "SYS200765"},
-                {name: "Student1", hallTicketNumber: "HALL765446546", programme: "Programme1", batch: "batch1", semesterType: "Semester1", semester: '1', systemNo: "SYS200765"},
-                {name: "Student2", hallTicketNumber: "HALL765867ghd7627", programme: "Programme2", batch: "batch2", semesterType: "Weekly", semester: '1', systemNo: "SYS200765"},
-              ]},
-            ]));
-            this.Stepper1FetchStudentTableRefresh();
-            this.examDetails = this.examDetails.map(({...rest}) => ({verified: false, ...rest}));
-            this.ngxLoader.stop();
-            
-        // }
-        // else {
-        //   this.toastrService.error(response.message);
-          this.ngxLoader.stop();
-        // }
+      this.examDetails = [
+        {
+          examId: 1, examName: "Certificate In Water Harvesting and Management System Exam for November 2019", studentList: [
+            { studentId: 1, name: "D. Waltor", hallTicketNumber: "HALL765446546", programme: "Certificate In Water Harvesting and Management", batch: "BHCIWHM2017", semesterType: "Semester", semester: '1', systemNo: "SYS200765", image: "https://homepages.cae.wisc.edu/~ece533/images/airplane.png", address: "Cross street, Angel Nagar, Dream house, Nagercoil, Kanyakumari District, Pin-629001." },
+            { studentId: 2, name: "Student2", hallTicketNumber: "HALL765867ghd7627", programme: "Programme2", batch: "batch2", semesterType: "Weekly", semester: '1', systemNo: "SYS200765" },
+          ]
+        },
+        {
+          examId: 2, examName: "Exam Name 2", studentList: [
+            { name: "Student1", hallTicketNumber: "HALL765446546", programme: "Programme1", batch: "batch1", semesterType: "Semester1", semester: '1', systemNo: "SYS200765" },
+            { name: "Student2", hallTicketNumber: "HALL765867ghd7627", programme: "Programme2", batch: "batch2", semesterType: "Weekly", semester: '1', systemNo: "SYS200765" },
+            { name: "Student1", hallTicketNumber: "HALL765446546", programme: "Programme1", batch: "batch1", semesterType: "Semester1", semester: '1', systemNo: "SYS200765" },
+            { name: "Student2", hallTicketNumber: "HALL765867ghd7627", programme: "Programme2", batch: "batch2", semesterType: "Weekly", semester: '1', systemNo: "SYS200765" },
+          ]
+        },
+      ];
+      this.Stepper1FetchStudentTableRefresh();
+      this.examDetails = this.examDetails.map(({ ...rest }) => ({ verified: false, ...rest }));
+      this.ngxLoader.stop();
+
+      // }
+      // else {
+      //   this.toastrService.error(response.message);
+      this.ngxLoader.stop();
+      // }
       // }, error => {
       //   this.toastrService.error(error.message);
       //   this.ngxLoader.stop();
@@ -89,12 +98,12 @@ export class ControllerDashboardComponent implements OnInit, AfterViewInit {
     }
   }
 
-  Stepper1FetchStudentTableRefresh(): void{// stepper 1
+  Stepper1FetchStudentTableRefresh(): void {// stepper 1
     this.examDetails.forEach((element, index) => {
       // var allocatedSeats = element['studentList'].map(({systemNo}) => {return systemNo});
       // this.allocatedSystems = this.allocatedSystems.concat(allocatedSeats);
-      
-      element['studentList'] = element['studentList'].map(({...rest}) => ({verified: false, ...rest}));
+
+      element['studentList'] = element['studentList'].map(({ ...rest }) => ({ verified: false, ...rest }));
       element['studentList'] = new MatTableDataSource<any>(element['studentList']);
       setTimeout(() => {
         element['studentList'].paginator = this.paginator.toArray()[index];
@@ -109,26 +118,27 @@ export class ControllerDashboardComponent implements OnInit, AfterViewInit {
     this.examDetails[index]['studentList'].filter = filterValue;
   }
 
-  SubmitVerification(): void{// stepper 1
+  SubmitVerification(): void {// stepper 1
     var validFalse = this.examDetails.some(d => d['verified'] == false);
-    if(validFalse)
+    if (validFalse)
       this.stepper1Valid = false;
     else
       this.stepper1Valid = true;
   }
 
-  SubmitStepper1(stepper: any): void{// stepper 1
+  SubmitStepper1(): void {// stepper 1
     try {
       this.ngxLoader.start();
       // this.service.FetchStudents().subscribe(response => {
       //   if (response.success) {
-        this.ngxLoader.stop();
-            stepper.next();
-        // }
-        // else {
-        //   this.toastrService.error(response.message);
-          this.ngxLoader.stop();
-        // }
+      this.ngxLoader.stop();
+      this.questionShuffled = "true";
+      localStorage.setItem('questionShuffled', 'true');
+      // }
+      // else {
+      //   this.toastrService.error(response.message);
+      this.ngxLoader.stop();
+      // }
       // }, error => {
       //   this.toastrService.error(error.message);
       //   this.ngxLoader.stop();
@@ -140,23 +150,27 @@ export class ControllerDashboardComponent implements OnInit, AfterViewInit {
     }
   }
 
-  SingleStudentVerification(data: object, index: number, rowIndex: number): void{
+  SingleStudentVerification(data: object, index: number, rowIndex: number): void {// stepper 1
     var rowData = Object.assign({}, data);
     const dialogRef = this.dialog.open(InvigilatorPageStudentVerificationPopupComponent, {
       width: '40%',
-      data: {student: rowData}
+      // height: '100%',
+      data: { student: rowData }
     })
     dialogRef.afterClosed().subscribe(response => {
       var submit = dialogRef.componentInstance.isSubmit;
-      if(submit){
-        this.examDetails[index]['studentList']['data'][rowIndex] = dialogRef.componentInstance.data.student;
-        console.log(this.examDetails[index]['studentList']['data']);
-      setTimeout(() => {
-        this.examDetails[index]['studentList']['data'].paginator = this.paginator.toArray()[index];
-        this.examDetails[index]['studentList']['data'].sort = this.sort.toArray()[index];
-      }, 10);
-      console.log(this.examDetails);
-      
+      if (submit) {
+        this.examDetails[index]['studentList']['data'][rowIndex]['verified'] = dialogRef.componentInstance.data.student['verified'];
+        var isAllVerified = this.examDetails[index]['studentList']['data'].every(s => s.verified == true);
+        if (isAllVerified)
+          this.examDetails[index]['verified'] = true;
+        this.SubmitVerification();
+        setTimeout(() => {
+          this.examDetails[index]['studentList']['data'].paginator = this.paginator.toArray()[index];
+          this.examDetails[index]['studentList']['data'].sort = this.sort.toArray()[index];
+        }, 10);
+        console.log(this.examDetails);
+
       }
     })
   }
