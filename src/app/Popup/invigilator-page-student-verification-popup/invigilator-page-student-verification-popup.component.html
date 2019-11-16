@@ -1,44 +1,122 @@
 <div class="col-sm-12">
-    <div class="row pb-3 d-flex justify-content-center Title">
-        Student Verification
+    <div class="row pb-3 Title">
+        <div class="col-sm-12">
+                <span>Student Verification</span>
+                <mat-icon class="VerifiedIcon" matTooltip="Image Verified" *ngIf="imgVerified">done</mat-icon>
+        </div>
     </div>
-    <div class="row">
+    <mat-divider></mat-divider>
+
+    <!-- //--------------Initial Student details section------------------------- -->
+
+    <div class="row pt-2" *ngIf="!showWebcam && !imgComparison">
         <div class="col-sm-5">
             <div class="row SubTitle d-flex justify-content-center">
-                {{data?.student?.hallTicketNumber}}
+                <mark> {{data?.student?.hallTicketNumber}} - {{data?.student?.systemNo}}</mark>
             </div>
             <div class="row">
-                <img [src]="data?.student?.image" class="rounded-circle w-100 h-100">
+                <img [src]="data?.student?.image" class="rounded w-100 h-100">
             </div>
-            <div class="row SubTitle d-flex justify-content-center">
-                    {{data?.student?.name}}
+            <div class="row SubTitle p-2">
+                {{data?.student?.name}}
             </div>
         </div>
-        <div class="col-sm-7">
-            <div class="row d-flex justify-content-end Caption p-2">
-                    {{data?.student?.programme}}
+        <div class="col-sm-7 pt-4">
+            <div class="row d-flex text-right justify-content-end Caption p-2">
+                {{data?.student?.programme}}
             </div>
-            <div class="row d-flex justify-content-end Caption p-2">
-                    {{data?.student?.batch}}
+            <div class="row d-flex text-right justify-content-end Caption p-2">
+                {{data?.student?.batch}}
             </div>
-            <div class="row d-flex justify-content-end Caption p-2">
-                    {{data?.student?.semesterType}} : {{data?.student?.semester}}
+            <div class="row d-flex text-right justify-content-end Caption p-2">
+                {{data?.student?.semesterType}} : {{data?.student?.semester}}
             </div>
             <div class="row text-right Caption p-2">
-                    {{data?.student?.address}}
+                {{data?.student?.address}}
             </div>
-            <div class="row d-flex justify-content-center SubTitle pt-3">
-                <mat-slide-toggle [(ngModel)]="data.student.verified" 
-                [matTooltip]="data?.student?.verified ? 'Verified' : 'Not Verified'"></mat-slide-toggle>
+            <div class="row d-flex justify-content-end SubTitle pt-3">
+                <mat-slide-toggle color="primary" [(ngModel)]="data.student.verified"
+                    [matTooltip]="data?.student?.verified ? 'Verified' : 'Not Verified'"></mat-slide-toggle>
             </div>
         </div>
     </div>
-    <div class="row">
+
+    <div class="row" *ngIf="!showWebcam && !imgComparison">
         <div class="col-sm-6 mt-2">
-            <button class="SecondaryButton w-100" mat-raised-button>Face recognition</button>
+            <button [disabled]="imgVerified" (click)="toggleWebcam();" class="w-100"
+              color="accent"  mat-raised-button>Face recognition</button>
         </div>
         <div class="col-sm-6 p-2">
-            <button [disabled]="!data?.student?.verified" (click)="Submit()" class="Submit w-100" mat-raised-button>Submit</button>
+            <button [disabled]="!data?.student?.verified" (click)="Submit()" class="Submit w-100"
+                mat-raised-button>Submit</button>
         </div>
     </div>
+    
+    <!-- //--------------Web camera section------------------------- -->
+
+    <div class="row d-flex justify-content-center">
+            <webcam [height]="500" [width]="560" [trigger]="triggerObservable" (imageCapture)="handleImage($event)"
+                *ngIf="showWebcam && !imgComparison" [allowCameraSwitch]="allowCameraSwitch"
+                [switchCamera]="nextWebcamObservable" [videoOptions]="videoOptions" [imageQuality]="1"
+                (cameraSwitched)="cameraWasSwitched($event)" (initError)="handleInitError($event)"></webcam>
+    
+            <img *ngIf="webcamImage && !imgComparison" class="w-25" [src]="webcamImage.imageAsDataUrl" />
+            <h4 *ngIf="errors.length > 0">Messages:</h4>
+            <ul *ngFor="let error of errors">
+                <li>{{error | json}}</li>
+            </ul>
+        </div>
+
+    <div class="row p-2" *ngIf="showWebcam && !imgComparison">
+        <div class="col-sm-2">
+            <button (click)="triggerSnapshot();" matTooltip="Make a Snap" color="primary" mat-icon-button>
+                <mat-icon>camera_alt</mat-icon>
+            </button>
+        </div>
+        <div class="col-sm-2">
+            <button [disabled]="!webcamImage" matTooltip="Reset Snap" (click)="ResetSnap();" color="warn" mat-icon-button>
+                <mat-icon>autorenew</mat-icon>
+            </button>
+        </div>
+        <div class="col-sm-4">
+            <button [disabled]="!webcamImage" (click)="SnapDone()" class="Submit w-100" mat-raised-button>
+                <mat-icon>done</mat-icon>
+                Done
+            </button>
+        </div>
+        <div class="col-sm-4">
+            <button (click)="CancelWebCam()" class="Cancel w-100" mat-raised-button>
+                <mat-icon>close</mat-icon>
+                Cancel
+            </button>
+        </div>
+    </div>
+
+    <!-- //--------------captured and original image section------------------------- -->
+
+    <div class="row pt-2" *ngIf="webcamImage && imgComparison">
+            <div class="col-sm-6">
+                <span class="font-weight-bold"> captured image</span>
+                <img *ngIf="webcamImage && imgComparison" class="rounded w-100 h-75" [src]="webcamImage.imageAsDataUrl" />
+            </div>
+            <div class="col-sm-6">
+                <span class="font-weight-bold"> Original image</span>
+                <img *ngIf="webcamImage && imgComparison" class="rounded w-100 h-75" [src]="data?.student?.image" />
+            </div>
+        </div>
+
+    <div class="row p-3" *ngIf="webcamImage && imgComparison">
+        <div class="col-sm-3">
+            <button matTooltip="Back to camera!" (click)="ResetSnapOnComparison();" mat-icon-button>
+                <mat-icon>camera_alt</mat-icon>
+            </button>
+        </div>
+        <div class="col-sm-7">
+            <button [disabled]="!imgVerified" (click)="ImageVerified();" class="Submit w-100" mat-raised-button>
+                <mat-icon>done</mat-icon>
+                Verified
+            </button>
+        </div>
+    </div>
+
 </div>
