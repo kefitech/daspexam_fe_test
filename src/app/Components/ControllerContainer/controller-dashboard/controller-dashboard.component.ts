@@ -37,6 +37,18 @@ export class ControllerDashboardComponent implements OnInit, AfterViewInit {
   @ViewChildren(MatSort) sort = new QueryList<MatSort>();// stepper 1
   @ViewChildren('myPaginator') studentListPaginator: QueryList<ElementRef>;// stepper 1
 
+  studentAssignmentExamDetails: Array<object>;// stepper 2
+  studentAssignmentColumns: any = ['sno', 'name', 'hallTicketNumber', 'systemNo', 'questionPattern'];// stepper 2
+  studentAssignmentCaption: object = JSON.parse(JSON.stringify({// stepper 1
+    caption1: "S/no",
+    caption2: "Name",
+    caption3: "Hall TicketNo",
+    caption4: "System No",
+    caption5: "Question Pattern"
+  }))
+
+  @ViewChildren('studentAssignmentPaginatorSize') studentAssignmentListPaginator: QueryList<ElementRef>;// stepper 2
+
   freeSystems: Array<string>;// stepper 1
 
   // allocatedSystems: Array<boolean> = []// stepper 1
@@ -46,10 +58,14 @@ export class ControllerDashboardComponent implements OnInit, AfterViewInit {
 
   questionShuffled: string = "false";
 
+  questionCount: string = "";
+
   ngOnInit() {
     window.onpopstate = function (e) { window.history.forward(); }
 
     this.FetchStudents();// stepper 1
+
+    this.FetchStudentAssignment();
   }
 
   ngAfterViewInit() {
@@ -65,7 +81,8 @@ export class ControllerDashboardComponent implements OnInit, AfterViewInit {
       this.examDetails = [
         {
           examId: 1, examName: "Certificate In Water Harvesting and Management System Exam for November 2019", studentList: [
-            { studentId: 1, name: "D. Waltor", hallTicketNumber: "HALL765446546", programme: "Certificate In Water Harvesting and Management", batch: "BHCIWHM2017", semesterType: "Semester", semester: '1', systemNo: "SYS200765", image: "https://homepages.cae.wisc.edu/~ece533/images/airplane.png", address: "Cross street, Angel Nagar, Dream house, Nagercoil, Kanyakumari District, Pin-629001." },
+            { studentId: 1, name: "D. Waltor", hallTicketNumber: "HALL7654", programme: "Certificate In Water Harvesting and Management", batch: "BHCIWHM2017", semesterType: "Semester", 
+            semester: '1', systemNo: "SYS200765", image: "https://homepages.cae.wisc.edu/~ece533/images/airplane.png", address: "Cross street, Angel Nagar, Dream house, Nagercoil, Kanyakumari District, Pin-629001.", questionPattern: "QN001" },
             { studentId: 2, name: "Student2", hallTicketNumber: "HALL765867ghd7627", programme: "Programme2", batch: "batch2", semesterType: "Weekly", semester: '1', systemNo: "SYS200765" },
           ]
         },
@@ -98,6 +115,50 @@ export class ControllerDashboardComponent implements OnInit, AfterViewInit {
     }
   }
 
+  FetchStudentAssignment(): void {// stepper 1
+    try {
+      this.ngxLoader.start();
+      // this.service.FetchStudents().subscribe(response => {
+      //   if (response.success) {
+      this.studentAssignmentExamDetails = [
+        {
+          examId: 1, examName: "Certificate In Water Harvesting and Management System Exam for November 2019", studentList: [
+            { studentId: 1, name: "D. Waltor", hallTicketNumber: "HALL7654", 
+            programme: "Certificate In Water Harvesting and Management", batch: "BHCIWHM2017", semesterType: "Semester", 
+            semester: '1', systemNo: "SYS200765", image: "https://homepages.cae.wisc.edu/~ece533/images/airplane.png", 
+            address: "Cross street, Angel Nagar, Dream house, Nagercoil, Kanyakumari District, Pin-629001.", questionPattern: "QN001" },
+            { studentId: 2, name: "Student2", hallTicketNumber: "HALL765867ghd7627", programme: "Programme2", batch: "batch2",
+             semesterType: "Weekly", semester: '1', systemNo: "SYS200765", questionPattern: "QN002" },
+          ]
+        },
+        {
+          examId: 2, examName: "Exam Name 2", studentList: [
+            { name: "Student1", hallTicketNumber: "HALL765446546", programme: "Programme1", batch: "batch1", semesterType: "Semester1", semester: '1', systemNo: "SYS200765" },
+            { name: "Student2", hallTicketNumber: "HALL765867ghd7627", programme: "Programme2", batch: "batch2", semesterType: "Weekly", semester: '1', systemNo: "SYS200765" },
+            { name: "Student1", hallTicketNumber: "HALL765446546", programme: "Programme1", batch: "batch1", semesterType: "Semester1", semester: '1', systemNo: "SYS200765" },
+            { name: "Student2", hallTicketNumber: "HALL765867ghd7627", programme: "Programme2", batch: "batch2", semesterType: "Weekly", semester: '1', systemNo: "SYS200765" },
+          ]
+        },
+      ];
+      this.Stepper2FetchStudentTableRefresh();
+      this.ngxLoader.stop();
+
+      // }
+      // else {
+      //   this.toastrService.error(response.message);
+      this.ngxLoader.stop();
+      // }
+      // }, error => {
+      //   this.toastrService.error(error.message);
+      //   this.ngxLoader.stop();
+      // })
+    }
+    catch (e) {
+      this.toastrService.error(e);
+      this.ngxLoader.stop();
+    }
+  }
+
   Stepper1FetchStudentTableRefresh(): void {// stepper 1
     this.examDetails.forEach((element, index) => {
       // var allocatedSeats = element['studentList'].map(({systemNo}) => {return systemNo});
@@ -110,6 +171,22 @@ export class ControllerDashboardComponent implements OnInit, AfterViewInit {
         element['studentList'].sort = this.sort.toArray()[index];
       }, 10);
     });
+  }
+
+  Stepper2FetchStudentTableRefresh(): void {// stepper 2
+    this.studentAssignmentExamDetails.forEach((element, index) => {
+      element['studentList'] = new MatTableDataSource<any>(element['studentList']);
+      setTimeout(() => {
+        element['studentList'].paginator = this.paginator.toArray()[this.examDetails.length + index];
+        element['studentList'].sort = this.sort.toArray()[this.examDetails.length + index];
+      }, 1000);
+    });
+  }
+
+  applyFilterStudentAssignment(filterValue: string, index: number) {// stepper 2
+    filterValue = filterValue.trim(); // Remove whitespace
+    filterValue = filterValue.toLowerCase(); // MatTableDataSource defaults to lowercase matches
+    this.studentAssignmentExamDetails[index]['studentList'].filter = filterValue;
   }
 
   applyFilter(filterValue: string, index: number) {// stepper 1
@@ -129,8 +206,18 @@ export class ControllerDashboardComponent implements OnInit, AfterViewInit {
   SubmitStepper1(): void {// stepper 1
     try {
       this.ngxLoader.start();
+      var body = {
+        questionShuffleCount: this.questionCount,
+        examDetails: this.dataService.RemoveMatTableSource(this.examDetails, ['studentList'])
+      }
+      body = Object.assign(body, this.dataService.controllerData.value);
+
+
+
+
       // this.service.FetchStudents().subscribe(response => {
       //   if (response.success) {
+      this.FetchStudentAssignment();
       this.ngxLoader.stop();
       this.questionShuffled = "true";
       localStorage.setItem('questionShuffled', 'true');
@@ -174,5 +261,6 @@ export class ControllerDashboardComponent implements OnInit, AfterViewInit {
       }
     })
   }
+
 
 }
