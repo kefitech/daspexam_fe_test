@@ -24,7 +24,7 @@ export class ControllerAPIService {
   // }
 
   CheckValidController(): any{
-    var body = this.dataService.controllerCredentials;
+    var body = this.dataService.controllerData;
     return this.http.post(this.URLService.baseURL + this.URLService.checkValidController, body);
   }
 
@@ -33,12 +33,12 @@ export class ControllerAPIService {
   }
 
   ExaminationInfo(): any{
-    var body = this.dataService.controllerCredentials;
+    var body = this.dataService.controllerData;
     return this.http.post(this.URLService.baseURL + this.URLService.controllerLogin, body);
   }
 
   CheckOTP(otp: any): any{
-    var body = this.dataService.controllerCredentials;
+    var body = this.dataService.controllerData;
     return this.http.post(this.URLService.baseURL + this.URLService.checkValidController, body);
   }
 

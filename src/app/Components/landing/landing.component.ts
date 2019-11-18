@@ -26,10 +26,11 @@ export class LandingComponent implements OnInit {
 
 
   ngOnInit() {
-    this.dataService.controllerCredentials = {
+    this.dataService.controllerData.next({
+      controllerMail: localStorage.getItem("controllerMail"),
       controllerId: localStorage.getItem("controllerId"),
       controllerSessionId: localStorage.getItem("controllerSessionId")
-    }
+    })
     this.dataService.sideNavButton.next(false);
     this.checkValidUser();
   }

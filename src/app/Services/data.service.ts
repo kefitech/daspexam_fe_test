@@ -18,8 +18,6 @@ export class DataService {
 
   public body = {};
 
-  public controllerCredentials = {};
-
   public examStatus = {};
 
   public loader = false;
@@ -61,6 +59,19 @@ NumberOnly(event: any) {
   }
 }
 
+
+RemoveMatTableSource(tableSource: any, tableSourceField: Array<string>): any{
+  var table = Object.assign([], tableSource);
+  
+  tableSourceField.forEach(elementField => {
+    table.forEach(element => {
+      element[elementField] = element[elementField]['data'];
+    });
+  });
+
+  return table;
+}
+
 }
 
 const docElmWithBrowsersFullScreenFunctions = document.documentElement as HTMLElement & {
@@ -68,3 +79,4 @@ const docElmWithBrowsersFullScreenFunctions = document.documentElement as HTMLEl
   webkitRequestFullscreen(): Promise<void>;
   msRequestFullscreen(): Promise<void>;
 };
+

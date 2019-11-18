@@ -98,6 +98,12 @@ export class InvigilatorPageStudentVerificationPopupComponent implements OnInit 
     this.imgComparison = true;
     try {
       this.ngxLoader.start();
+      var body = {
+        studentId: this.data.student.studentId,
+        imageBase64: this.webcamImage
+      }
+
+      body = Object.assign(body, this.dataService.controllerData);
       // this.service.FetchStudents().subscribe(response => {
       //   if (response.success) {
       this.ngxLoader.stop();

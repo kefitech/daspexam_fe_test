@@ -43,11 +43,11 @@ export class ControllerLoginComponent implements OnInit, AfterViewInit {
 
   ngOnInit() {
     this.loginForm = this.formbuilder.group(this.loginFormData);
+    this.addRecaptchaScript();
   }
 
   ngAfterViewInit(){
 
-    this.addRecaptchaScript();
   }
 
   togglePass() {
