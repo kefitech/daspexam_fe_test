@@ -7,6 +7,8 @@ import { AngularMaterial } from 'src/app/CommonModules/MaterialModules';
 import { InvigilatorOTPPopupComponent } from 'src/app/Popup/invigilator-otppopup/invigilator-otppopup.component';
 import { InvigilatorPageStudentVerificationPopupComponent } from 'src/app/Popup/invigilator-page-student-verification-popup/invigilator-page-student-verification-popup.component';
 import {WebcamModule} from 'ngx-webcam';
+import { ConfirmationPopoverModule } from 'angular-confirmation-popover';
+import { CountdownModule } from 'ngx-countdown';
 
 @NgModule({
   declarations: [
@@ -16,7 +18,11 @@ import {WebcamModule} from 'ngx-webcam';
     CommonModule,
     ControllerLoginRoutingModule,
     AngularMaterial,
-    WebcamModule
+    WebcamModule,
+    CountdownModule,
+    ConfirmationPopoverModule.forRoot({
+      confirmButtonType: 'danger' // set defaults here
+    })
   ],
   entryComponents: [InvigilatorOTPPopupComponent, InvigilatorPageStudentVerificationPopupComponent]
 })

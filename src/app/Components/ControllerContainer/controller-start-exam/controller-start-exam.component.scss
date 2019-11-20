@@ -1,0 +1,38 @@
+@import '../../../../styles.scss';
+
+.MasterTimer{
+    font-size: 2.5em;
+    font-weight: bold;
+    color: color(primary);
+}
+
+.Table{
+    .mat-column-sno {
+        word-wrap: break-word !important;
+        white-space: unset !important;
+        flex: 0 0 8% !important;
+        width: 8% !important;
+        overflow-wrap: break-word;
+        word-wrap: break-word;
+    
+        word-break: break-word;
+    
+        -ms-hyphens: auto;
+        -moz-hyphens: auto;
+        -webkit-hyphens: auto;
+        hyphens: auto;
+      }
+
+    .Pause{
+        color: color(success);
+    }
+    .Resume{
+        color: color(warn);
+    }
+    .SuccessIcon{
+        color: color(darkSuccess);
+    }
+    .DefaultButton{
+        color: lighten(gray, 20) !important;
+    }
+}
