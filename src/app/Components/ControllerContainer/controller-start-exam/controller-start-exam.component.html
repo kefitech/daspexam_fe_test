@@ -1,0 +1,131 @@
+<div class="container">
+    <div class="col-sm-12">
+
+        <!-- Timer heading protion -->
+        <div class="row mt-3">
+            <div class="col-sm-10 d-flex justify-content-center MasterTimer">
+                <countdown #masterTimer [config]="masterTimerConfig" (event)="handleMasterTimerEvent($event)">
+                </countdown>
+            </div>
+            <div class="col-sm-2 pt-2">
+                <button [disabled]="!masterSubmitValid" mat-raised-button class="Submit">Submit All</button>
+            </div>
+        </div>
+
+        <!-- Tab portion -->
+
+        <mat-tab-group mat-stretch-tabs class="mat-elevation-z4 Table">
+            <mat-tab class="w-100" *ngFor="let exam of examList; let index=index;" [label]="exam?.examName">
+
+                <mat-table class="mt-2" [dataSource]="exam?.studentList" matSort>
+                    <!--- Note that these columns can be defined in any order.
+                                                                      The actual rendered columns are set as a property on the row definition" -->
+
+                    <!-- SNO Column -->
+                    <ng-container [matColumnDef]="displayedColumns[0]">
+                        <mat-header-cell class="tableHeader" *matHeaderCellDef> {{headerCaption?.caption1}}
+                        </mat-header-cell>
+                        <mat-cell *matCellDef="let element; let i = index;">
+                            {{(i+1) + (myPaginator.pageIndex * myPaginator.pageSize)}}
+                        </mat-cell>
+                    </ng-container>
+
+                    <!-- name Column -->
+                    <ng-container [matColumnDef]="displayedColumns[1]">
+                        <mat-header-cell class="tableHeader" *matHeaderCellDef mat-sort-header>
+                            {{headerCaption?.caption2}} </mat-header-cell>
+                        <mat-cell *matCellDef="let element">
+                            {{element[displayedColumns[1]]}}
+                        </mat-cell>
+                    </ng-container>
+
+                    <!-- hall ticket no Column -->
+                    <ng-container [matColumnDef]="displayedColumns[2]">
+                        <mat-header-cell class="tableHeader" *matHeaderCellDef mat-sort-header>
+                            {{headerCaption?.caption3}} </mat-header-cell>
+                        <mat-cell *matCellDef="let element">
+                            {{element[displayedColumns[2]]}} </mat-cell>
+                    </ng-container>
+
+                    <!-- system no Column -->
+                    <ng-container [matColumnDef]="displayedColumns[3]">
+                        <mat-header-cell class="tableHeader" *matHeaderCellDef mat-sort-header>
+                            {{headerCaption?.caption4}} </mat-header-cell>
+                        <mat-cell *matCellDef="let element; let i=index;">
+                            <!-- <mat-form-field class="w-75">
+                                <mat-select [(ngModel)]="element[displayedColumns[3]]" 
+                                (selectionChange)="SystemChange($event?.value, index, i)">
+                                    <mat-option *ngFor="let data of element?.systems" [innerHtml]="data" [value]="data">
+                                    </mat-option>
+                                </mat-select>
+                            </mat-form-field> -->
+                            {{element[displayedColumns[3]]}}
+                        </mat-cell>
+                    </ng-container>
+
+                    <!-- Timer Column -->
+                    <ng-container [matColumnDef]="displayedColumns[4]">
+                        <mat-header-cell class="tableHeader" *matHeaderCellDef>
+                            {{headerCaption?.caption5}} </mat-header-cell>
+                        <mat-cell *matCellDef="let element; let i=index">
+                            <countdown #studentTimer (event)="handleStudentTimerEvent($event, index, i)"
+                             [config]="element?.timerConfig"></countdown>
+                        </mat-cell>
+                    </ng-container>
+
+                    <!-- action Column -->
+                    <ng-container [matColumnDef]="displayedColumns[5]">
+                        <mat-header-cell class="tableHeader d-flex justify-content-center" *matHeaderCellDef>
+                            {{headerCaption?.caption6}} </mat-header-cell>
+                        <mat-cell *matCellDef="let element; let i=index">
+                            <button
+                                [ngClass]="{'Pause': element?.studentStatus == 0, 'Resume': element?.studentStatus == 1}"
+                                [matTooltip]="element?.studentStatus == 1?'Pause Time!':'Resume Time!'"
+                                (click)="StudentTimerPauseResume(index, i, element?.studentStatus)" mat-icon-button>
+                                <mat-icon *ngIf="element?.studentStatus == 1">pause</mat-icon>
+                                <mat-icon *ngIf="element?.studentStatus == 0">play_arrow</mat-icon>
+                            </button>
+                            <button [disabled]="element?.studentStatus == 1" color="primary" [matMenuTriggerFor]="systems" matTooltip="Reallocate"
+                                mat-icon-button>
+                                <mat-icon>shuffle</mat-icon>
+                            </button>
+                            <mat-menu #systems="matMenu">
+                                <span *ngFor="let data of backupSystems; let j=index">
+                                <button [disabled]="data?.disabled"
+                                (click)="SystemChange(element?.systemNo, data?.value, index, i, j)" mat-menu-item>
+                                    <mat-icon>desktop_windows</mat-icon>
+                                    <span>{{data?.value}}</span>
+                                </button>
+                            </span>
+                            </mat-menu>
+                            <button [disabled]="element?.studentStatus == 1" color="warn" matTooltip="Malware" mat-icon-button>
+                                <mat-icon>bug_report</mat-icon>
+                            </button>
+                            <button [class.DefaultButton]="element?.studentStatus == 1" [disabled]="element?.studentStatus == 1" class="SuccessIcon" matTooltip="Save" mat-icon-button>
+                                <mat-icon>save</mat-icon>
+                            </button>
+                        </mat-cell>
+                    </ng-container>
+
+
+                    <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
+                    <mat-row *matRowDef="let row; columns: displayedColumns;"></mat-row>
+                </mat-table>
+                <div class="col-sm-12 d-flex justify-content-center p-3" *ngIf="exam?.studentList?.data?.length == 0">
+                    No data available
+                </div>
+                <!-- <div class="row"> -->
+                <div class="col-sm-12">
+                    <mat-paginator #myPaginator style="background: transparent" [pageSize]="50"
+                        [pageSizeOptions]="[50, 75, 100]">
+                    </mat-paginator>
+                </div>
+                <div class="col-sm-12 d-flex justify-content-end p-2">
+                    <button [disabled]="!masterSubmitValid" mat-raised-button class="Submit">Submit</button>
+                </div>
+                <!-- </div> -->
+            </mat-tab>
+        </mat-tab-group>
+
+    </div>
+</div>

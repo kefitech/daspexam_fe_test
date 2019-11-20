@@ -76,7 +76,8 @@ export class LandingComponent implements OnInit {
     try{
       this.ngxLoader.start();
       var acceptInstruction = localStorage.getItem('AcceptInstruction');
-      if(localStorage.getItem("controllerId") && !acceptInstruction){
+      var controllerStartExam = localStorage.getItem('controllerExamStart');
+      if(localStorage.getItem("controllerId") && !acceptInstruction && !controllerStartExam){
         var controller = {
           controllerId: localStorage.getItem("controllerId"),
           controllerSessionId: localStorage.getItem("controllerSessionId"),
@@ -88,7 +89,8 @@ export class LandingComponent implements OnInit {
       this.ngxLoader.stop();
       this.router.navigate(["/landing/controller/instruction"]);
       }
-      else if(localStorage.getItem("controllerId") && (acceptInstruction && acceptInstruction == 'true')){
+      else if(localStorage.getItem("controllerId") && (acceptInstruction && acceptInstruction == 'true')
+      && !controllerStartExam){
         var controller = {
           controllerId: localStorage.getItem("controllerId"),
           controllerSessionId: localStorage.getItem("controllerSessionId"),
@@ -99,6 +101,19 @@ export class LandingComponent implements OnInit {
       this.auth.controllerLoginAuth();
       this.ngxLoader.stop();
       this.router.navigate(["/landing/controller/dashboard"]);
+      }
+      else if(localStorage.getItem("controllerId") && (acceptInstruction && acceptInstruction == 'true')
+      && (controllerStartExam && controllerStartExam == 'true')){
+        var controller = {
+          controllerId: localStorage.getItem("controllerId"),
+          controllerSessionId: localStorage.getItem("controllerSessionId"),
+          controllerMail: localStorage.getItem("controllerMail"),
+        }
+      this.dataService.controllerLogin.next(true);
+      this.dataService.controllerData.next(controller);
+      this.auth.controllerLoginAuth();
+      this.ngxLoader.stop();
+      this.router.navigate(["/landing/controller/examstart"]);
       }
       else
       this.router.navigate(["/landing/controller/login"]);
@@ -130,6 +145,7 @@ export class LandingComponent implements OnInit {
     localStorage.removeItem("controllerMail");
     localStorage.removeItem("AcceptInstruction");
     localStorage.removeItem("questionShuffled");
+    localStorage.removeItem('controllerExamStart');
     this.dataService.controllerLogin.next(false);
     this.dataService.controllerData.next(null);
     this.auth.controllerLogoutAuth();

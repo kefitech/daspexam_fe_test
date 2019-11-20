@@ -1,42 +1,40 @@
-@import '../../../../styles.scss';
+@import "../../../../styles.scss";
 
-
-
-  .list {
-    border: solid 1px #ccc;
-    min-height: 60px;
-    display: block;
+.list {
+  border: solid 1px #ccc;
+  min-height: 60px;
+  display: block;
+  background: white;
+  border-radius: 4px;
+  overflow: hidden;
+  .box {
+    padding: 20px 10px;
+    border-bottom: solid 1px #ccc;
+    color: color(primary);
+    display: flex;
+    flex-direction: row;
+    box-sizing: border-box;
     background: white;
-    border-radius: 4px;
-    overflow: hidden;
-    .box {
-        padding: 20px 10px;
-        border-bottom: solid 1px #ccc;
-        color: color(primary);
-        display: flex;
-        flex-direction: row;
-        box-sizing: border-box;
-        background: white;
-        font-size: 1em;
-        font-weight: bold;
-      }
+    font-size: 1em;
+    font-weight: bold;
   }
-
-  .CardHeader{
-    background-color: color(review);
-    color: color(basic);
-    .Header{
-        font-size: 1em !important;
-        // font-weight: bold;
-    }
 }
 
-.Table{
-  .TitleCaption{
+.CardHeader {
+  background-color: color(review);
+  color: color(basic);
+  .Header {
+    font-size: 1em !important;
+    // font-weight: bold;
+  }
+}
+
+.Table {
+  .TitleCaption {
     font-size: 1.3em;
     font-weight: bold;
   }
-  .TitleTotal{
+  .TitleTotal {
     font-size: 1em;
     font-weight: bold;
   }
@@ -73,7 +71,7 @@
   }
 }
 
-.StudentAssignmentTable{
+.StudentAssignmentTable {
   .mat-column-sno {
     word-wrap: break-word !important;
     white-space: unset !important;
@@ -103,5 +101,14 @@
     -moz-hyphens: auto;
     -webkit-hyphens: auto;
     hyphens: auto;
+  }
+  ::ng-deep .mat-slide-toggle.mat-checked .mat-slide-toggle-bar {
+    background-color: gray !important;
+  }
+  ::ng-deep .mat-slide-toggle.mat-checked .mat-slide-toggle-thumb {
+    background-color: color(success);
+  }
+  ::ng-deep .mat-slide-toggle-thumb {
+    background-color: red;
   }
 }

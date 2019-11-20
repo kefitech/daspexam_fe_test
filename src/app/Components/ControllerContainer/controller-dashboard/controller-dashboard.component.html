@@ -1,7 +1,7 @@
 <mat-horizontal-stepper [linear]="true" #stepper>
 
   <!-- Student Verification -->
-  <mat-step [completed]="stepper1Valid && !(!questionCount) && questionShuffled == 'true'">
+  <mat-step [completed]="stepper1Valid && questionShuffled == 'true' && questionCountValid">
     <ng-template matStepLabel>Verification</ng-template>
     <div class="container">
       <div class="col-sm-12 p-2 Table" *ngFor="let exam of examDetails; let index=index">
@@ -18,10 +18,21 @@
                 </span>
               </mat-panel-title>
             </mat-expansion-panel-header>
-            <mat-form-field class="w-100">
-              <mat-label>Filter</mat-label>
-              <input (keyup)="applyFilter($event.target.value, index)" matInput placeholder="Filter">
-            </mat-form-field>
+            <div class="row">
+              <div class="col-sm-10">
+                <mat-form-field class="w-100">
+                  <mat-label>Filter</mat-label>
+                  <input (keyup)="applyFilter($event.target.value, index)" matInput placeholder="Filter">
+                </mat-form-field>
+              </div>
+              <div class="col-sm-2">
+                <mat-form-field class="w-100" appearance="outline">
+                  <mat-label>Shuffle Count</mat-label>
+                  <input maxlength="1" (input)="QuestionCountValidCheck()" (keypress)="dataService?.NumberOnly($event)" 
+                  [(ngModel)]="exam.shuffleCount" matInput placeholder="Shuffle Count">
+                </mat-form-field>
+              </div>
+            </div>
             <mat-table [dataSource]="exam?.studentList" matSort>
               <!--- Note that these columns can be defined in any order.
                                                             The actual rendered columns are set as a property on the row definition" -->
@@ -90,20 +101,24 @@
           </mat-expansion-panel>
         </mat-accordion>
       </div>
-      <div class="row m-4">
-        <div class="col-sm-10">
+      <div class="row m-4 d-flex justify-content-end">
+        <!-- <div class="col-sm-10">
           <mat-form-field class="w-100">
             <mat-label>Question Shuffle Count</mat-label>
             <input (keypress)="dataService?.NumberOnly($event)" [disabled]="!stepper1Valid" maxlength="1"
               [(ngModel)]="questionCount" matInput placeholder="Question Shuffle Count">
           </mat-form-field>
+        </div> -->
+        <div class="col-sm-1">
+          <button [disabled]="!stepper1Valid || questionShuffled == 'true' || !questionCountValid" mat-raised-button
+            class="Submit" mwlConfirmationPopover
+            [popoverTitle]="popoverTitleSubmitStepper1"
+            [popoverMessage]="popoverMessageSubmitStepper1"
+            placement="top"
+            (confirm)="SubmitStepper1()">Submit</button>
         </div>
         <div class="col-sm-1">
-          <button [disabled]="!questionCount || !stepper1Valid || questionShuffled == 'true'" mat-raised-button
-            (click)="SubmitStepper1()" class="Submit">Submit</button>
-        </div>
-        <div class="col-sm-1">
-          <button [disabled]="!(questionShuffled == 'true') || !questionCount || !stepper1Valid" mat-raised-button
+          <button [disabled]="!(questionShuffled == 'true') || !stepper1Valid || !questionCountValid" mat-raised-button
             color="primary" matStepperNext>Next</button>
         </div>
       </div>
@@ -169,25 +184,22 @@
 
              <!-- Question Pattern Column -->
              <ng-container [matColumnDef]="studentAssignmentColumns[4]">
-                <mat-header-cell class="tableHeader" *matHeaderCellDef mat-sort-header>
+                <mat-header-cell class="tableHeader d-flex justify-content-center" *matHeaderCellDef mat-sort-header>
                   {{studentAssignmentCaption?.caption5}} </mat-header-cell>
                 <mat-cell class="d-flex justify-content-center" *matCellDef="let element">
                   {{element[studentAssignmentColumns[4]]}} </mat-cell>
               </ng-container>
 
-            <!-- action Column -->
-            <!-- <ng-container [matColumnDef]="studentAssignmentColumns[4]">
-              <mat-header-cell class="tableHeader" *matHeaderCellDef>
-                {{studentAssignmentCaption?.caption5}} </mat-header-cell>
-              <mat-cell *matCellDef="let element; let i=index">
-                <button
-                  (click)="SingleStudentVerification(element, index, i + (myPaginator.pageIndex * myPaginator.pageSize))"
-                  [disabled]="element?.verified" mat-flat-button class="Submit">
-                  <span *ngIf="!element?.verified">Verify</span>
-                  <span *ngIf="element?.verified">Verified</span>
-                </button>
+            <!-- status Column -->
+            <ng-container [matColumnDef]="studentAssignmentColumns[5]">
+              <mat-header-cell class="tableHeader d-flex justify-content-center" *matHeaderCellDef>
+                {{studentAssignmentCaption?.caption6}} </mat-header-cell>
+              <mat-cell class="d-flex justify-content-center" *matCellDef="let element; let i=index">
+                  <mat-slide-toggle (click)="$event.preventDefault()" 
+                  [matTooltip]="element?.status"
+                  [checked]="element?.status == 'online'"></mat-slide-toggle>
               </mat-cell>
-            </ng-container> -->
+            </ng-container>
 
 
             <mat-header-row *matHeaderRowDef="studentAssignmentColumns"></mat-header-row>
@@ -209,7 +221,10 @@
     </div>
     <div class="row w-100 d-flex justify-content-end">
       <div class="col-sm-2">
-          <button mat-raised-button class="Submit">Start Exam</button>
+          <button mat-raised-button class="Submit" mwlConfirmationPopover
+          [popoverTitle]="popoverTitleSubmitStepper2"
+          placement="top" [disabled]="!stepper2Valid"
+          (confirm)="SubmitStepper2()">Start Exam</button>
       </div>
     </div>
   </mat-step>
