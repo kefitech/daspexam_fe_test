@@ -1,8 +1,11 @@
 import { Component, OnInit, AfterViewInit, ViewChildren, QueryList, ElementRef, OnDestroy } from '@angular/core';
 import { ToastrService } from 'ngx-toastr';
 import { NgxUiLoaderService } from 'ngx-ui-loader';
-import { MatTableDataSource, MatPaginator, MatSort } from '@angular/material';
+import { MatTableDataSource, MatPaginator, MatSort, MatDialog } from '@angular/material';
 import { CountdownComponent } from 'ngx-countdown';
+import { InvigilatorSMPPopupComponent } from 'src/app/Popup/invigilator-smp-popup/invigilator-smp-popup.component';
+import { ConfirmationPopupComponent } from 'src/app/Popup/confirmation-popup/confirmation-popup.component';
+import { ControllerAPIService } from 'src/app/Services/controller-api.service';
 
 @Component({
   selector: 'app-controller-start-exam',
@@ -11,7 +14,8 @@ import { CountdownComponent } from 'ngx-countdown';
 })
 export class ControllerStartExamComponent implements OnInit, AfterViewInit, OnDestroy {
 
-  constructor(private toastrService: ToastrService, private ngxLoader: NgxUiLoaderService, ) { }
+  constructor(private toastrService: ToastrService, private ngxLoader: NgxUiLoaderService,
+    private dialog: MatDialog, private service: ControllerAPIService) { }
 
   masterTimerConfig: any;
   masterSubmitValid: boolean = false;
@@ -65,6 +69,9 @@ export class ControllerStartExamComponent implements OnInit, AfterViewInit, OnDe
   FetchExamList(): void {
     try {
       this.ngxLoader.start();
+      // 0 => pause
+      // 1 => Resume
+      // 2 => Completed
       this.examList = [
         {
           examId: 1, examName: "Certificate In Water Harvesting and Management System Exam for November 2019",
@@ -124,22 +131,61 @@ export class ControllerStartExamComponent implements OnInit, AfterViewInit, OnDe
     });
   }
 
-  StudentTimerPauseResume(index: number, rowIndex: number, status: number, type?: any): void {
+  StudentTimerPauseResume(index: number, rowIndex: number, status: number, check?: any): void {
+    const dialogRef = this.dialog.open(ConfirmationPopupComponent, {
+      width: '40%',
+      data: { title: "Do you want to Pause/Resume time for this student?" }
+    })
+    dialogRef.afterClosed().subscribe(response => {
+      var isSubmit = dialogRef.componentInstance.isSubmit;
+      if (isSubmit) {
+        try {
+          // this.ngxLoader.start();
+          if (!check && status == 1)
+            var timeInSec = (this.studentTimer['_results'][length + rowIndex]['i']['value']) / 1000;
+          var body = {
+
+          }
+          // this.service.TimePauseresume(body).subscribe(response => {
+          //   if (response.success) {
+          this.StudentTimePauseResumeConfig(index, rowIndex, status, check);
+          //   }
+          //   else {
+          //     this.toastrService.error(response.message);
+          //     this.ngxLoader.stop();
+          //   }
+          // }, error => {
+          //   this.toastrService.error(error.message);
+          //   this.ngxLoader.stop();
+          // })
+        }
+        catch (e) {
+          this.toastrService.error(e);
+          this.ngxLoader.stop();
+        }
+      }
+    })
+  }
+
+  StudentTimePauseResumeConfig(index: number, rowIndex: number, status: number, check?: any): void {
     var length = 0;
     if (index > 0) {
       for (var i = 0; i < index; i++) {
         length = length + this.examList[i]['studentList']['data'].length;
       }
     }
-    if (!type)
-      this.examList[index]['studentList']['data'][rowIndex]['studentStatus'] = status == 0 ? 1 : 0;
-    if (status == 1)
-      this.studentTimer['_results'][length + rowIndex].pause();
-    else if (status == 0)
-      this.studentTimer['_results'][length + rowIndex].resume();
-    if (!type)
-      console.log((this.studentTimer['_results'][length + rowIndex]['i']['value']), this.studentTimer['_results'][length + rowIndex]['i']['text']);
-
+    if (this.studentTimer['_results'][length + rowIndex]['i']['value'] != 0) {
+      if (!check)
+        this.examList[index]['studentList']['data'][rowIndex]['studentStatus'] = status == 0 ? 1 : 0;
+      if (status == 1)
+        this.studentTimer['_results'][length + rowIndex].pause();
+      else if (status == 0)
+        this.studentTimer['_results'][length + rowIndex].resume();
+      // if (!type && status == 1){
+      //   this.examList[index]['studentList']['data'][rowIndex]['time'] = this.studentTimer['_results'][length + rowIndex]['i']['value'];
+      //   console.log((this.studentTimer['_results'][length + rowIndex]['i']['value']) / 1000, this.studentTimer['_results'][length + rowIndex]['i']['text']);
+      // }
+    }
   }
 
   CheckAllStudentTimer(): void {
@@ -155,7 +201,7 @@ export class ControllerStartExamComponent implements OnInit, AfterViewInit, OnDe
       });
     });
     pauseIndex.forEach(element => {
-      this.StudentTimerPauseResume(element.parent, element.row, 1, true);
+      this.StudentTimePauseResumeConfig(element.parent, element.row, 1, true);
     });
   }
 
@@ -190,8 +236,41 @@ export class ControllerStartExamComponent implements OnInit, AfterViewInit, OnDe
         }
       }
       this.studentTimer['_results'][length + rowIndex].stop();
-      this.examList[index]['studentList']['data'][rowIndex]['studentStatus'] = 0;
+      this.examList[index]['studentList']['data'][rowIndex]['studentStatus'] = 2;
     }
+  }
+
+  StudentSMP(data: object): void {
+    const dialogRef = this.dialog.open(InvigilatorSMPPopupComponent, {
+      width: '40%',
+      // height: '100%',
+      data: { student: data }
+    })
+  }
+
+  Submit(type: string, examIndex?:number, rowIndex?: number, examId?: number, data?: object): void{
+    console.log(type,examIndex,examId, data);
+    var body;
+    if(type == 'student'){
+      body = {
+        examDetails: [this.examList[examIndex]['studentList']['data'][rowIndex]].map(({...rest}) => ({examId: examId, ...rest}))
+      }
+    }
+    else if(type == 'exam'){
+      body = {
+        examDetails: this.examList[examIndex]['studentList']['data'].map(({...rest}) => ({examId: examId, ...rest}))
+      }
+    }
+    else if(type == 'all'){
+      var studentList = [];
+      this.examList.forEach(element => {
+        studentList = studentList.concat(element['studentList']['data'].map(({...rest}) => ({examId: element['examId'], ...rest})));
+      });
+      body = {
+        examDetails: studentList
+      }
+    }
+    
   }
 
   ngOnDestroy() {

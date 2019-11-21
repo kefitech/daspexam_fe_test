@@ -23,8 +23,12 @@ export class ControllerAPIService {
   //   return this.http.post(this.URLService.captchaVerificationURL, body, httpOptions);
   // }
 
+  RecaptchaVerification(body: any): any{
+    return this.http.post(this.URLService.baseURL + this.URLService.recaptchaVerification, body);
+  }
+
   CheckValidController(): any{
-    var body = this.dataService.controllerData;
+    var body = this.dataService.controllerData.value;
     return this.http.post(this.URLService.baseURL + this.URLService.checkValidController, body);
   }
 
@@ -36,10 +40,25 @@ export class ControllerAPIService {
     var body = this.dataService.controllerData;
     return this.http.post(this.URLService.baseURL + this.URLService.controllerLogin, body);
   }
+  
+  CheckOTP(body: any): any{
+    body = Object.assign(body, this.dataService.controllerData.value);
+    return this.http.post(this.URLService.baseURL + this.URLService.controllerOTPVerification, body);
+  }
 
-  CheckOTP(otp: any): any{
-    var body = this.dataService.controllerData;
-    return this.http.post(this.URLService.baseURL + this.URLService.checkValidController, body);
+  StudentSMPCheck(body: any): any{
+    body = Object.assign(body, this.dataService.controllerData.value);
+    return this.http.post(this.URLService.baseURL + this.URLService.individualStudentSMP, body);
+  }
+  
+  StudentSMPBlock(body: any): any{
+    body = Object.assign(body, this.dataService.controllerData.value);
+    return this.http.post(this.URLService.baseURL + this.URLService.individualStudentSMPBlock, body);
+  }
+
+  TimePauseresume(body: any): any{
+    body = Object.assign(body, this.dataService.controllerData.value);
+    return this.http.post(this.URLService.baseURL + this.URLService.individualStudentTimePauseResume, body);
   }
 
 }

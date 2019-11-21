@@ -1,4 +1,5 @@
-<div class="col-sm-12">
+<div class="col-sm-12 vh-100">
+        <!-- style="background-image:url(../../../assets/Images/exam.jpg)" -->
     <div class="row">
         <mat-toolbar class="ToolBar">
             <mat-toolbar-row>
@@ -19,7 +20,7 @@
 
                 
                      <span *ngIf="(dataService?.controllerLogin | async)">
-                         {{(dataService?.controllerData | async)?.controllerMail}} 
+                        <span class="userName">{{(dataService?.controllerData | async)?.email}} </span> 
                          <button matTooltip="Logout" color="warn" (click)="LogoutController()" mat-icon-button>
                              <mat-icon>power_settings_new</mat-icon>
                             </button>

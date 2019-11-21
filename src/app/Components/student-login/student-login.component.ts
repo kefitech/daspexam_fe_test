@@ -13,9 +13,9 @@ export class StudentLoginComponent implements OnInit {
 
 
   ngOnInit() {
-    localStorage.removeItem("controllerId");
-    localStorage.removeItem("controllerSessionId");
-    localStorage.removeItem("controllerMail");
+    localStorage.removeItem("userId");
+    localStorage.removeItem("sessionId");
+    localStorage.removeItem("email");
     this.dataService.controllerLogin.next(false);
     this.dataService.controllerData.next(null);
   }
