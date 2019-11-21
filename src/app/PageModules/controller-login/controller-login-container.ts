@@ -4,6 +4,8 @@ import { InvigilatorOTPPopupComponent } from 'src/app/Popup/invigilator-otppopup
 import { ControllerInstructionsComponent } from 'src/app/Components/ControllerContainer/controller-instructions/controller-instructions.component';
 import { InvigilatorPageStudentVerificationPopupComponent } from 'src/app/Popup/invigilator-page-student-verification-popup/invigilator-page-student-verification-popup.component';
 import { ControllerStartExamComponent } from 'src/app/Components/ControllerContainer/controller-start-exam/controller-start-exam.component';
+import { InvigilatorSMPPopupComponent } from 'src/app/Popup/invigilator-smp-popup/invigilator-smp-popup.component';
+import { ConfirmationPopupComponent } from 'src/app/Popup/confirmation-popup/confirmation-popup.component';
 
 
 export const ControllerLoginComponentContainer = [
@@ -12,5 +14,7 @@ export const ControllerLoginComponentContainer = [
     InvigilatorOTPPopupComponent, 
     ControllerInstructionsComponent,
     InvigilatorPageStudentVerificationPopupComponent,
-    ControllerStartExamComponent
+    ControllerStartExamComponent,
+    InvigilatorSMPPopupComponent,
+    ConfirmationPopupComponent
 ];

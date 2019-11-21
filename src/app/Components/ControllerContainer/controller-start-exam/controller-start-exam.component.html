@@ -8,7 +8,7 @@
                 </countdown>
             </div>
             <div class="col-sm-2 pt-2">
-                <button [disabled]="!masterSubmitValid" mat-raised-button class="Submit">Submit All</button>
+                <button (click)="Submit('all')" [disabled]="!masterSubmitValid" mat-raised-button class="Submit">Submit All</button>
             </div>
         </div>
 
@@ -78,14 +78,15 @@
                         <mat-header-cell class="tableHeader d-flex justify-content-center" *matHeaderCellDef>
                             {{headerCaption?.caption6}} </mat-header-cell>
                         <mat-cell *matCellDef="let element; let i=index">
-                            <button
-                                [ngClass]="{'Pause': element?.studentStatus == 0, 'Resume': element?.studentStatus == 1}"
+                            <button [disabled] = "element?.studentStatus == 2"
+                                [ngClass]="{'Pause': element?.studentStatus == 0, 'Resume': element?.studentStatus == 1, 'Stop': element?.studentStatus == 2}"
                                 [matTooltip]="element?.studentStatus == 1?'Pause Time!':'Resume Time!'"
                                 (click)="StudentTimerPauseResume(index, i, element?.studentStatus)" mat-icon-button>
+                                <mat-icon *ngIf="element?.studentStatus == 2">stop</mat-icon>
                                 <mat-icon *ngIf="element?.studentStatus == 1">pause</mat-icon>
                                 <mat-icon *ngIf="element?.studentStatus == 0">play_arrow</mat-icon>
                             </button>
-                            <button [disabled]="element?.studentStatus == 1" color="primary" [matMenuTriggerFor]="systems" matTooltip="Reallocate"
+                            <button [disabled]="element?.studentStatus == 1 || element?.studentStatus == 2" color="primary" [matMenuTriggerFor]="systems" matTooltip="Reallocate"
                                 mat-icon-button>
                                 <mat-icon>shuffle</mat-icon>
                             </button>
@@ -98,10 +99,12 @@
                                 </button>
                             </span>
                             </mat-menu>
-                            <button [disabled]="element?.studentStatus == 1" color="warn" matTooltip="Malware" mat-icon-button>
+                            <button (click)="StudentSMP(element)" [disabled]="element?.studentStatus == 1 || element?.studentStatus == 2" color="warn" 
+                            matTooltip="SMP" mat-icon-button>
                                 <mat-icon>bug_report</mat-icon>
                             </button>
-                            <button [class.DefaultButton]="element?.studentStatus == 1" [disabled]="element?.studentStatus == 1" class="SuccessIcon" matTooltip="Save" mat-icon-button>
+                            <button (click)="Submit('student', index, i, exam?.examId, element)" [class.DefaultButton]="element?.studentStatus == 1" [disabled]="element?.studentStatus == 1" 
+                            class="SuccessIcon" matTooltip="Save" mat-icon-button>
                                 <mat-icon>save</mat-icon>
                             </button>
                         </mat-cell>
@@ -121,7 +124,7 @@
                     </mat-paginator>
                 </div>
                 <div class="col-sm-12 d-flex justify-content-end p-2">
-                    <button [disabled]="!masterSubmitValid" mat-raised-button class="Submit">Submit</button>
+                    <button (click)="Submit('exam', index, '', exam?.examId)" [disabled]="!masterSubmitValid" mat-raised-button class="Submit">Submit</button>
                 </div>
                 <!-- </div> -->
             </mat-tab>

@@ -21,8 +21,19 @@ export class URLService {
   public hallTicketVerification = "api/hall_ticket_verification";
   public examDetails = "api/student_exam_info";
   public questionFetch = "api/student_question_fetch";
-  public checkValidController = "api/check";
-  public controllerLogin = "api/controller_login";
+
+  //Controller verification
+  public checkValidController = "api/exam/session_verification";
+
+  //Controller login
+  public controllerLogin = "api/exam/invigilator_login";
+  public controllerOTPVerification = "api/exam/invigilator_otp_verification";
+  public recaptchaVerification = "api/exam/reCaptcha_verify";
+
+  //Controller Exam
+  public individualStudentSMP = "api/exam/smp_verify";
+  public individualStudentSMPBlock = "api/exam/smp_block";
+  public individualStudentTimePauseResume = "api/exam/time-pause-resume";
 
   private url = new BehaviorSubject<string>('');
 

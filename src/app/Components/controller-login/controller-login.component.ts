@@ -8,6 +8,7 @@ import { ControllerAuthService } from 'src/app/Services/controller-auth.service'
 import { Router } from '@angular/router';
 import { MatDialog } from '@angular/material';
 import { InvigilatorOTPPopupComponent } from 'src/app/Popup/invigilator-otppopup/invigilator-otppopup.component';
+import * as sha512 from 'js-sha512';
 
 @Component({
   selector: 'app-controller-login',
@@ -46,7 +47,7 @@ export class ControllerLoginComponent implements OnInit, AfterViewInit {
     this.addRecaptchaScript();
   }
 
-  ngAfterViewInit(){
+  ngAfterViewInit() {
 
   }
 
@@ -62,37 +63,35 @@ export class ControllerLoginComponent implements OnInit, AfterViewInit {
     try {
       this.ngxLoader.start();
       if (this.loginForm.valid && this.captchaValid) {
-        // this.service.ControllerLogin(this.loginForm.value).subscribe(response => {
-        //   if(response.success){
-        //     localStorage.setItem("controllerId", "1");
-        //     localStorage.setItem("controllerSessionId", "abcde");
-        //     this.auth.controllerLogin();
-        //     this.router.navigate(["/landing/controller/dashboard"]);
-        //   }
-        //   else{
-
-        //   }
-        // }, error => {
-        //   this.toastrService.error(error.message);
-        //   this.ngxLoader.stop();
-        // })
-        this.dataService.controllerData.next({
-          controllerMail: this.loginForm.value.email,
-          controllerId: 1,
-          controllerSessionId: "abcde"
-        });
-        localStorage.setItem("controllerMail", this.loginForm.value.email);
-        localStorage.setItem("controllerId", "1");
-        localStorage.setItem("controllerSessionId", "abcde");
-        this.ngxLoader.stop();
-        this.OpenOTPPopup();
-        // this.router.navigate(["/landing/controller/dashboard"]);
+        var body = Object.assign({devType:"w" }, this.loginForm.value);
+        body['password'] = sha512.sha512(this.loginForm.value.password);
+        this.service.ControllerLogin(body).subscribe(response => {
+          if (response.success) {
+            this.dataService.controllerData.next({
+              email: response.data.email,
+              userId: response.data.userId,
+              sessionId: response.data.sessionId
+            });
+            localStorage.setItem("email", response.data.email);
+            localStorage.setItem("userId", response.data.userId);
+            localStorage.setItem("sessionId", response.data.sessionId);
+            this.ngxLoader.stop();
+            this.OpenOTPPopup();
+          }
+          else {
+            this.toastrService.error(response.message);
+            this.ngxLoader.stop();
+          }
+        }, error => {
+          this.toastrService.error(error.message);
+          this.ngxLoader.stop();
+        })
       }
-      else if(this.loginForm.invalid){
+      else if (this.loginForm.invalid) {
         this.toastrService.error("Mandatory data missing!");
         this.ngxLoader.stop();
       }
-      else if(!this.captchaValid){
+      else if (!this.captchaValid) {
         this.toastrService.error("Captcha not valid!");
         this.ngxLoader.stop();
       }
@@ -135,10 +134,33 @@ export class ControllerLoginComponent implements OnInit, AfterViewInit {
     window['grecaptcha'].render(this.recaptchaElement.nativeElement, {
       'sitekey': this.dataService.captchaSecretKey,
       'callback': (response) => {
-          this.captchaValid = true;
+        var body = {
+          response: response
+        }
+        try {
+          this.ngxLoader.start();
+          this.service.RecaptchaVerification(body).subscribe(response => {
+            if (response){
+              this.captchaValid = true;
+              this.ngxLoader.stop();
+            }
+            else {
+              this.toastrService.error(response.message);
+              this.ngxLoader.stop();
+            }
+          }, error => {
+            this.toastrService.error(error.message);
+            this.ngxLoader.stop();
+          })
+        }
+        catch (e) {
+          this.toastrService.error(e);
+          this.ngxLoader.stop();
+        }
       },
       'expired-callback': (response) => {
         this.captchaValid = false;
+        this.ngxLoader.stop();
       }
     });
   }
@@ -146,20 +168,24 @@ export class ControllerLoginComponent implements OnInit, AfterViewInit {
   CheckOTP(otp: number): void {
     try {
       this.ngxLoader.start();
-      // this.service.CheckOTP(otp).subscribe(response => {
-      //   if (response.success) {
+      var body = {
+        verificationCode: otp
+      }
+      this.service.CheckOTP(body).subscribe(response => {
+        if (response.success) {
           this.dataService.controllerLogin.next(true);
           this.auth.controllerLoginAuth();
-          this.router.navigate(["/landing/controller/instruction"]);
-        // }
-        // else {
-        //   this.toastrService.error(response.message);
           this.ngxLoader.stop();
-        // }
-      // }, error => {
-      //   this.toastrService.error(error.message);
-      //   this.ngxLoader.stop();
-      // })
+          this.router.navigate(["/landing/controller/instruction"]);
+        }
+        else {
+          this.toastrService.error(response.message);
+          this.ngxLoader.stop();
+        }
+      }, error => {
+        this.toastrService.error(error.message);
+        this.ngxLoader.stop();
+      })
     }
     catch (e) {
       this.toastrService.error(e);

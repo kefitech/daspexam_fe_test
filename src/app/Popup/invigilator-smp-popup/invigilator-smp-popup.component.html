@@ -1,0 +1,21 @@
+<div class="col-sm-12">
+    <div class="row d-flex justify-content-center">
+        <h5 class="font-weight-bold">{{studentDetails?.studentName}}</h5>
+    </div>
+    <div class="row">
+        <div class="col-sm-11 pt-2">
+            <h6 class="font-weight-bold">No of SMP attempts</h6>
+        </div>
+        <div class="col-sm-1">
+            <button style="outline: none; cursor: default;" mat-mini-fab color="warn">{{studentDetails?.attempts}}</button>
+        </div>
+    </div>
+    <div class="row m-4 d-flex justify-content-end">
+        <div class="col-sm-3">
+            <button (click)="Block()" mat-raised-button class="Submit" [disabled]="studentDetails?.attempts < 3">Block</button>
+        </div>
+        <div class="col-sm-3">
+            <button mat-raised-button color="warn" (click)="Close()">Close</button>
+        </div>
+    </div>
+</div>

@@ -1,4 +1,4 @@
-import { Component, OnInit, HostListener } from '@angular/core';
+import { Component, OnInit, HostListener, AfterViewInit } from '@angular/core';
 import { DataService } from 'src/app/Services/data.service';
 import { Router } from '@angular/router';
 import { DeviceDetectorService } from 'ngx-device-detector';
@@ -12,9 +12,9 @@ import { ToastrService } from 'ngx-toastr';
   templateUrl: './landing.component.html',
   styleUrls: ['./landing.component.scss']
 })
-export class LandingComponent implements OnInit {
+export class LandingComponent implements OnInit, AfterViewInit {
 
-  constructor(private dataService: DataService, private router: Router, 
+  constructor(private dataService: DataService, private router: Router,
     private deviceService: DeviceDetectorService, private auth: ControllerAuthService, private service: ControllerAPIService,
     private ngxLoader: NgxUiLoaderService, private toastrService: ToastrService) { }
 
@@ -27,12 +27,17 @@ export class LandingComponent implements OnInit {
 
   ngOnInit() {
     this.dataService.controllerData.next({
-      controllerMail: localStorage.getItem("controllerMail"),
-      controllerId: localStorage.getItem("controllerId"),
-      controllerSessionId: localStorage.getItem("controllerSessionId")
+      email: localStorage.getItem("email"),
+      userId: localStorage.getItem("userId"),
+      sessionId: localStorage.getItem("sessionId")
     })
     this.dataService.sideNavButton.next(false);
-    this.checkValidUser();
+  }
+
+  ngAfterViewInit() {
+    setTimeout(() => {
+      this.checkValidUser();
+    }, 10);
   }
 
   @HostListener('contextmenu', ['$event'])
@@ -57,92 +62,142 @@ export class LandingComponent implements OnInit {
   //   }
   //   this.dataService.warning.next(false);
   // }
-  
-//   toggleFullScreen() {
-//    this.dataService.toggleFullScreen()
-//     this.dataService.warning.next(false);
-// }
 
-// @HostListener('window:resize', ['$event'])
-//   onResize(event){
-//    event.preventDefault();
-//   }
+  //   toggleFullScreen() {
+  //    this.dataService.toggleFullScreen()
+  //     this.dataService.warning.next(false);
+  // }
 
-  sideNavToggle(): void{
+  // @HostListener('window:resize', ['$event'])
+  //   onResize(event){
+  //    event.preventDefault();
+  //   }
+
+  sideNavToggle(): void {
     this.dataService.sideNav.next(true);
   }
 
   checkValidUser(): void {
-    try{
+    try {
       this.ngxLoader.start();
       var acceptInstruction = localStorage.getItem('AcceptInstruction');
       var controllerStartExam = localStorage.getItem('controllerExamStart');
-      if(localStorage.getItem("controllerId") && !acceptInstruction && !controllerStartExam){
-        var controller = {
-          controllerId: localStorage.getItem("controllerId"),
-          controllerSessionId: localStorage.getItem("controllerSessionId"),
-          controllerMail: localStorage.getItem("controllerMail"),
+      if (localStorage.getItem("userId") && !acceptInstruction && !controllerStartExam) {
+        try {
+          this.ngxLoader.start();
+          this.service.CheckValidController().subscribe(response => {
+            if (response.success) {
+              var controller = {
+                userId: localStorage.getItem("userId"),
+                sessionId: localStorage.getItem("sessionId"),
+                email: localStorage.getItem("email")
+              }
+              this.dataService.controllerLogin.next(true);
+              this.dataService.controllerData.next(controller);
+              this.auth.controllerLoginAuth();
+              this.ngxLoader.stop();
+              this.router.navigate(["/landing/controller/instruction"]);
+            }
+            else {
+              this.router.navigate(["/landing/controller/login"]);
+              this.toastrService.error(response.message);
+              this.ngxLoader.stop();
+            }
+          }, error => {
+            this.router.navigate(["/landing/controller/login"]);
+            this.toastrService.error(error.message);
+            this.ngxLoader.stop();
+          })
         }
-      this.dataService.controllerLogin.next(true);
-      this.dataService.controllerData.next(controller);
-      this.auth.controllerLoginAuth();
-      this.ngxLoader.stop();
-      this.router.navigate(["/landing/controller/instruction"]);
-      }
-      else if(localStorage.getItem("controllerId") && (acceptInstruction && acceptInstruction == 'true')
-      && !controllerStartExam){
-        var controller = {
-          controllerId: localStorage.getItem("controllerId"),
-          controllerSessionId: localStorage.getItem("controllerSessionId"),
-          controllerMail: localStorage.getItem("controllerMail"),
+        catch (e) {
+          this.router.navigate(["/landing/controller/login"]);
+          this.toastrService.error(e);
+          this.ngxLoader.stop();
         }
-      this.dataService.controllerLogin.next(true);
-      this.dataService.controllerData.next(controller);
-      this.auth.controllerLoginAuth();
-      this.ngxLoader.stop();
-      this.router.navigate(["/landing/controller/dashboard"]);
       }
-      else if(localStorage.getItem("controllerId") && (acceptInstruction && acceptInstruction == 'true')
-      && (controllerStartExam && controllerStartExam == 'true')){
-        var controller = {
-          controllerId: localStorage.getItem("controllerId"),
-          controllerSessionId: localStorage.getItem("controllerSessionId"),
-          controllerMail: localStorage.getItem("controllerMail"),
+      else if (localStorage.getItem("userId") && (acceptInstruction && acceptInstruction == 'true')
+        && !controllerStartExam) {
+        try {
+          this.ngxLoader.start();
+          this.service.CheckValidController().subscribe(response => {
+            if (response.success) {
+              var controller = {
+                userId: localStorage.getItem("userId"),
+                sessionId: localStorage.getItem("sessionId"),
+                email: localStorage.getItem("email"),
+              }
+              this.dataService.controllerLogin.next(true);
+              this.dataService.controllerData.next(controller);
+              this.auth.controllerLoginAuth();
+              this.ngxLoader.stop();
+              this.router.navigate(["/landing/controller/dashboard"]);
+            }
+            else {
+              this.router.navigate(["/landing/controller/login"]);
+              this.toastrService.error(response.message);
+              this.ngxLoader.stop();
+            }
+          }, error => {
+            this.router.navigate(["/landing/controller/login"]);
+            this.toastrService.error(error.message);
+            this.ngxLoader.stop();
+          })
         }
-      this.dataService.controllerLogin.next(true);
-      this.dataService.controllerData.next(controller);
-      this.auth.controllerLoginAuth();
-      this.ngxLoader.stop();
-      this.router.navigate(["/landing/controller/examstart"]);
+        catch (e) {
+          this.router.navigate(["/landing/controller/login"]);
+          this.toastrService.error(e);
+          this.ngxLoader.stop();
+        }
       }
-      else
-      this.router.navigate(["/landing/controller/login"]);
-      this.ngxLoader.stop();
-      // this.service.CheckValidController().subscribe(response => {
-      //   if (response.success) {
-      //     this.ngxLoader.stop();
-      //     if(!response.user.valid)
-      //       this.router.navigate(["/landing/controller/login"])
-      //   }
-      //   else {
-      //     this.toastrService.error(response.message);
-      //     this.ngxLoader.stop();
-      //   }
-      // }, error => {
-      //   this.toastrService.error(error);
-      //   this.ngxLoader.stop();
-      // })
+      else if (localStorage.getItem("userId") && (acceptInstruction && acceptInstruction == 'true')
+        && (controllerStartExam && controllerStartExam == 'true')) {
+        try {
+          this.ngxLoader.start();
+          this.service.CheckValidController().subscribe(response => {
+            if (response.success) {
+              var controller = {
+                userId: localStorage.getItem("userId"),
+                sessionId: localStorage.getItem("sessionId"),
+                email: localStorage.getItem("email"),
+              }
+              this.dataService.controllerLogin.next(true);
+              this.dataService.controllerData.next(controller);
+              this.auth.controllerLoginAuth();
+              this.ngxLoader.stop();
+              this.router.navigate(["/landing/controller/examstart"]);
+            }
+            else {
+              this.router.navigate(["/landing/controller/login"]);
+              this.toastrService.error(response.message);
+              this.ngxLoader.stop();
+            }
+          }, error => {
+            this.router.navigate(["/landing/controller/login"]);
+            this.toastrService.error(error.message);
+            this.ngxLoader.stop();
+          })
+        }
+        catch (e) {
+          this.router.navigate(["/landing/controller/login"]);
+          this.toastrService.error(e);
+          this.ngxLoader.stop();
+        }
+      }
+      else{
+        this.router.navigate(["/landing/controller/login"]);
+        this.ngxLoader.stop();
+      }
     }
-    catch (e){
+    catch (e) {
       this.toastrService.error(e);
       this.ngxLoader.stop();
     }
   }
 
-  LogoutController(): void{
-    localStorage.removeItem("controllerId");
-    localStorage.removeItem("controllerSessionId");
-    localStorage.removeItem("controllerMail");
+  LogoutController(): void {
+    localStorage.removeItem("userId");
+    localStorage.removeItem("sessionId");
+    localStorage.removeItem("email");
     localStorage.removeItem("AcceptInstruction");
     localStorage.removeItem("questionShuffled");
     localStorage.removeItem('controllerExamStart');
