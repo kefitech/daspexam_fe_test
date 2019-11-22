@@ -34,6 +34,7 @@ export class URLService {
   public individualStudentSMP = "api/exam/smp_verify";
   public individualStudentSMPBlock = "api/exam/smp_block";
   public individualStudentTimePauseResume = "api/exam/time-pause-resume";
+  public invigilatorExamSubmit = "api/exam/invigilator_exam_submit";
 
   private url = new BehaviorSubject<string>('');
 
