@@ -8,7 +8,9 @@
                 </countdown>
             </div>
             <div class="col-sm-2 pt-2">
-                <button (click)="Submit('all')" [disabled]="!masterSubmitValid" mat-raised-button class="Submit">Submit All</button>
+                <button (confirm)="Submit('all')" mwlConfirmationPopover popoverTitle="Do you want to submit all exams?"
+                    placement="left" [disabled]="!masterSubmitValid" mat-raised-button class="Submit">Submit
+                    All</button>
             </div>
         </div>
 
@@ -69,7 +71,7 @@
                             {{headerCaption?.caption5}} </mat-header-cell>
                         <mat-cell *matCellDef="let element; let i=index">
                             <countdown #studentTimer (event)="handleStudentTimerEvent($event, index, i)"
-                             [config]="element?.timerConfig"></countdown>
+                                [config]="element?.timerConfig"></countdown>
                         </mat-cell>
                     </ng-container>
 
@@ -78,33 +80,42 @@
                         <mat-header-cell class="tableHeader d-flex justify-content-center" *matHeaderCellDef>
                             {{headerCaption?.caption6}} </mat-header-cell>
                         <mat-cell *matCellDef="let element; let i=index">
-                            <button [disabled] = "element?.studentStatus == 2"
-                                [ngClass]="{'Pause': element?.studentStatus == 0, 'Resume': element?.studentStatus == 1, 'Stop': element?.studentStatus == 2}"
+                            <button [disabled]="element?.studentStatus == 2 || element?.isSubmit" [ngClass]="{'Pause': element?.studentStatus == 0, 
+                                'Resume': element?.studentStatus == 1, 
+                                'Stop': element?.studentStatus == 2 || element?.isSubmit}"
                                 [matTooltip]="element?.studentStatus == 1?'Pause Time!':'Resume Time!'"
                                 (click)="StudentTimerPauseResume(index, i, element?.studentStatus)" mat-icon-button>
-                                <mat-icon *ngIf="element?.studentStatus == 2">stop</mat-icon>
-                                <mat-icon *ngIf="element?.studentStatus == 1">pause</mat-icon>
-                                <mat-icon *ngIf="element?.studentStatus == 0">play_arrow</mat-icon>
+                                <mat-icon *ngIf="element?.studentStatus == 2 || element?.isSubmit">stop</mat-icon>
+                                <mat-icon *ngIf="element?.studentStatus == 1 && !element?.isSubmit">pause</mat-icon>
+                                <mat-icon *ngIf="element?.studentStatus == 0 && !element?.isSubmit">play_arrow
+                                </mat-icon>
                             </button>
-                            <button [disabled]="element?.studentStatus == 1 || element?.studentStatus == 2" color="primary" [matMenuTriggerFor]="systems" matTooltip="Reallocate"
+                            <button [disabled]="element?.studentStatus == 1 
+                            || element?.studentStatus == 2 
+                            || element?.isSubmit" color="primary" [matMenuTriggerFor]="systems" matTooltip="Reallocate"
                                 mat-icon-button>
                                 <mat-icon>shuffle</mat-icon>
                             </button>
                             <mat-menu #systems="matMenu">
                                 <span *ngFor="let data of backupSystems; let j=index">
-                                <button [disabled]="data?.disabled"
-                                (click)="SystemChange(element?.systemNo, data?.value, index, i, j)" mat-menu-item>
-                                    <mat-icon>desktop_windows</mat-icon>
-                                    <span>{{data?.value}}</span>
-                                </button>
-                            </span>
+                                    <button [disabled]="data?.disabled"
+                                        (click)="SystemChange(element?.systemNo, data?.value, index, i, j)"
+                                        mat-menu-item>
+                                        <mat-icon>desktop_windows</mat-icon>
+                                        <!-- <mat-icon color="warn" *ngIf="data?.removed">close</mat-icon> -->
+                                        <span>{{data?.value}}</span>
+                                    </button>
+                                </span>
                             </mat-menu>
-                            <button (click)="StudentSMP(element)" [disabled]="element?.studentStatus == 1 || element?.studentStatus == 2" color="warn" 
-                            matTooltip="SMP" mat-icon-button>
+                            <button (click)="StudentSMP(element)"
+                                [disabled]="element?.studentStatus == 1 || element?.studentStatus == 2 || element?.isSubmit"
+                                color="warn" matTooltip="SMP" mat-icon-button>
                                 <mat-icon>bug_report</mat-icon>
                             </button>
-                            <button (click)="Submit('student', index, i, exam?.examId, element)" [class.DefaultButton]="element?.studentStatus == 1" [disabled]="element?.studentStatus == 1" 
-                            class="SuccessIcon" matTooltip="Save" mat-icon-button>
+                            <button (click)="Submit('student', index, i, exam?.examId, element)"
+                                [class.DefaultButton]="element?.studentStatus == 1 || element?.isSubmit"
+                                [disabled]="element?.studentStatus == 1 || element?.isSubmit" class="SuccessIcon"
+                                matTooltip="Save" mat-icon-button>
                                 <mat-icon>save</mat-icon>
                             </button>
                         </mat-cell>
@@ -124,7 +135,10 @@
                     </mat-paginator>
                 </div>
                 <div class="col-sm-12 d-flex justify-content-end p-2">
-                    <button (click)="Submit('exam', index, '', exam?.examId)" [disabled]="!masterSubmitValid" mat-raised-button class="Submit">Submit</button>
+                    <button mwlConfirmationPopover popoverTitle="Do you want to submit all the students on this exam?"
+                        placement="top" (confirm)="Submit('exam', index, '', exam?.examId)"
+                        [disabled]="!masterSubmitValid || exam?.isSubmit" mat-raised-button
+                        class="Submit">Submit</button>
                 </div>
                 <!-- </div> -->
             </mat-tab>
