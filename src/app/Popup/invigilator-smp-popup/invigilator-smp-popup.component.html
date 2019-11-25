@@ -10,6 +10,17 @@
             <button style="outline: none; cursor: default;" mat-mini-fab color="warn">{{studentDetails?.attempts}}</button>
         </div>
     </div>
+    <div class="row" *ngFor="let data of studentDetails?.warnings; let index=index; let first=first; let last=last">
+        <div class="col-sm-6 font-weight-bold d-flex justify-content-center">
+            {{data?.caption}} <span class="text-danger">*</span>
+        </div>
+        <div class="col-sm-6 d-flex justify-content-center">
+               <span *ngIf="!data?.entered" class="font-weight-bold">{{data?.key}}</span>
+               <span *ngIf="data?.entered" class="font-weight-bold text-danger strikethrough">
+                    <span class="text-dark">{{data?.key}}</span>
+                  </span>
+            </div>
+    </div>
     <div class="row m-4 d-flex justify-content-end">
         <div class="col-sm-3">
             <button (click)="Block()" mat-raised-button class="Submit" [disabled]="studentDetails?.attempts < 3">Block</button>

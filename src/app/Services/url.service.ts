@@ -46,7 +46,6 @@ export class URLService {
         this.url.next(data["URL"]);
       },
       error => {
-        console.log(error);
       }
     );
   }

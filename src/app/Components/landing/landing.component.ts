@@ -204,8 +204,8 @@ export class LandingComponent implements OnInit, AfterViewInit {
     this.dataService.controllerLogin.next(false);
     this.dataService.controllerData.next(null);
     this.auth.controllerLogoutAuth();
-    // this.router.navigate(["/landing/controller/login"]);
-    window.location.reload();
+    this.router.navigate(["/landing/controller/login"]);
+    // window.location.reload();
   }
 
 

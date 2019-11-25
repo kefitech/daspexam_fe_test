@@ -43,7 +43,6 @@ export class CommonPanelComponent implements OnInit {
   @HostListener('document:keypress', ['$event'])
   handleKeyboardEvent(event: KeyboardEvent) {
     event.preventDefault();
-    console.log(event);
     
   }
 

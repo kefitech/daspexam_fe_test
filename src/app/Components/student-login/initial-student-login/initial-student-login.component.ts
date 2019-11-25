@@ -30,9 +30,10 @@ export class InitialStudentLoginComponent implements OnInit, AfterViewInit {
   ngOnInit() {
     // this.showPopup();
     // this.Interval();
+    this.dataService.studentData.next(null);
   }
 
-  ngAfterViewInit(){
+  ngAfterViewInit() {
     this.EnterHallticket();
     this.loadData();
   }
@@ -60,12 +61,12 @@ export class InitialStudentLoginComponent implements OnInit, AfterViewInit {
 
   loadData(): void {
     this.caption = {
-      exam: "Examination Name: ",
+      examName: "Examination Name: ",
       examDate: "Examination Date: ",
       examTime: "Exam Time: ",
-      programme: "Programme Name: ",
+      programmeName: "Programme Name: ",
       batchName: "Batch Name: ",
-      course: "Course Name: ",
+      courseName: "Course Name: ",
       studentName: "Student Name",
       studyCenter: "Study Center: ",
       examDuration: "Exam Duration: "
@@ -73,28 +74,48 @@ export class InitialStudentLoginComponent implements OnInit, AfterViewInit {
   }
 
   studentDetails(): void {
-    try {
-      this.ngxLoader.start();
-      this.apiService.studentDetailData().subscribe(response => {
-        if (response.success) {
-          this.ngxLoader.stop();
-          this.studentData = response.data.examList[0];
-          this.studentData["examDuration"] = this.studentData["examDuration"] + " Minutes";
-          this.dataService.studentData.next(this.studentData);
-        }
-        else {
-          this.toastrService.error(response.message);
-          this.ngxLoader.stop();
-        }
-      }, error => {
-        this.toastrService.error(error.message);
-        this.ngxLoader.stop();
-      })
+    // try {
+    // this.ngxLoader.start();
+    // this.apiService.studentDetailData().subscribe(response => {
+    //   if (response.success) {
+    // this.ngxLoader.stop();
+    // this.studentData = response.data.examList[0];
+    this.studentData = {
+      exam: "Certificate in water management",
+      examName: "Water management exam",
+      examDate: "12-02-2018",
+      examTime: "11:15 A.M",
+      examDuration: "240",
+      programmeName: "Certificate in water harvesting",
+      batchName: "BH08767",
+      courseName: "Environmental studies",
+      studyCenter: "Block1",
+      fullName: "Watson T",
+      photo: "https://homepages.cae.wisc.edu/~ece533/images/monarch.png",
+      address1: "Hall Street",
+      address2: "West-Nagercoil",
+      city: "Nagercoil",
+      state: "Tamil Nadu",
+      country: "India",
+      semesterType: "Semester",
+      semester: "2"
     }
-    catch (e) {
-      this.toastrService.error(e);
-      this.ngxLoader.stop();
-    }
+    this.studentData["examDuration"] = this.studentData["examDuration"] + " Minutes";
+    this.dataService.studentData.next(this.studentData);
+    //     }
+    //     else {
+    //       this.toastrService.error(response.message);
+    //       this.ngxLoader.stop();
+    //     }
+    //   }, error => {
+    //     this.toastrService.error(error.message);
+    //     this.ngxLoader.stop();
+    //   })
+    // }
+    // catch (e) {
+    //   this.toastrService.error(e);
+    //   this.ngxLoader.stop();
+    // }
   }
 
   // Interval(): void{
@@ -104,60 +125,32 @@ export class InitialStudentLoginComponent implements OnInit, AfterViewInit {
 
   // }
 
-  // Submit(): void {
-  //   try {
-  //     // this.auth.hallTicketValid();
-  //     //     this.dataService.toggleFullScreen();
-  //     //     this.dataService.isNotLoginScreen.next(true);
-  //     //     this.router.navigate(['/landing/student/exam']);
-  //     this.ngxLoader.start();
-  //     if (this.hallticket && this.studentData) {
-  //       var body = this.dataService.body;
-  //       body["batchId"] = this.studentData["batchId"];
-  //       body["programmeId"] = this.studentData["programmeId"];
-  //       body["registerNo"] = parseInt(this.hallticket);
-
-  //       this.apiService.hallTicketVerification(body).subscribe(response => {
-  //         if (response.success) {
-  //           this.auth.hallTicketValid();
-  //           this.dataService.toggleFullScreen();
-  //           this.dataService.isNotLoginScreen.next(true);
-  //           this.router.navigate(['/landing/student/exam']);
-  //           this.ngxLoader.stop();
-  //         }
-  //         else {
-  //           this.toastrService.error(response.message);
-  //           this.ngxLoader.stop();
-  //         }
-  //       }, error => {
-  //         this.toastrService.error(error.message);
-  //         this.ngxLoader.stop();
-  //       })
-  //     }
-  //     else if (!this.hallticket) {
-  //       this.toastrService.error("Please enter the Hallticket!");
-  //       this.ngxLoader.stop();
-  //     }
-  //     else if (!this.studentData) {
-  //       this.toastrService.error("Student data not available");
-  //       this.ngxLoader.stop();
-  //     }
-  //   }
-  //   catch (e) {
-  //     this.toastrService.error(e);
-  //     this.ngxLoader.stop();
-  //   }
-  // }
+  Submit(): void {
+    try {
+      this.auth.hallTicketValid();
+      this.dataService.toggleFullScreen();
+      this.dataService.isNotLoginScreen.next(true);
+      this.router.navigate(['/landing/student/exam']);
+      this.ngxLoader.stop();
+    }
+    catch (e) {
+      this.toastrService.error(e);
+      this.ngxLoader.stop();
+    }
+  }
 
 
   EnterHallticket(): void {
     const dialog = this.dialog.open(HallticketPopupComponent,
       {
-        minWidth: '35%',
+        minWidth: '25%',
         disableClose: true
       });
     dialog.afterClosed().subscribe(response => {
       this.valid = dialog.componentInstance.submit;
+      if (this.valid) {
+        this.studentDetails();
+      }
     }, error => {
       this.toastrService.error(error);
     })

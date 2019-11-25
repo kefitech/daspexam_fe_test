@@ -29,7 +29,12 @@ export class InvigilatorSMPPopupComponent implements OnInit, AfterViewInit {
   StudentSMPCheck(): void {
     this.studentDetails = {
       studentName: "Sunderson.J",
-      attempts: 3
+      attempts: 3,
+      warnings: [
+        {caption: "Warning1", key: "123456789", entered: true},
+        {caption: "Warning2", key: "555555555", entered: true},
+        {caption: "Warning3", key: "222222222", entered: false}
+      ]
     }
     // try {
     //   this.ngxLoader.start();

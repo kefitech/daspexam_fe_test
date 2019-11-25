@@ -72,7 +72,6 @@ export class ExamStartComponent implements OnInit {
     this.dataService.questionsData.subscribe(response => {
       this.examinationData = response;
       var checkFirstQuestion = this.examinationData.filter(m => m.question.status != 0);
-      console.log(checkFirstQuestion);
       
       if (checkFirstQuestion.length == 0)
         this.examinationData[0]["question"]["status"] = 1;
@@ -87,7 +86,6 @@ export class ExamStartComponent implements OnInit {
   }
 
   handleEvent(event): void {
-    console.log(event);
     var timeLeft = event.left / 60000
     if (event.action == "start") {
       this.toastrService.success("Examination started");

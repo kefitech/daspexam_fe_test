@@ -1,21 +1,33 @@
 <div class="col-sm-12">
-    <div class="row d-flex justify-content-center Heading">
+    <!-- <div class="row d-flex justify-content-center Heading">
         Enter Hallticket Number
-    </div>
+    </div> -->
     <form [formGroup]="hallticketForm" (ngSubmit)="Submit()">
         <div class="row">
-                <mat-form-field appearance="outline" class="FormField">
-                    <mat-label>{{formCaption}}</mat-label>
-                    <input (keypress)="_keyPress($event)" formControlName="hallticket" matInput
-                        [placeholder]="formCaption">
-                    <mat-error *ngIf="hallticketForm.get('hallticket').hasError('required')">
-                        {{error?.required}}
-                    </mat-error>
-                </mat-form-field>
+            <mat-form-field appearance="outline" class="FormField">
+                <mat-label>{{formCaption?.caption1}}</mat-label>
+                <input (keypress)="_keyPress($event)" formControlName="hallticket" matInput
+                    [placeholder]="formCaption?.caption1">
+                <mat-error *ngIf="hallticketForm.get('hallticket').hasError('required')">
+                    {{error?.required}}
+                </mat-error>
+            </mat-form-field>
         </div>
         <div class="row">
-            <div class="col-sm-2 pt-2">
-                <button [disabled]="hallticketForm?.invalid" class="Submit" mat-raised-button>Submit</button>
+            <mat-form-field appearance="outline" class="FormField">
+                <mat-label>{{formCaption?.caption2}}</mat-label>
+                <input style="cursor: pointer" readonly matInput (click)="picker.open()" [matDatepicker]="picker"
+                    formControlName="dob" [max]="maxDate" [placeholder]="formCaption?.caption2" required>
+                <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+                <mat-datepicker #picker></mat-datepicker>
+                <mat-error *ngIf="hallticketForm.get('dob').hasError('required')">
+                    {{error?.required}}
+                </mat-error>
+            </mat-form-field>
+        </div>
+        <div class="row d-flex justify-content-center">
+            <div class="col-sm-8 pt-2">
+                <button [disabled]="hallticketForm?.invalid" class="Submit w-100" mat-raised-button>Submit</button>
             </div>
         </div>
     </form>
