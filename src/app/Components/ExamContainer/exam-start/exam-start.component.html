@@ -28,7 +28,7 @@
         </div>
 
         <!-- Question Navigation -->
-        <div class="col-sm-12 mt-4 QuestionPagination">
+        <div class="col-sm-12 mt-4 QuestionPagination" *ngIf="examinationData?.length > 0">
             <div class="row px-3 QuestionNo">
                 Choose a Question
             </div>
@@ -45,7 +45,8 @@
 
         <!-- submit button -->
         <div class="col-sm-12">
-            <button [disabled]="submitDisable" (click)="Submit()" mat-raised-button class=" col-sm-12 Submit">Submit</button>
+            <button [disabled]="submitDisable" (click)="Submit()" mat-raised-button
+                class=" col-sm-12 Submit">Submit</button>
         </div>
 
 
@@ -63,7 +64,19 @@
                         <!-- Questions available here -->
                     </div>
                     <div class="col-sm-4">
-                        <img class="rounded QuestionImage" [src]="exam?.question?.imageUrl" alt="">
+                        <div class="row" *ngIf="exam?.question?.imageUrl">
+                            <img class="rounded QuestionImage" [src]="exam?.question?.imageUrl" alt="">
+                        </div>
+                        <div class="row" *ngIf="exam?.question?.audio">
+                            <audio controls>
+                                <source [src]="exam?.question?.audio">
+                            </audio>
+                        </div>
+                        <div class="row" *ngIf="exam?.question?.video">
+                            <video width="400" controls>
+                                <source [src]="exam?.question?.video">
+                            </video>
+                        </div>
                     </div>
                 </div>
                 <div class="row mt-5" *ngIf="i==activeIndex">

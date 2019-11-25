@@ -1,4 +1,4 @@
-<div class="col-sm-12 vh-100">
+<div class="col-sm-12 min-vh-100">
         <!-- style="background-image:url(../../../assets/Images/exam.jpg)" -->
     <div class="row">
         <mat-toolbar class="ToolBar">
@@ -7,7 +7,7 @@
                 <span class="ml-3 w-100 col-sm-9">DASP Examination</span>
                 <span *ngIf="(dataService?.isNotLoginScreen | async)" class="d-flex justify-content-end p-3">
                     <img class="userImg rounded-circle" [src]="(dataService?.studentData | async)?.photo"
-                        alt="user avatar">
+                        alt="">
                     <span class="userName p-2">{{(dataService?.studentData | async)?.fullName}}</span>
                     <!-- <button matTooltip="Full Screen" *ngIf="(dataService?.warning | async)" (click)="toggleFullScreen()" mat-icon-button color="accent">
                             <mat-icon>settings_overscan</mat-icon>

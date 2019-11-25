@@ -8,9 +8,9 @@
                 </countdown>
             </div>
             <div class="col-sm-2 pt-2">
-                <button (confirm)="Submit('all')" mwlConfirmationPopover popoverTitle="Do you want to submit all exams?"
-                    placement="left" [disabled]="!masterSubmitValid" mat-raised-button class="Submit">Submit
-                    All</button>
+                <button (click)="Submit('all')" [disabled]="!masterSubmitValid" mat-raised-button class="Submit">
+                    Submit All
+                </button>
             </div>
         </div>
 
@@ -135,8 +135,7 @@
                     </mat-paginator>
                 </div>
                 <div class="col-sm-12 d-flex justify-content-end p-2">
-                    <button mwlConfirmationPopover popoverTitle="Do you want to submit all the students on this exam?"
-                        placement="top" (confirm)="Submit('exam', index, '', exam?.examId)"
+                    <button (click)="Submit('exam', index, '', exam?.examId)"
                         [disabled]="!masterSubmitValid || exam?.isSubmit" mat-raised-button
                         class="Submit">Submit</button>
                 </div>

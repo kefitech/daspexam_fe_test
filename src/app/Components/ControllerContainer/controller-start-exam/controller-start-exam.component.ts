@@ -286,10 +286,10 @@ export class ControllerStartExamComponent implements OnInit, AfterViewInit, OnDe
   }
 
   Submit(type: string, examIndex?: number, rowIndex?: number, examId?: number, data?: object): void {
-   
+   var title = type == 'student'?"Do you want to submit exam for this student?":type == 'exam'?"Do you want to submit all students in this exam?":"Do you want to submit all exams?";
     const dialogRef = this.dialog.open(ConfirmationPopupComponent, {
       width: '40%',
-      data: { title: "Do you want to submit?" }
+      data: { title: title }
     })
     dialogRef.afterClosed().subscribe(response => {
       var isSubmit = dialogRef.componentInstance.isSubmit;

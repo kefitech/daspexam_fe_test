@@ -80,7 +80,6 @@ export class ControllerDashboardComponent implements OnInit, AfterViewInit {
     if (this.questionShuffled == 'true') {// Stepper 2
       this.interval = setInterval(() => {
         this.FetchStudentAssignment();
-        console.log('interval');
       }, 3600)
     }
   }
@@ -176,7 +175,6 @@ export class ControllerDashboardComponent implements OnInit, AfterViewInit {
       //   if (response.success) {
       this.interval = setInterval(() => {
         this.FetchStudentAssignment();
-        console.log('interval');
       }, 3600)
       this.ngxLoader.stop();
       this.questionShuffled = "true";
@@ -216,7 +214,6 @@ export class ControllerDashboardComponent implements OnInit, AfterViewInit {
           this.examDetails[index]['studentList']['data'].paginator = this.paginator.toArray()[index];
           this.examDetails[index]['studentList']['data'].sort = this.sort.toArray()[index];
         }, 10);
-        console.log(this.examDetails);
 
       }
     })

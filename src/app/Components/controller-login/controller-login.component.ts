@@ -43,12 +43,11 @@ export class ControllerLoginComponent implements OnInit, AfterViewInit {
   };
 
   ngOnInit() {
-    this.loginForm = this.formbuilder.group(this.loginFormData);
     this.addRecaptchaScript();
+    this.loginForm = this.formbuilder.group(this.loginFormData);
   }
 
   ngAfterViewInit() {
-
   }
 
   togglePass() {
@@ -115,14 +114,13 @@ export class ControllerLoginComponent implements OnInit, AfterViewInit {
   }
 
   addRecaptchaScript() {
-
     window['grecaptchaCallback'] = () => {
       this.renderReCaptcha();
     }
 
     (function (d, s, id, obj) {
       var js, fjs = d.getElementsByTagName(s)[0];
-      if (d.getElementById(id)) { return; }
+      // if (d.getElementById(id)) { return; }
       js = d.createElement(s); js.id = id;
       js.src = "https://www.google.com/recaptcha/api.js?onload=grecaptchaCallback&amp;render=explicit";
       fjs.parentNode.insertBefore(js, fjs);
