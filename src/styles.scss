@@ -3,7 +3,7 @@
 @import "~material-design-icons/iconfont/material-icons.css";
 
 $colors: (
-  primary: #011e40,
+  primary: #011e40,//#247BA0 //#011e40
   accent: #f1c40f,
   basic: #fff,
   basicDark: #1b1b1b,
@@ -12,7 +12,7 @@ $colors: (
   darkSuccess: #3A7D44,
   submitButton: #398439,
   cancelButton: #d9534f,
-  review: #673ab7,
+  review: #673ab7, //#673ab7 //#C2CAE8
   lightenGray: lighten(gray, 30%)
 );
 
