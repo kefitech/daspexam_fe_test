@@ -30,6 +30,6 @@ import { ConfirmationPopupComponent } from 'src/app/Popup/confirmation-popup/con
     InvigilatorPageStudentVerificationPopupComponent,
     InvigilatorSMPPopupComponent,
     ConfirmationPopupComponent
-  ]
+  ],
 })
 export class ControllerLoginModule { }

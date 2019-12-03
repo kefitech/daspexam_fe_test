@@ -24,27 +24,37 @@ export class ControllerAPIService {
   // }
 
   RecaptchaVerification(body: any): any{
-    return this.http.post(this.URLService.baseURL + this.URLService.recaptchaVerification, body);
+    return this.http.post(this.URLService.cloudBaseURL + this.URLService.recaptchaVerificationURL, body);
   }
 
   CheckValidController(): any{
     var body = this.dataService.controllerData.value;
-    return this.http.post(this.URLService.baseURL + this.URLService.checkValidController, body);
+    return this.http.post(this.URLService.cloudBaseURL + this.URLService.checkValidControllerURL, body);
   }
 
   ControllerLogin(body: object): any{
-    return this.http.post(this.URLService.baseURL + this.URLService.controllerLogin, body);
-  }
-
-  ExaminationInfo(): any{
-    var body = this.dataService.controllerData;
-    return this.http.post(this.URLService.baseURL + this.URLService.controllerLogin, body);
+    return this.http.post(this.URLService.cloudBaseURL + this.URLService.controllerLoginURL, body);
   }
   
   CheckOTP(body: any): any{
     body = Object.assign(body, this.dataService.controllerData.value);
-    return this.http.post(this.URLService.baseURL + this.URLService.controllerOTPVerification, body);
+    return this.http.post(this.URLService.cloudBaseURL + this.URLService.controllerOTPVerificationURL, body);
   }
+
+  ExamFetchFromMainServer(): any{
+    return this.http.post(this.URLService.baseURL + this.URLService.examFetchFormCloudServerURL, this.dataService.controllerData.value);
+  }
+
+  ExaminationInfo(): any{
+    return this.http.post(this.URLService.baseURL + this.URLService.examStudentFetchURL, this.dataService.controllerData.value);
+  }
+
+  studentFaceRecognition(body): any{
+    body = Object.assign(body, this.dataService.controllerData.value)
+    return this.http.post(this.URLService.baseURL + this.URLService.studentFaceRecognitionURL, body);
+  }
+
+  //------------------implemented-------------------
 
   StudentSMPCheck(body: any): any{
     body = Object.assign(body, this.dataService.controllerData.value);
