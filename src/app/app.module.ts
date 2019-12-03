@@ -4,9 +4,10 @@ import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
 
 import { AppComponent } from './app.component';
 import { Routing } from './Master Modules/routing';
-import { HttpClientModule } from '@angular/common/http';
+import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
 import { ToastrModule } from 'ngx-toastr';
 import { NgxUiLoaderModule } from 'ngx-ui-loader';
+import { InvigilatorInterceptor } from './Components/Interceptors/InvigilatorInterceptor';
 
 @NgModule({
   declarations: [
@@ -24,7 +25,13 @@ import { NgxUiLoaderModule } from 'ngx-ui-loader';
     }),
     NgxUiLoaderModule
   ],
-  providers: [],
+  providers: [
+    {
+      provide: HTTP_INTERCEPTORS,
+      useClass: InvigilatorInterceptor,
+      multi: true
+    }
+  ],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

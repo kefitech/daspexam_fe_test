@@ -6,9 +6,9 @@
         <div class="row">
             <mat-form-field appearance="outline" class="FormField">
                 <mat-label>{{formCaption?.caption1}}</mat-label>
-                <input (keypress)="_keyPress($event)" formControlName="hallticket" matInput
+                <input (keypress)="_keyPress($event)" formControlName="hallTicketNumber" matInput
                     [placeholder]="formCaption?.caption1">
-                <mat-error *ngIf="hallticketForm.get('hallticket').hasError('required')">
+                <mat-error *ngIf="hallticketForm.get('hallTicketNumber').hasError('required')">
                     {{error?.required}}
                 </mat-error>
             </mat-form-field>
@@ -17,10 +17,10 @@
             <mat-form-field appearance="outline" class="FormField">
                 <mat-label>{{formCaption?.caption2}}</mat-label>
                 <input style="cursor: pointer" readonly matInput (click)="picker.open()" [matDatepicker]="picker"
-                    formControlName="dob" [max]="maxDate" [placeholder]="formCaption?.caption2" required>
+                    formControlName="birthDate" [max]="maxDate" [placeholder]="formCaption?.caption2" required>
                 <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
                 <mat-datepicker #picker></mat-datepicker>
-                <mat-error *ngIf="hallticketForm.get('dob').hasError('required')">
+                <mat-error *ngIf="hallticketForm.get('birthDate').hasError('required')">
                     {{error?.required}}
                 </mat-error>
             </mat-form-field>

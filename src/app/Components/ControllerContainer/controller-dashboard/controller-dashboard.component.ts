@@ -28,7 +28,7 @@ export class ControllerDashboardComponent implements OnInit, AfterViewInit {
   private popoverTitleSubmitStepper2: string = 'Are you sure to start exam?';
 
 
-  examDetails: Array<object>;// stepper 1
+  examDetails: Array<any>;// stepper 1
   displayedColumns: any = ['sno', 'name', 'hallTicketNumber', 'systemNo', 'action'];// stepper 1
   headerCaption: object = JSON.parse(JSON.stringify({// stepper 1
     caption1: "S/no",
@@ -71,15 +71,14 @@ export class ControllerDashboardComponent implements OnInit, AfterViewInit {
 
   ngOnInit() {
     window.onpopstate = function (e) { window.history.forward(); }
-
-    this.FetchStudents();// stepper 1
   }
 
   ngAfterViewInit() {
+    this.FetchStudents();// stepper 1
     this.questionShuffled = localStorage.getItem('questionShuffled');
     if (this.questionShuffled == 'true') {// Stepper 2
       this.interval = setInterval(() => {
-        this.FetchStudentAssignment();
+        // this.FetchStudentAssignment();
       }, 3600)
     }
   }
@@ -87,44 +86,46 @@ export class ControllerDashboardComponent implements OnInit, AfterViewInit {
   FetchStudents(): void {// stepper 1
     try {
       this.ngxLoader.start();
-      // this.service.FetchStudents().subscribe(response => {
-      //   if (response.success) {
-      this.examDetails = [
-        {
-          examId: 1, examName: "Certificate In Water Harvesting and Management System Exam for November 2019",
-          shuffleCount: '2', verified: true, studentList: [
-            {
-              studentId: 1, name: "D. Waltor", hallTicketNumber: "HALL7654", programme: "Certificate In Water Harvesting and Management", batch: "BHCIWHM2017", semesterType: "Semester",
-              semester: '1', systemNo: "SYS200765", image: "https://homepages.cae.wisc.edu/~ece533/images/airplane.png", address: "Cross street, Angel Nagar, Dream house, Nagercoil, Kanyakumari District, Pin-629001.", questionPattern: "QN001"
-            },
-            { studentId: 2, name: "Student2", hallTicketNumber: "HALL765867ghd7627", programme: "Programme2", batch: "batch2", semesterType: "Weekly", semester: '1', systemNo: "SYS200765" },
-          ]
-        },
-        {
-          examId: 2, examName: "Exam Name 2", shuffleCount: '5', verified: true, studentList: [
-            { name: "Student1", hallTicketNumber: "HALL765446546", programme: "Programme1", batch: "batch1", semesterType: "Semester1", semester: '1', systemNo: "SYS200765" },
-            { name: "Student2", hallTicketNumber: "HALL765867ghd7627", programme: "Programme2", batch: "batch2", semesterType: "Weekly", semester: '1', systemNo: "SYS200765" },
-            { name: "Student1", hallTicketNumber: "HALL765446546", programme: "Programme1", batch: "batch1", semesterType: "Semester1", semester: '1', systemNo: "SYS200765" },
-            { name: "Student2", hallTicketNumber: "HALL765867ghd7627", programme: "Programme2", batch: "batch2", semesterType: "Weekly", semester: '1', systemNo: "SYS200765" },
-          ]
-        },
-      ];
-      this.Stepper1FetchStudentTableRefresh();
-      // if (this.questionShuffled == 'false')
-      //   this.examDetails = this.examDetails.map(({ ...rest }) => ({ verified: false, ...rest }));
-      this.SubmitVerification();// stepper 1
-      this.QuestionCountValidCheck();// stepper 1
-      this.ngxLoader.stop();
+      this.service.ExaminationInfo().subscribe(response => {
+        if (response.success) {
+          // this.examDetails = [
+          //   {
+          //     examId: 1, examName: "Certificate In Water Harvesting and Management System Exam for November 2019",
+          //     shuffleCount: '2', verified: true, studentList: [
+          //       {
+          //         studentId: 1, name: "D. Waltor", hallTicketNumber: "HALL7654", programme: "Certificate In Water Harvesting and Management", batch: "BHCIWHM2017", semesterType: "Semester",
+          //         semester: '1', systemNo: "SYS200765", image: "https://homepages.cae.wisc.edu/~ece533/images/airplane.png", address: "Cross street, Angel Nagar, Dream house, Nagercoil, Kanyakumari District, Pin-629001.", questionPattern: "QN001"
+          //       },
+          //       { studentId: 2, name: "Student2", hallTicketNumber: "HALL765867ghd7627", programme: "Programme2", batch: "batch2", semesterType: "Weekly", semester: '1', systemNo: "SYS200765" },
+          //     ]
+          //   },
+          //   {
+          //     examId: 2, examName: "Exam Name 2", shuffleCount: '5', verified: true, studentList: [
+          //       { name: "Student1", hallTicketNumber: "HALL765446546", programme: "Programme1", batch: "batch1", semesterType: "Semester1", semester: '1', systemNo: "SYS200765" },
+          //       { name: "Student2", hallTicketNumber: "HALL765867ghd7627", programme: "Programme2", batch: "batch2", semesterType: "Weekly", semester: '1', systemNo: "SYS200765" },
+          //       { name: "Student1", hallTicketNumber: "HALL765446546", programme: "Programme1", batch: "batch1", semesterType: "Semester1", semester: '1', systemNo: "SYS200765" },
+          //       { name: "Student2", hallTicketNumber: "HALL765867ghd7627", programme: "Programme2", batch: "batch2", semesterType: "Weekly", semester: '1', systemNo: "SYS200765" },
+          //     ]
+          //   },
+          // ];
+          this.examDetails = response.data.examDetails;
+          this.examDetails = this.examDetails.map(({verified, ...rest}) => ({verified: verified==1?true:false, ...rest}));
+          this.Stepper1FetchStudentTableRefresh();
+          if (this.questionShuffled == 'false')
+            this.examDetails = this.examDetails.map(({ ...rest }) => ({ verified: false, ...rest }));
+          this.SubmitVerification();// stepper 1
+          this.QuestionCountValidCheck();// stepper 1
+          this.ngxLoader.stop();
 
-      // }
-      // else {
-      //   this.toastrService.error(response.message);
-      this.ngxLoader.stop();
-      // }
-      // }, error => {
-      //   this.toastrService.error(error.message);
-      //   this.ngxLoader.stop();
-      // })
+        }
+        else {
+          this.toastrService.error(response.message);
+          this.ngxLoader.stop();
+        }
+      }, error => {
+        this.toastrService.error(error.message);
+        this.ngxLoader.stop();
+      })
     }
     catch (e) {
       this.toastrService.error(e);
@@ -137,7 +138,7 @@ export class ControllerDashboardComponent implements OnInit, AfterViewInit {
       // var allocatedSeats = element['studentList'].map(({systemNo}) => {return systemNo});
       // this.allocatedSystems = this.allocatedSystems.concat(allocatedSeats);
 
-      element['studentList'] = element['studentList'].map(({ ...rest }) => ({ verified: false, ...rest }));
+      element['studentList'] = element['studentList'].map(({ verified, ...rest }) => ({ verified: verified==1?true:false, ...rest }));
       element['studentList'] = new MatTableDataSource<any>(element['studentList']);
       setTimeout(() => {
         element['studentList'].paginator = this.paginator.toArray()[index];
@@ -198,9 +199,8 @@ export class ControllerDashboardComponent implements OnInit, AfterViewInit {
   SingleStudentVerification(data: object, index: number, rowIndex: number): void {// stepper 1
     var rowData = Object.assign({}, data);
     const dialogRef = this.dialog.open(InvigilatorPageStudentVerificationPopupComponent, {
-      width: '40%',
-      // height: '100%',
-      data: { student: rowData }
+      width: '50%',
+      data: { student: rowData, exam: this.examDetails[index] }
     })
     dialogRef.afterClosed().subscribe(response => {
       var submit = dialogRef.componentInstance.isSubmit;
@@ -238,72 +238,72 @@ export class ControllerDashboardComponent implements OnInit, AfterViewInit {
   FetchStudentAssignment(): void {// stepper 2
     try {
       this.ngxLoader.start();
-      // this.service.FetchStudents().subscribe(response => {
-      //   if (response.success) {
-      this.studentAssignmentExamDetails = [
-        {
-          examId: 1, examName: "Certificate In Water Harvesting and Management System Exam for November 2019", shuffleCount: '', studentList: [
+      this.service.ExaminationInfo().subscribe(response => {
+        if (response.success) {
+          this.studentAssignmentExamDetails = [
             {
-              studentId: 1, name: "D. Waltor", hallTicketNumber: "HALL7654",
-              programme: "Certificate In Water Harvesting and Management", batch: "BHCIWHM2017", semesterType: "Semester",
-              semester: '1', systemNo: "SYS200765", image: "https://homepages.cae.wisc.edu/~ece533/images/airplane.png",
-              address: "Cross street, Angel Nagar, Dream house, Nagercoil, Kanyakumari District, Pin-629001.",
-              questionPattern: "QN001", status: 'online'
+              examId: 1, examName: "Certificate In Water Harvesting and Management System Exam for November 2019", shuffleCount: '', studentList: [
+                {
+                  studentId: 1, name: "D. Waltor", hallTicketNumber: "HALL7654",
+                  programme: "Certificate In Water Harvesting and Management", batch: "BHCIWHM2017", semesterType: "Semester",
+                  semester: '1', systemNo: "SYS200765", image: "https://homepages.cae.wisc.edu/~ece533/images/airplane.png",
+                  address: "Cross street, Angel Nagar, Dream house, Nagercoil, Kanyakumari District, Pin-629001.",
+                  questionPattern: "QN001", status: 'online'
+                },
+                {
+                  studentId: 2, name: "Student2", hallTicketNumber: "HALL765867ghd7627", programme: "Programme2", batch: "batch2",
+                  semesterType: "Weekly", semester: '1', systemNo: "SYS200765", questionPattern: "QN002", status: 'online'
+                },
+              ]
             },
             {
-              studentId: 2, name: "Student2", hallTicketNumber: "HALL765867ghd7627", programme: "Programme2", batch: "batch2",
-              semesterType: "Weekly", semester: '1', systemNo: "SYS200765", questionPattern: "QN002", status: 'online'
+              examId: 2, examName: "Exam Name 2", shuffleCount: '', studentList: [
+                {
+                  name: "Student1", hallTicketNumber: "HALL765446546", programme: "Programme1", batch: "batch1",
+                  semesterType: "Semester1", semester: '1', systemNo: "SYS200765", status: 'online'
+                },
+                {
+                  name: "Student2", hallTicketNumber: "HALL765867ghd7627", programme: "Programme2", batch: "batch2",
+                  semesterType: "Weekly", semester: '1', systemNo: "SYS200765", status: 'online'
+                },
+                {
+                  name: "Student1", hallTicketNumber: "HALL765446546", programme: "Programme1", batch: "batch1",
+                  semesterType: "Semester1", semester: '1', systemNo: "SYS200765", status: 'online'
+                },
+                {
+                  name: "Student2", hallTicketNumber: "HALL765867ghd7627", programme: "Programme2", batch: "batch2",
+                  semesterType: "Weekly", semester: '1', systemNo: "SYS200765", status: 'online'
+                },
+              ]
             },
-          ]
-        },
-        {
-          examId: 2, examName: "Exam Name 2", shuffleCount: '', studentList: [
-            {
-              name: "Student1", hallTicketNumber: "HALL765446546", programme: "Programme1", batch: "batch1",
-              semesterType: "Semester1", semester: '1', systemNo: "SYS200765", status: 'online'
-            },
-            {
-              name: "Student2", hallTicketNumber: "HALL765867ghd7627", programme: "Programme2", batch: "batch2",
-              semesterType: "Weekly", semester: '1', systemNo: "SYS200765", status: 'online'
-            },
-            {
-              name: "Student1", hallTicketNumber: "HALL765446546", programme: "Programme1", batch: "batch1",
-              semesterType: "Semester1", semester: '1', systemNo: "SYS200765", status: 'online'
-            },
-            {
-              name: "Student2", hallTicketNumber: "HALL765867ghd7627", programme: "Programme2", batch: "batch2",
-              semesterType: "Weekly", semester: '1', systemNo: "SYS200765", status: 'online'
-            },
-          ]
-        },
-      ];
-      this.Stepper2FetchStudentTableRefresh();
-      this.ngxLoader.stop();
-      var statusHold = [];
-      this.studentAssignmentExamDetails.forEach(masterElement => {
-        if (masterElement['studentList']['data'])
-          var studentStatusCheck = masterElement['studentList']['data'].every(s => s['status'] == 'online');
-        else
-          var studentStatusCheck = masterElement['studentList'].every(s => s['status'] == 'online');
-        statusHold.push(studentStatusCheck)
-      });
-      var valid = statusHold.every(s => s == true);
-      if (valid){
-        this.stepper2Valid = true;
-        clearInterval(this.interval);
-      }
-      else{
-        this.stepper2Valid = false;
-      }
-      // }
-      // else {
-      //   this.toastrService.error(response.message);
-      this.ngxLoader.stop();
-      // }
-      // }, error => {
-      //   this.toastrService.error(error.message);
-      //   this.ngxLoader.stop();
-      // })
+          ];
+          this.Stepper2FetchStudentTableRefresh();
+          this.ngxLoader.stop();
+          var statusHold = [];
+          this.studentAssignmentExamDetails.forEach(masterElement => {
+            if (masterElement['studentList']['data'])
+              var studentStatusCheck = masterElement['studentList']['data'].every(s => s['status'] == 'online');
+            else
+              var studentStatusCheck = masterElement['studentList'].every(s => s['status'] == 'online');
+            statusHold.push(studentStatusCheck)
+          });
+          var valid = statusHold.every(s => s == true);
+          if (valid) {
+            this.stepper2Valid = true;
+            clearInterval(this.interval);
+          }
+          else {
+            this.stepper2Valid = false;
+          }
+        }
+        else {
+          this.toastrService.error(response.message);
+          this.ngxLoader.stop();
+        }
+      }, error => {
+        this.toastrService.error(error.message);
+        this.ngxLoader.stop();
+      })
     }
     catch (e) {
       this.toastrService.error(e);

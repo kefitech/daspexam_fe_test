@@ -73,56 +73,49 @@ export class InitialStudentLoginComponent implements OnInit, AfterViewInit {
     };
   }
 
-  studentDetails(): void {
-    // try {
-    // this.ngxLoader.start();
-    // this.apiService.studentDetailData().subscribe(response => {
-    //   if (response.success) {
-    // this.ngxLoader.stop();
-    // this.studentData = response.data.examList[0];
-    this.studentData = {
-      exam: "Certificate in water management",
-      examName: "Water management exam",
-      examDate: "12-02-2018",
-      examTime: "11:15 A.M",
-      examDuration: "240",
-      programmeName: "Certificate in water harvesting",
-      batchName: "BH08767",
-      courseName: "Environmental studies",
-      studyCenter: "Block1",
-      fullName: "Watson T",
-      photo: "https://homepages.cae.wisc.edu/~ece533/images/monarch.png",
-      address1: "Hall Street",
-      address2: "West-Nagercoil",
-      city: "Nagercoil",
-      state: "Tamil Nadu",
-      country: "India",
-      semesterType: "Semester",
-      semester: "2"
-    }
-    this.studentData["examDuration"] = this.studentData["examDuration"] + " Minutes";
-    this.dataService.studentData.next(this.studentData);
-    //     }
-    //     else {
-    //       this.toastrService.error(response.message);
-    //       this.ngxLoader.stop();
-    //     }
-    //   }, error => {
-    //     this.toastrService.error(error.message);
-    //     this.ngxLoader.stop();
-    //   })
-    // }
-    // catch (e) {
-    //   this.toastrService.error(e);
-    //   this.ngxLoader.stop();
-    // }
-  }
-
-  // Interval(): void{
-  //  this.int = setInterval(() => {
-  //     this.studentDetails();
-  //   }, 1000);
-
+  // studentDetails(): void {
+  //   try {
+  //     this.ngxLoader.start();
+  //     this.apiService.studentDetailData().subscribe(response => {
+  //       if (response.success) {
+  //         this.ngxLoader.stop();
+  //         this.studentData = response.data.examList[0];
+  //         // this.studentData = {
+  //         //   exam: "Certificate in water management",
+  //         //   examName: "Water management exam",
+  //         //   examDate: "12-02-2018",
+  //         //   examTime: "11:15 A.M",
+  //         //   examDuration: "240",
+  //         //   programmeName: "Certificate in water harvesting",
+  //         //   batchName: "BH08767",
+  //         //   courseName: "Environmental studies",
+  //         //   studyCenter: "Block1",
+  //         //   fullName: "Watson T",
+  //         //   photo: "https://homepages.cae.wisc.edu/~ece533/images/monarch.png",
+  //         //   address1: "Hall Street",
+  //         //   address2: "West-Nagercoil",
+  //         //   city: "Nagercoil",
+  //         //   state: "Tamil Nadu",
+  //         //   country: "India",
+  //         //   semesterType: "Semester",
+  //         //   semester: "2"
+  //         // }
+  //         this.studentData["examDuration"] = this.studentData["examDuration"] + " Minutes";
+  //         this.dataService.studentData.next(this.studentData);
+  //       }
+  //       else {
+  //         this.toastrService.error(response.message);
+  //         this.ngxLoader.stop();
+  //       }
+  //     }, error => {
+  //       this.toastrService.error(error.message);
+  //       this.ngxLoader.stop();
+  //     })
+  //   }
+  //   catch (e) {
+  //     this.toastrService.error(e);
+  //     this.ngxLoader.stop();
+  //   }
   // }
 
   Submit(): void {
@@ -149,7 +142,11 @@ export class InitialStudentLoginComponent implements OnInit, AfterViewInit {
     dialog.afterClosed().subscribe(response => {
       this.valid = dialog.componentInstance.submit;
       if (this.valid) {
-        this.studentDetails();
+        var studentLoginResponse = dialog.componentInstance.studentData;
+        this.toastrService.success(studentLoginResponse.message);
+        this.studentData = studentLoginResponse.data;
+        this.studentData["examDuration"] = this.studentData["examDuration"] + " Minutes";
+        this.dataService.studentData.next(this.studentData);
       }
     }, error => {
       this.toastrService.error(error);
