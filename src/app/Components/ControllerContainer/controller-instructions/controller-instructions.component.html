@@ -87,7 +87,7 @@
                 </mat-card>
             </div>
             <div class="row p-2 d-flex justify-content-center">
-                <button [disabled]="!checked" (click)="Accept()" matTooltip="Proceed" mat-raised-button
+                <button [disabled]="!checked || !examFetchCompleted" (click)="Accept()" matTooltip="Proceed" mat-raised-button
                     class="Submit">
                     Accept and Start
                 </button>

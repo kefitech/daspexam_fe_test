@@ -7,7 +7,6 @@ import { HttpClient, HttpHeaders } from '@angular/common/http';
 })
 export class URLService {
 
-  // public captchaVerificationURL = "https://www.google.com/recaptcha/api/siteverify";
 
   public baseURL = "";
   public cloudBaseURL = "";
@@ -30,6 +29,12 @@ export class URLService {
   public examStudentFetchURL = "api/conduct_exam/student_data_fetch";
 
   public studentFaceRecognitionURL = "api/conduct_exam/face_recognition";
+
+  public singleStudentVerifyURL = "api/conduct_exam/student_verification";
+
+  public submitAllExamsURL = "api/conduct_exam/exam_verification";
+
+  public examVerifiedStudentFetchURL = "api/conduct_exam/verified_student_list";
 
   public individualStudentSMP = "api/exam/smp_verify";
   public individualStudentSMPBlock = "api/exam/smp_block";

@@ -99,17 +99,23 @@ export class InvigilatorPageStudentVerificationPopupComponent implements OnInit 
       this.ngxLoader.start();
       var body = {
         examStudentId: this.data.student.examStudentId,
-        webCamImage: this.webcamImage
+        webCamImage: this.webcamImage['_imageAsDataUrl'].substring(23) // remove unwanted data from base64
       }
       this.service.studentFaceRecognition(body).subscribe(response => {
         if (response.success) {
-      this.ngxLoader.stop();
-      this.imgVerified = true;
-      }
-      else {
-        this.toastrService.error(response.message);
-      this.ngxLoader.stop();
-      }
+          if (response.data.isRecognised) {
+            this.ngxLoader.stop();
+            this.imgVerified = true;
+          }
+          else {
+            this.toastrService.error(response.message);
+            this.ngxLoader.stop();
+          }
+        }
+        else {
+          this.toastrService.error(response.message);
+          this.ngxLoader.stop();
+        }
       }, error => {
         this.toastrService.error(error.message);
         this.ngxLoader.stop();

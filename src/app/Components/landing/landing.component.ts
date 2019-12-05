@@ -35,6 +35,8 @@ export class LandingComponent implements OnInit, AfterViewInit {
   }
 
   ngAfterViewInit() {
+    var loggedInUser = localStorage.getItem("loginUser");
+    if(loggedInUser == 'invigilator')
     setTimeout(() => {
       this.checkValidUser();
     }, 10);
@@ -201,11 +203,13 @@ export class LandingComponent implements OnInit, AfterViewInit {
     localStorage.removeItem("AcceptInstruction");
     localStorage.removeItem("questionShuffled");
     localStorage.removeItem('controllerExamStart');
+    localStorage.removeItem("loginUser");
+    localStorage.removeItem("Token");
     this.dataService.controllerLogin.next(false);
     this.dataService.controllerData.next(null);
     this.auth.controllerLogoutAuth();
     this.router.navigate(["/landing/controller/login"]);
-    // window.location.reload();
+    window.location.reload();
   }
 
 

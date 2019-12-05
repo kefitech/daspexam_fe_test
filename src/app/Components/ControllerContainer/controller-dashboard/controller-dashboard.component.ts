@@ -1,4 +1,4 @@
-import { Component, OnInit, AfterViewInit, ViewChildren, QueryList, ElementRef } from '@angular/core';
+import { Component, OnInit, AfterViewInit, ViewChildren, QueryList, ElementRef, OnDestroy } from '@angular/core';
 import { ControllerAuthService } from 'src/app/Services/controller-auth.service';
 import { ControllerAPIService } from 'src/app/Services/controller-api.service';
 import { NgxUiLoaderService } from 'ngx-ui-loader';
@@ -9,12 +9,13 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { MatPaginator, MatSort, MatTableDataSource, MatDialog } from '@angular/material';
 import { InvigilatorPageStudentVerificationPopupComponent } from 'src/app/Popup/invigilator-page-student-verification-popup/invigilator-page-student-verification-popup.component';
 
+
 @Component({
   selector: 'app-controller-dashboard',
   templateUrl: './controller-dashboard.component.html',
   styleUrls: ['./controller-dashboard.component.scss']
 })
-export class ControllerDashboardComponent implements OnInit, AfterViewInit {
+export class ControllerDashboardComponent implements OnInit, AfterViewInit, OnDestroy {
 
   constructor(private auth: ControllerAuthService, private service: ControllerAPIService,
     private ngxLoader: NgxUiLoaderService, private toastrService: ToastrService,
@@ -43,7 +44,7 @@ export class ControllerDashboardComponent implements OnInit, AfterViewInit {
   @ViewChildren('myPaginator') studentListPaginator: QueryList<ElementRef>;// stepper 1
 
   studentAssignmentExamDetails: Array<object>;// stepper 2
-  studentAssignmentColumns: any = ['sno', 'name', 'hallTicketNumber', 'systemNo', 'questionPattern', 'status'];// stepper 2
+  studentAssignmentColumns: any = ['sno', 'name', 'hallTicketNumber', 'systemNo', 'qpCode', 'status'];// stepper 2
   studentAssignmentCaption: object = JSON.parse(JSON.stringify({// stepper 1
     caption1: "S/no",
     caption2: "Name",
@@ -67,7 +68,9 @@ export class ControllerDashboardComponent implements OnInit, AfterViewInit {
 
   questionCountValid: boolean = false;
 
-  interval: any;
+  private pageInitInterval: any = null;
+  private stepperInterval: any = null;
+  private submitInterval: any = null;
 
   ngOnInit() {
     window.onpopstate = function (e) { window.history.forward(); }
@@ -76,11 +79,6 @@ export class ControllerDashboardComponent implements OnInit, AfterViewInit {
   ngAfterViewInit() {
     this.FetchStudents();// stepper 1
     this.questionShuffled = localStorage.getItem('questionShuffled');
-    if (this.questionShuffled == 'true') {// Stepper 2
-      this.interval = setInterval(() => {
-        // this.FetchStudentAssignment();
-      }, 3600)
-    }
   }
 
   FetchStudents(): void {// stepper 1
@@ -88,33 +86,23 @@ export class ControllerDashboardComponent implements OnInit, AfterViewInit {
       this.ngxLoader.start();
       this.service.ExaminationInfo().subscribe(response => {
         if (response.success) {
-          // this.examDetails = [
-          //   {
-          //     examId: 1, examName: "Certificate In Water Harvesting and Management System Exam for November 2019",
-          //     shuffleCount: '2', verified: true, studentList: [
-          //       {
-          //         studentId: 1, name: "D. Waltor", hallTicketNumber: "HALL7654", programme: "Certificate In Water Harvesting and Management", batch: "BHCIWHM2017", semesterType: "Semester",
-          //         semester: '1', systemNo: "SYS200765", image: "https://homepages.cae.wisc.edu/~ece533/images/airplane.png", address: "Cross street, Angel Nagar, Dream house, Nagercoil, Kanyakumari District, Pin-629001.", questionPattern: "QN001"
-          //       },
-          //       { studentId: 2, name: "Student2", hallTicketNumber: "HALL765867ghd7627", programme: "Programme2", batch: "batch2", semesterType: "Weekly", semester: '1', systemNo: "SYS200765" },
-          //     ]
-          //   },
-          //   {
-          //     examId: 2, examName: "Exam Name 2", shuffleCount: '5', verified: true, studentList: [
-          //       { name: "Student1", hallTicketNumber: "HALL765446546", programme: "Programme1", batch: "batch1", semesterType: "Semester1", semester: '1', systemNo: "SYS200765" },
-          //       { name: "Student2", hallTicketNumber: "HALL765867ghd7627", programme: "Programme2", batch: "batch2", semesterType: "Weekly", semester: '1', systemNo: "SYS200765" },
-          //       { name: "Student1", hallTicketNumber: "HALL765446546", programme: "Programme1", batch: "batch1", semesterType: "Semester1", semester: '1', systemNo: "SYS200765" },
-          //       { name: "Student2", hallTicketNumber: "HALL765867ghd7627", programme: "Programme2", batch: "batch2", semesterType: "Weekly", semester: '1', systemNo: "SYS200765" },
-          //     ]
-          //   },
-          // ];
           this.examDetails = response.data.examDetails;
-          this.examDetails = this.examDetails.map(({verified, ...rest}) => ({verified: verified==1?true:false, ...rest}));
+          this.examDetails = this.examDetails.map(({ verified, shuffleCount, ...rest }) => (
+            { 
+              verified: verified == 1 ? true : false, 
+              shuffleCount: shuffleCount==null?'':shuffleCount, 
+              ...rest 
+            }));
           this.Stepper1FetchStudentTableRefresh();
-          if (this.questionShuffled == 'false')
-            this.examDetails = this.examDetails.map(({ ...rest }) => ({ verified: false, ...rest }));
-          this.SubmitVerification();// stepper 1
+          // if (this.questionShuffled == 'false')
+          //   this.examDetails = this.examDetails.map(({ ...rest }) => ({ verified: false, ...rest }));
+          this.Stepper1Verification();// stepper 1
           this.QuestionCountValidCheck();// stepper 1
+          if (this.questionShuffled == 'true') {// Stepper 2
+            this.pageInitInterval = setInterval(() => {
+              this.FetchStudentAssignment();
+            }, 3600)
+          }
           this.ngxLoader.stop();
 
         }
@@ -138,7 +126,7 @@ export class ControllerDashboardComponent implements OnInit, AfterViewInit {
       // var allocatedSeats = element['studentList'].map(({systemNo}) => {return systemNo});
       // this.allocatedSystems = this.allocatedSystems.concat(allocatedSeats);
 
-      element['studentList'] = element['studentList'].map(({ verified, ...rest }) => ({ verified: verified==1?true:false, ...rest }));
+      element['studentList'] = element['studentList'].map(({ verified, ...rest }) => ({ verified: verified == 1 ? true : false, ...rest }));
       element['studentList'] = new MatTableDataSource<any>(element['studentList']);
       setTimeout(() => {
         element['studentList'].paginator = this.paginator.toArray()[index];
@@ -153,7 +141,7 @@ export class ControllerDashboardComponent implements OnInit, AfterViewInit {
     this.examDetails[index]['studentList'].filter = filterValue;
   }
 
-  SubmitVerification(): void {// stepper 1
+  Stepper1Verification(): void {// stepper 1
     var validFalse = this.examDetails.some(d => d['verified'] == false);
     if (validFalse)
       this.stepper1Valid = false;
@@ -161,34 +149,40 @@ export class ControllerDashboardComponent implements OnInit, AfterViewInit {
       this.stepper1Valid = true;
   }
 
+  NextToStepper2(): void {
+    console.log('click');
+    
+    this.stepperInterval = setInterval(() => {
+      this.FetchStudentAssignment();
+    }, 3600)
+  }
+
   SubmitStepper1(): void {// stepper 1
     try {
       this.ngxLoader.start();
+      var tableWithRemovedMatTableSource = this.dataService.RemoveMatTableSource(this.examDetails, ['studentList']);
+
       var body = {
-        examDetails: this.dataService.RemoveMatTableSource(this.examDetails, ['studentList'])
+        examList: tableWithRemovedMatTableSource.map(({ e_id, shuffleCount }) => ({ e_id: e_id, shuffleCount: parseInt(shuffleCount) }))
       }
       body = Object.assign(body, this.dataService.controllerData.value);
-
-
-
-
-      // this.service.FetchStudents().subscribe(response => {
-      //   if (response.success) {
-      this.interval = setInterval(() => {
-        this.FetchStudentAssignment();
-      }, 3600)
-      this.ngxLoader.stop();
-      this.questionShuffled = "true";
-      localStorage.setItem('questionShuffled', 'true');
-      // }
-      // else {
-      //   this.toastrService.error(response.message);
-      this.ngxLoader.stop();
-      // }
-      // }, error => {
-      //   this.toastrService.error(error.message);
-      //   this.ngxLoader.stop();
-      // })
+      this.service.SubmitAllExams(body).subscribe(response => {
+        if (response.success) {
+          this.submitInterval = setInterval(() => {
+            this.FetchStudentAssignment();
+          }, 3600)
+          this.ngxLoader.stop();
+          this.questionShuffled = "true";
+          localStorage.setItem('questionShuffled', 'true');
+        }
+        else {
+          this.toastrService.error(response.message);
+          this.ngxLoader.stop();
+        }
+      }, error => {
+        this.toastrService.error(error.message);
+        this.ngxLoader.stop();
+      })
     }
     catch (e) {
       this.toastrService.error(e);
@@ -198,25 +192,54 @@ export class ControllerDashboardComponent implements OnInit, AfterViewInit {
 
   SingleStudentVerification(data: object, index: number, rowIndex: number): void {// stepper 1
     var rowData = Object.assign({}, data);
+
     const dialogRef = this.dialog.open(InvigilatorPageStudentVerificationPopupComponent, {
-      width: '50%',
+      width: '45%',
+      height: '80%',
       data: { student: rowData, exam: this.examDetails[index] }
     })
     dialogRef.afterClosed().subscribe(response => {
       var submit = dialogRef.componentInstance.isSubmit;
       if (submit) {
-        this.examDetails[index]['studentList']['data'][rowIndex]['verified'] = dialogRef.componentInstance.data.student['verified'];
-        var isAllVerified = this.examDetails[index]['studentList']['data'].every(s => s.verified == true);
-        if (isAllVerified)
-          this.examDetails[index]['verified'] = true;
-        this.SubmitVerification();
-        setTimeout(() => {
-          this.examDetails[index]['studentList']['data'].paginator = this.paginator.toArray()[index];
-          this.examDetails[index]['studentList']['data'].sort = this.sort.toArray()[index];
-        }, 10);
-
+        var passData = {
+          verified: dialogRef.componentInstance.data.student['verified'],
+          examStudentId: rowData['examStudentId']
+        }
+        this.CheckSingleStudentVerification(passData, index, rowIndex);
       }
     })
+  }
+
+  CheckSingleStudentVerification(data: object, index: number, rowIndex: number): void {
+    try {
+      this.ngxLoader.start();
+      this.service.SingleStudentVerification(data).subscribe(response => {
+        if (response.success) {
+          this.examDetails[index]['studentList']['data'][rowIndex]['verified'] = data['verified'];
+          var isAllVerified = this.examDetails[index]['studentList']['data'].every(s => s.verified == true);
+          if (isAllVerified)
+            this.examDetails[index]['verified'] = true;
+          this.Stepper1Verification();
+          setTimeout(() => {
+            this.examDetails[index]['studentList']['data'].paginator = this.paginator.toArray()[index];
+            this.examDetails[index]['studentList']['data'].sort = this.sort.toArray()[index];
+          }, 10);
+          this.ngxLoader.stop();
+
+        }
+        else {
+          this.toastrService.error(response.message);
+          this.ngxLoader.stop();
+        }
+      }, error => {
+        this.toastrService.error(error.message);
+        this.ngxLoader.stop();
+      })
+    }
+    catch (e) {
+      this.toastrService.error(e);
+      this.ngxLoader.stop();
+    }
   }
 
   QuestionCountValidCheck(): void {// stepper 1
@@ -238,45 +261,9 @@ export class ControllerDashboardComponent implements OnInit, AfterViewInit {
   FetchStudentAssignment(): void {// stepper 2
     try {
       this.ngxLoader.start();
-      this.service.ExaminationInfo().subscribe(response => {
+      this.service.ExaminationInfoForVerifiedStudents().subscribe(response => {
         if (response.success) {
-          this.studentAssignmentExamDetails = [
-            {
-              examId: 1, examName: "Certificate In Water Harvesting and Management System Exam for November 2019", shuffleCount: '', studentList: [
-                {
-                  studentId: 1, name: "D. Waltor", hallTicketNumber: "HALL7654",
-                  programme: "Certificate In Water Harvesting and Management", batch: "BHCIWHM2017", semesterType: "Semester",
-                  semester: '1', systemNo: "SYS200765", image: "https://homepages.cae.wisc.edu/~ece533/images/airplane.png",
-                  address: "Cross street, Angel Nagar, Dream house, Nagercoil, Kanyakumari District, Pin-629001.",
-                  questionPattern: "QN001", status: 'online'
-                },
-                {
-                  studentId: 2, name: "Student2", hallTicketNumber: "HALL765867ghd7627", programme: "Programme2", batch: "batch2",
-                  semesterType: "Weekly", semester: '1', systemNo: "SYS200765", questionPattern: "QN002", status: 'online'
-                },
-              ]
-            },
-            {
-              examId: 2, examName: "Exam Name 2", shuffleCount: '', studentList: [
-                {
-                  name: "Student1", hallTicketNumber: "HALL765446546", programme: "Programme1", batch: "batch1",
-                  semesterType: "Semester1", semester: '1', systemNo: "SYS200765", status: 'online'
-                },
-                {
-                  name: "Student2", hallTicketNumber: "HALL765867ghd7627", programme: "Programme2", batch: "batch2",
-                  semesterType: "Weekly", semester: '1', systemNo: "SYS200765", status: 'online'
-                },
-                {
-                  name: "Student1", hallTicketNumber: "HALL765446546", programme: "Programme1", batch: "batch1",
-                  semesterType: "Semester1", semester: '1', systemNo: "SYS200765", status: 'online'
-                },
-                {
-                  name: "Student2", hallTicketNumber: "HALL765867ghd7627", programme: "Programme2", batch: "batch2",
-                  semesterType: "Weekly", semester: '1', systemNo: "SYS200765", status: 'online'
-                },
-              ]
-            },
-          ];
+          this.studentAssignmentExamDetails = response.data.studentList;
           this.Stepper2FetchStudentTableRefresh();
           this.ngxLoader.stop();
           var statusHold = [];
@@ -290,7 +277,9 @@ export class ControllerDashboardComponent implements OnInit, AfterViewInit {
           var valid = statusHold.every(s => s == true);
           if (valid) {
             this.stepper2Valid = true;
-            clearInterval(this.interval);
+            clearInterval(this.pageInitInterval);
+            clearInterval(this.stepperInterval);
+            clearInterval(this.submitInterval);
           }
           else {
             this.stepper2Valid = false;
@@ -313,6 +302,7 @@ export class ControllerDashboardComponent implements OnInit, AfterViewInit {
 
   Stepper2FetchStudentTableRefresh(): void {// stepper 2
     this.studentAssignmentExamDetails.forEach((element, index) => {
+      element['studentList'] = element['studentList'].map(({ status, ...rest }) => ({ status: status == 1 ? 'offline' : 'online', ...rest }))
       element['studentList'] = new MatTableDataSource<any>(element['studentList']);
       setTimeout(() => {
         element['studentList'].paginator = this.paginator.toArray()[this.examDetails.length + index];
@@ -326,5 +316,9 @@ export class ControllerDashboardComponent implements OnInit, AfterViewInit {
     this.router.navigate(['landing/controller/examstart']);
   }
 
-
+  ngOnDestroy() {
+    clearInterval(this.pageInitInterval);
+    clearInterval(this.stepperInterval);
+    clearInterval(this.submitInterval);
+  }
 }

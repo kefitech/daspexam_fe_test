@@ -2,112 +2,39 @@
     <div class="row">
         <div class="col-sm-12">
 
-            <mat-card style="margin-top: 5%;" class="mat-elevation-z8" *ngIf="studentData?.examName">
-                <!-- <div class="row">
-                    <div class="col-sm-8">
-                        <div *ngIf="studentData?.examName" class="row p-2">
-                            <div class="col-sm-4">
-                                <span class="Caption">{{caption?.exam}}</span>
-                            </div>
-                            <div class="col-sm-8">
-                                <span class="CaptionValue">{{studentData?.examName}}</span>
-                            </div>
-                        </div>
-                        <div *ngIf="studentData?.examDate" class="row p-2">
-                            <div class="col-sm-4">
-                                <span class="Caption">{{caption?.examDate}}</span>
-                            </div>
-                            <div class="col-sm-8">
-                                <span class="CaptionValue">{{studentData?.examDate}}</span>
-                            </div>
-                        </div>
-                        <div *ngIf="studentData?.examTime" class="row p-2">
-                            <div class="col-sm-4">
-                                <span class="Caption">{{caption?.examTime}}</span>
-                            </div>
-                            <div class="col-sm-8">
-                                <span class="CaptionValue">{{studentData?.examTime}}</span>
-                            </div>
-                        </div>
-                        <div *ngIf="studentData?.examDuration" class="row p-2">
-                            <div class="col-sm-4">
-                                <span class="Caption">{{caption?.examDuration}}</span>
-                            </div>
-                            <div class="col-sm-8">
-                                <span class="CaptionValue">{{studentData?.examDuration}}</span>
-                            </div>
-                        </div>
-                        <div *ngIf="studentData?.programmeName" class="row p-2">
-                            <div class="col-sm-4">
-                                <span class="Caption">{{caption?.programmeName}}</span>
-                            </div>
-                            <div class="col-sm-8">
-                                <span class="CaptionValue">{{studentData?.programmeName}}</span>
-                            </div>
-                        </div>
-                        <div *ngIf="studentData?.batchName" class="row p-2">
-                            <div class="col-sm-4">
-                                <span class="Caption">{{caption?.batchName}}</span>
-                            </div>
-                            <div class="col-sm-8">
-                                <span class="CaptionValue">{{studentData?.batchName}}</span>
-                            </div>
-                        </div>
-                        <div *ngIf="studentData?.courseName" class="row p-2">
-                            <div class="col-sm-4">
-                                <span class="Caption">{{caption?.courseName}}</span>
-                            </div>
-                            <div class="col-sm-8">
-                                <span class="CaptionValue">{{studentData?.courseName}}</span>
-                            </div>
-                        </div>
-                        <div *ngIf="studentData?.examCenter" class="row p-2">
-                            <div class="col-sm-4">
-                                <span class="Caption">{{caption?.studyCenter}}</span>
-                            </div>
-                            <div class="col-sm-8">
-                                <span class="CaptionValue">{{studentData?.studyCenter}}</span>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-sm-4">
-                        <div *ngIf="studentData?.fullName" class="row">
-                            <div class="col-sm-12 d-flex justify-content-center">
-                                <span *ngIf="studentData?.fullName"
-                                    class="StudentCaption">{{caption?.studentName}}</span>&nbsp;
-                            </div>
-                            <div class="col-sm-12 d-flex justify-content-center">
-                                <span class="StudentCaptionValue">{{studentData?.fullName}}</span>
-                            </div>
-                        </div>
-                        <div class="row d-flex justify-content-center">
-                            <img *ngIf="studentData?.photo" class="StudentImg rounded" [src]="studentData?.photo"
-                                alt="profile image">
-                        </div>
-                    </div>
-
-                </div> -->
+            <mat-card style="margin-top: 3%;margin-bottom: 3%;" class="mat-elevation-z8" *ngIf="studentData?.examName">
                 <div class="row">
-                    <div class="col-sm-8">
-                        <h4 class="font-weight-bold">{{studentData?.fullName}}</h4>
-                        <h6>{{studentData?.address1}}</h6>
-                        <h6>{{studentData?.address2}}</h6>
-                        <h6>{{studentData?.city}}</h6>
-                        <h6>{{studentData?.state}}</h6>
-                        <h6>{{studentData?.country}}</h6>
-                    </div>
-                    <div class="col-sm-4">
-                        <img *ngIf="studentData?.photo" class="w-100 rounded" [src]="studentData?.photo"
-                            alt="profile image">
-                    </div>
-                </div>
-                <div class="row mt-4">
-                    <div class="col-sm-6">
+                    <div class="col-sm-7">
+                        <div class="row">
+                            <div class="col-sm-4">
+                                {{caption?.studyCentre}}
+                            </div>
+                            <div class="col-sm-8 font-weight-bold">
+                                <div class="row">
+                                    <div class="col-sm-1">
+                                        <span style="padding-right: 1%">:</span>
+                                    </div>
+                                    <div class="col-sm-11">
+                                        {{studentData?.studyCentre}}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-sm-4">
+                                {{caption?.studyCentreCode}}
+                            </div>
+                            <div class="col-sm-8 font-weight-bold">
+                                <span style="padding-right: 1%">:</span>
+                                {{studentData?.studyCentreCode}}
+                            </div>
+                        </div>
                         <div class="row">
                             <div class="col-sm-4">
                                 {{caption?.examName}}
                             </div>
                             <div class="col-sm-8 font-weight-bold">
+                                <span style="padding-right: 1%">:</span>
                                 {{studentData?.examName}}
                             </div>
                         </div>
@@ -116,6 +43,7 @@
                                 {{caption?.examDate}}
                             </div>
                             <div class="col-sm-8 font-weight-bold">
+                                <span style="padding-right: 1%">:</span>
                                 {{studentData?.examDate}}
                             </div>
                         </div>
@@ -124,52 +52,78 @@
                                 {{caption?.examTime}}
                             </div>
                             <div class="col-sm-8 font-weight-bold">
+                                <span style="padding-right: 1%">:</span>
                                 {{studentData?.examTime}}
                             </div>
                         </div>
                         <div class="row">
                             <div class="col-sm-4">
-                                {{caption?.examDuration}}
+                                {{caption?.duration}}
                             </div>
                             <div class="col-sm-8 font-weight-bold">
-                                {{studentData?.examDuration}}
+                                <span style="padding-right: 1%">:</span>
+                                {{studentData?.duration}}
                             </div>
                         </div>
-
                     </div>
+                    <div class="col-sm-3">
+                        <h4 class="font-weight-bold">{{studentData?.fullName}}</h4>
+                        <h5 class="font-weight-bold">{{studentData?.hallTicketNumber}}</h5>
+                        <h6>{{studentData?.houseName}}</h6>
+                        <h6>{{studentData?.streetName}}</h6>
+                        <h6>{{studentData?.city}}</h6>
+                        <h6>{{studentData?.state}}</h6>
+                        <h6>{{studentData?.country}}</h6>
+                    </div>
+                    <div class="col-sm-2">
+                        <img *ngIf="studentData?.photo" class="w-100 rounded" [src]="studentData?.photo"
+                            alt="profile image">
+                    </div>
+                </div>
+                <div class="row mt-4">
                     <div class="col-sm-6">
                         <div class="row">
                             <div class="col-sm-4">
                                 {{caption?.programmeName}}
                             </div>
                             <div class="col-sm-8 font-weight-bold">
+                                <span style="padding-right: 1%">:</span>
                                 {{studentData?.programmeName}}
                             </div>
                         </div>
+                    </div>
+                    <div class="col-sm-6">
                         <div class="row">
                             <div class="col-sm-4">
                                 {{caption?.batchName}}
                             </div>
                             <div class="col-sm-8 font-weight-bold">
+                                <span style="padding-right: 1%">:</span>
                                 {{studentData?.batchName}}
                             </div>
                         </div>
+                    </div>
+                    <div class="col-sm-6">
                         <div class="row">
                             <div class="col-sm-4">
-                                {{caption?.studyCenter}}
+                                {{caption?.courseName}}
                             </div>
                             <div class="col-sm-8 font-weight-bold">
-                                {{studentData?.studyCenter}}
+                                <span style="padding-right: 1%">:</span>
+                                {{studentData?.courseName}}
                             </div>
                         </div>
+                    </div>
+                    <div class="col-sm-6">
                         <div class="row">
-                                <div class="col-sm-4">
-                                    {{studentData?.semesterType || "Not found"}}:
-                                </div>
-                                <div class="col-sm-8 font-weight-bold">
-                                    {{studentData?.semester}}
-                                </div>
+                            <div class="col-sm-4">
+                                {{studentData?.semesterType || "Not found"}}:
                             </div>
+                            <div class="col-sm-8 font-weight-bold">
+                                <span style="padding-right: 1%">:</span>
+                                {{studentData?.semester}}
+                            </div>
+                        </div>
                     </div>
                 </div>
                 <div class="row d-flex justify-content-end">

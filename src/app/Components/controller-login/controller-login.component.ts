@@ -71,11 +71,8 @@ export class ControllerLoginComponent implements OnInit, AfterViewInit {
               userId: response.data.userId,
               sessionId: response.data.sessionId
             });
-            localStorage.setItem("email", response.data.email);
-            localStorage.setItem("userId", response.data.userId);
-            localStorage.setItem("sessionId", response.data.sessionId);
             this.ngxLoader.stop();
-            this.OpenOTPPopup();
+            this.OpenOTPPopup(response.data.email, response.data.userId, response.data.sessionId);
           }
           else {
             this.toastrService.error(response.message);
@@ -101,7 +98,7 @@ export class ControllerLoginComponent implements OnInit, AfterViewInit {
     }
   }
 
-  OpenOTPPopup(): void {
+  OpenOTPPopup(email: string, userId: string, sessionId: string): void {
     const dialogRef = this.dialog.open(InvigilatorOTPPopupComponent, {
       minWidth: '20%'
     })
@@ -109,7 +106,7 @@ export class ControllerLoginComponent implements OnInit, AfterViewInit {
       var isSubmit = dialogRef.componentInstance.isSubmit;
       var otp = dialogRef.componentInstance.otpForm.value.otp;
       if (isSubmit)
-        this.CheckOTP(otp);
+        this.CheckOTP(otp, email, userId, sessionId);
     })
   }
 
@@ -157,13 +154,14 @@ export class ControllerLoginComponent implements OnInit, AfterViewInit {
         }
       },
       'expired-callback': (response) => {
+        this.dialog.closeAll();
         this.captchaValid = false;
         this.ngxLoader.stop();
       }
     });
   }
 
-  CheckOTP(otp: number): void {
+  CheckOTP(otp: number, email: string, userId: string, sessionId: string): void {
     try {
       this.ngxLoader.start();
       var body = {
@@ -174,6 +172,11 @@ export class ControllerLoginComponent implements OnInit, AfterViewInit {
           this.dataService.controllerLogin.next(true);
           this.auth.controllerLoginAuth();
           this.ngxLoader.stop();
+
+          localStorage.setItem("email", email);
+          localStorage.setItem("userId", userId);
+          localStorage.setItem("sessionId", sessionId);
+          localStorage.setItem("loginUser", 'invigilator');
           this.router.navigate(["/landing/controller/instruction"]);
         }
         else {
@@ -191,22 +194,5 @@ export class ControllerLoginComponent implements OnInit, AfterViewInit {
     }
   }
 
-  // VerifyCaptcha(token: string): void{
-  //   try{
-  //     this.ngxLoader.start();
-  //     this.service.VerifyCaptcha(token).subscribe(response => {
-  //       console.log(response);
-
-  //       this.captchaValid = response;
-  //     }, error => {
-  //       this.toastrService.error(error.message);
-  //     this.ngxLoader.stop();
-  //     })
-  //   }
-  //   catch (e){
-  //     this.toastrService.error(e);
-  //     this.ngxLoader.stop();
-  //   }
-  // }
 
 }
