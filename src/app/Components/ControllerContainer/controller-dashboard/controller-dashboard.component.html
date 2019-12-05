@@ -9,7 +9,7 @@
           <mat-expansion-panel>
             <mat-expansion-panel-header>
               <mat-panel-title>
-                <mat-checkbox (change)="SubmitVerification()" [(ngModel)]="exam.verified" class="pt-1 px-3">
+                <mat-checkbox [disabled]="(questionShuffled | lowercase) == 'true'" (change)="Stepper1Verification()" [(ngModel)]="exam.verified" class="pt-1 px-3">
                 </mat-checkbox>
                 <span class="TitleCaption w-100">{{exam?.examName}}</span>
                 <span class="float-right w-25 TitleTotal pt-1">
@@ -28,7 +28,7 @@
               <div class="col-sm-2">
                 <mat-form-field class="w-100" appearance="outline">
                   <mat-label>Shuffle Count</mat-label>
-                  <input maxlength="1" (input)="QuestionCountValidCheck()" (keypress)="dataService?.NumberOnly($event)" 
+                  <input [disabled]="(questionShuffled | lowercase) == 'true'" maxlength="1" (input)="QuestionCountValidCheck()" (keypress)="dataService?.NumberOnly($event)" 
                   [(ngModel)]="exam.shuffleCount" matInput placeholder="Shuffle Count">
                 </mat-form-field>
               </div>
@@ -77,7 +77,7 @@
                 <mat-cell *matCellDef="let element; let i=index">
                   <button
                     (click)="SingleStudentVerification(element, index, i + (myPaginator.pageIndex * myPaginator.pageSize))"
-                    [disabled]="element?.verified" mat-flat-button class="Submit">
+                    [disabled]="element?.verified || (questionShuffled | lowercase) == 'true'" mat-flat-button class="Submit">
                     <span *ngIf="!element?.verified">Verify</span>
                     <span *ngIf="element?.verified">Verified</span>
                   </button>
@@ -118,7 +118,7 @@
             (confirm)="SubmitStepper1()">Submit</button>
         </div>
         <div class="col-sm-1">
-          <button [disabled]="!(questionShuffled == 'true') || !stepper1Valid || !questionCountValid" mat-raised-button
+          <button (click)="NextToStepper2()" [disabled]="!(questionShuffled == 'true') || !stepper1Valid || !questionCountValid" mat-raised-button
             color="primary" matStepperNext>Next</button>
         </div>
       </div>

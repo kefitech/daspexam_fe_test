@@ -14,6 +14,8 @@ export class ControllerInstructionsComponent implements OnInit, AfterViewInit {
   constructor(private router: Router, private auth: ControllerAuthService,
     private toastrService: ToastrService, private service: ControllerAPIService) { }
 
+    examFetchCompleted: boolean = false;
+
   ngOnInit() {
     window.onpopstate = function (e) { window.history.forward(); }
   }
@@ -23,9 +25,11 @@ export class ControllerInstructionsComponent implements OnInit, AfterViewInit {
       this.service.ExamFetchFromMainServer().subscribe(response => {
         if (response.success) {
           localStorage.setItem('Token', response.data.token);
+          this.examFetchCompleted = true;
         }
         else{
           this.toastrService.error(response.message);
+          this.examFetchCompleted = false;
         }
       }, error => {
         this.toastrService.error(error.message);

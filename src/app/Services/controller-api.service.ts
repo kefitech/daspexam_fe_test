@@ -10,18 +10,6 @@ export class ControllerAPIService {
 
   constructor(private http: HttpClient, private URLService: URLService, private dataService: DataService) { }
 
-  // VerifyCaptcha(token: string): any{
-  //   var body = {
-  //     secret: this.dataService.captchaSecretKey,
-  //     response: token
-  //   };
-  //   const httpOptions = {
-  //     headers: new HttpHeaders({
-  //       'Content-Type':  'application/json'
-  //     })
-  //   }
-  //   return this.http.post(this.URLService.captchaVerificationURL, body, httpOptions);
-  // }
 
   RecaptchaVerification(body: any): any{
     return this.http.post(this.URLService.cloudBaseURL + this.URLService.recaptchaVerificationURL, body);
@@ -52,6 +40,20 @@ export class ControllerAPIService {
   studentFaceRecognition(body): any{
     body = Object.assign(body, this.dataService.controllerData.value)
     return this.http.post(this.URLService.baseURL + this.URLService.studentFaceRecognitionURL, body);
+  }
+
+  SingleStudentVerification(body: object): any{
+    body = Object.assign(body, this.dataService.controllerData.value)
+    return this.http.post(this.URLService.baseURL + this.URLService.singleStudentVerifyURL, body);
+  }
+
+  SubmitAllExams(body: object): any{
+    body = Object.assign(body, this.dataService.controllerData.value)
+    return this.http.post(this.URLService.baseURL + this.URLService.submitAllExamsURL, body);
+  }
+
+  ExaminationInfoForVerifiedStudents(): any{
+    return this.http.post(this.URLService.baseURL + this.URLService.examVerifiedStudentFetchURL, this.dataService.controllerData.value);
   }
 
   //------------------implemented-------------------

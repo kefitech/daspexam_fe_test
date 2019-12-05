@@ -62,7 +62,9 @@ export class HallticketPopupComponent implements OnInit, AfterViewInit {
       if (this.hallticketForm.valid) {
         this.service.hallTicketVerification(this.hallticketForm.value).subscribe(response => {
           if (response.success) {
+            
             this.studentData = response;
+            localStorage.setItem('Token', response.data.token)
             this.submit = true;
             this.ngxLoader.stop();
             this.dialogScreen.close();

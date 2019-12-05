@@ -61,15 +61,17 @@ export class InitialStudentLoginComponent implements OnInit, AfterViewInit {
 
   loadData(): void {
     this.caption = {
-      examName: "Examination Name: ",
-      examDate: "Examination Date: ",
-      examTime: "Exam Time: ",
-      programmeName: "Programme Name: ",
-      batchName: "Batch Name: ",
-      courseName: "Course Name: ",
+      examName: "Examination Name",
+      examDate: "Examination Date",
+      examTime: "Exam Time",
+      programmeName: "Programme Name",
+      batchName: "Batch Name",
+      courseName: "Course Name",
       studentName: "Student Name",
-      studyCenter: "Study Center: ",
-      examDuration: "Exam Duration: "
+      studyCentre: "Exam Center",
+      duration: "Exam Duration",
+      hallTicketNumber: "Hall Ticket",
+      studyCentreCode: "Exam Centre Code"
     };
   }
 
@@ -144,9 +146,10 @@ export class InitialStudentLoginComponent implements OnInit, AfterViewInit {
       if (this.valid) {
         var studentLoginResponse = dialog.componentInstance.studentData;
         this.toastrService.success(studentLoginResponse.message);
-        this.studentData = studentLoginResponse.data;
-        this.studentData["examDuration"] = this.studentData["examDuration"] + " Minutes";
+        this.studentData = studentLoginResponse.data.examInfo[0];
+        this.studentData["duration"] = this.studentData["duration"] + " Minutes";
         this.dataService.studentData.next(this.studentData);
+        localStorage.setItem("loginUser", 'student');
       }
     }, error => {
       this.toastrService.error(error);
