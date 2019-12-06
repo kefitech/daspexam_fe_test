@@ -10,10 +10,10 @@ export class ExamAPIService {
 
   constructor(private http: HttpClient, private URLService: URLService, private dataService: DataService) { }
 
-  examDetails(data: any): any{
-    data["userId"] = this.dataService.body["userId"];
-    data["sessionId"] = this.dataService.body["sessionId"];
-    return this.http.post(this.URLService.baseURL + this.URLService.examDetails, data);
-  }
+  // examDetails(data: any): any{
+  //   data["userId"] = this.dataService.body["userId"];
+  //   data["sessionId"] = this.dataService.body["sessionId"];
+  //   return this.http.post(this.URLService.baseURL + this.URLService.examDetails, data);
+  // }
 
 }

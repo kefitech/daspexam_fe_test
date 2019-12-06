@@ -11,12 +11,14 @@ export class QuestionService {
   constructor(private http: HttpClient, private URLService: URLService, private dataService: DataService) { }
 
   questionFetch(): any{
-    var body = this.dataService.body;
-    this.dataService.studentData.subscribe()
-    body["batchId"] = this.dataService.studentData.value["batchId"];
-    body["programmeId"] = this.dataService.studentData.value["programmeId"];
-    body["courseId"] = this.dataService.studentData.value["courseId"];
-    return this.http.post(this.URLService.baseURL + this.URLService.questionFetch, body);
+    var body = this.dataService.studentCredentials.value;
+    return this.http.post(this.URLService.baseURL + this.URLService.questionFetchURL, body);
+  }
+
+  CheckExamStarts(): any{
+    var body = this.dataService.studentCredentials.value;
+    body['examId'] = this.dataService.studentData.value.examId;
+    return this.http.post(this.URLService.baseURL + this.URLService.checkExamStartsURL, body);
   }
 
 }

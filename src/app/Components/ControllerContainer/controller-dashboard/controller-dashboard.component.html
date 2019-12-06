@@ -9,7 +9,7 @@
           <mat-expansion-panel>
             <mat-expansion-panel-header>
               <mat-panel-title>
-                <mat-checkbox [disabled]="(questionShuffled | lowercase) == 'true'" (change)="Stepper1Verification()" [(ngModel)]="exam.verified" class="pt-1 px-3">
+                <mat-checkbox [disabled]="exam?.examVerified == 1" (change)="Stepper1Verification()" [(ngModel)]="exam.verified" class="pt-1 px-3">
                 </mat-checkbox>
                 <span class="TitleCaption w-100">{{exam?.examName}}</span>
                 <span class="float-right w-25 TitleTotal pt-1">
@@ -28,7 +28,7 @@
               <div class="col-sm-2">
                 <mat-form-field class="w-100" appearance="outline">
                   <mat-label>Shuffle Count</mat-label>
-                  <input [disabled]="(questionShuffled | lowercase) == 'true'" maxlength="1" (input)="QuestionCountValidCheck()" (keypress)="dataService?.NumberOnly($event)" 
+                  <input [disabled]="exam?.examVerified == 1" maxlength="1" (input)="QuestionCountValidCheck()" (keypress)="dataService?.NumberOnly($event)" 
                   [(ngModel)]="exam.shuffleCount" matInput placeholder="Shuffle Count">
                 </mat-form-field>
               </div>
@@ -77,7 +77,7 @@
                 <mat-cell *matCellDef="let element; let i=index">
                   <button
                     (click)="SingleStudentVerification(element, index, i + (myPaginator.pageIndex * myPaginator.pageSize))"
-                    [disabled]="element?.verified || (questionShuffled | lowercase) == 'true'" mat-flat-button class="Submit">
+                    [disabled]="element?.verified || exam?.examVerified == 1" mat-flat-button class="Submit">
                     <span *ngIf="!element?.verified">Verify</span>
                     <span *ngIf="element?.verified">Verified</span>
                   </button>
@@ -198,6 +198,21 @@
                   <mat-slide-toggle (click)="$event.preventDefault()" 
                   [matTooltip]="element?.status"
                   [checked]="element?.status == 'online'"></mat-slide-toggle>
+              </mat-cell>
+            </ng-container>
+
+             <!-- verified Column -->
+             <ng-container [matColumnDef]="studentAssignmentColumns[6]">
+              <mat-header-cell class="tableHeader d-flex justify-content-center" *matHeaderCellDef>
+                {{studentAssignmentCaption?.caption7}} </mat-header-cell>
+              <mat-cell class="d-flex justify-content-center" *matCellDef="let element; let i=index">
+                 <button *ngIf="element?.isVerified" [disabled]="element?.isVerified" style="color: green" mat-icon-button>
+                  <mat-icon>done_all</mat-icon>
+                 </button>
+                 <button matTooltip="Verify Now" (click)="StudentAssignmentSingleStudentVerification(element, index, i)" 
+                 *ngIf="!element?.isVerified" color="primary" mat-icon-button>
+                  <mat-icon>vpn_key</mat-icon>
+                 </button>
               </mat-cell>
             </ng-container>
 

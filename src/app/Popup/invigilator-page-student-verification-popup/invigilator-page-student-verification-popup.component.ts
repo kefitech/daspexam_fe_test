@@ -42,6 +42,7 @@ export class InvigilatorPageStudentVerificationPopupComponent implements OnInit 
   private nextWebcam: Subject<boolean | string> = new Subject<boolean | string>();
 
   ngOnInit() {
+
     WebcamUtil.getAvailableVideoInputs()
       .then((mediaDevices: MediaDeviceInfo[]) => {
         this.multipleWebcamsAvailable = mediaDevices && mediaDevices.length > 1;
@@ -85,8 +86,32 @@ export class InvigilatorPageStudentVerificationPopupComponent implements OnInit 
   }
 
   Submit(): void {
-    this.isSubmit = true;
-    this.dialogScreen.close();
+    try {
+      this.ngxLoader.start();
+      var body = {
+        verified: this.data.student['verified'],
+        examStudentId: this.data.student['examStudentId'],
+        timeRemains: this.data.duration
+      }
+      this.service.SingleStudentVerification(body).subscribe(response => {
+        if (response.success) {
+          this.isSubmit = true;
+          this.ngxLoader.stop();
+          this.dialogScreen.close();
+        }
+        else {
+          this.toastrService.error(response.message);
+          this.ngxLoader.stop();
+        }
+      }, error => {
+        this.toastrService.error(error.message);
+        this.ngxLoader.stop();
+      })
+    }
+    catch (e) {
+      this.toastrService.error(e);
+      this.ngxLoader.stop();
+    }
   }
 
   ResetSnap(): void {
