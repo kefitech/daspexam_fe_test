@@ -1,4 +1,4 @@
-import { Component, OnInit, HostListener } from '@angular/core';
+import { Component, OnInit, HostListener, OnDestroy, AfterViewInit } from '@angular/core';
 import { DataService } from 'src/app/Services/data.service';
 import { DeviceDetectorService } from 'ngx-device-detector';
 import { Router } from '@angular/router';
@@ -12,13 +12,20 @@ import { QuestionService } from 'src/app/Services/question.service';
   templateUrl: './common-instructions.component.html',
   styleUrls: ['./common-instructions.component.scss']
 })
-export class CommonInstructionsComponent implements OnInit {
+export class CommonInstructionsComponent implements OnInit, AfterViewInit, OnDestroy {
 
   constructor(private router: Router, private toastrService: ToastrService,
     private ngxLoader: NgxUiLoaderService, private apiService: QuestionService, private dataService: DataService ) { }
 
+
+    private pageInitInterval: any = null;
   
   ngOnInit() {
+    
+  }
+
+  ngAfterViewInit(){
+    localStorage.setItem('studentCommonInstruction', 'true');
     setTimeout(() => {
       this.fetchQuestions();
     }, 10);
@@ -28,7 +35,31 @@ export class CommonInstructionsComponent implements OnInit {
     try{
       this.apiService.questionFetch().subscribe(response => {
         if(response.success){
-          this.dataService.questionsData.next(response.data.questionList)
+          console.log(response.data.questionList);
+          
+          this.dataService.questionsData.next(response.data.questionList);
+          this.pageInitInterval = setInterval(() => {
+            this.CheckExamStarts();
+          }, 3600)
+        }
+        else{
+          this.toastrService.error(response.message);
+        }
+      }, error => {
+        this.toastrService.error(error.message);
+      })
+    }
+    catch (e){
+      this.toastrService.error(e.message);
+    }
+  }
+
+  CheckExamStarts(): void{
+    try{
+      this.apiService.CheckExamStarts().subscribe(response => {
+        if(response.success){
+          this.dataService.examStartAndTimer.next(response.data);
+          clearInterval(this.pageInitInterval);
         }
         else{
           this.toastrService.error(response.message);
@@ -44,5 +75,9 @@ export class CommonInstructionsComponent implements OnInit {
 
   Next(): void{
     this.router.navigate(['/landing/student/exam/subjectspecificinstructions']);
+  }
+
+  ngOnDestroy(){
+    clearInterval(this.pageInitInterval);
   }
 }

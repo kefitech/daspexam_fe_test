@@ -7,7 +7,7 @@ import { HttpClient } from '@angular/common/http';
 })
 export class DataService {
 
-  constructor() { 
+  constructor() {
   }
 
   public PATTERN = {
@@ -16,25 +16,15 @@ export class DataService {
     telephonePattern: '\\s*(?:\\+?\\d{1,3})?[- (]*\\d{3}(?:[- )]*\\d{3})?[- ]*\\d{1,6}(?: *[x/#]\\d+)?\\s*$'
   }
 
-  public body = {};
+  public encrypetionToken = "DASTP@mgu@*1234*";
 
-  public examStatus = {};
-
-  public loader = false;
-
-  public studentData = new BehaviorSubject<object>(null);
-
-  public warning = new BehaviorSubject<boolean>(null);
-
-  public isNotLoginScreen = new BehaviorSubject<boolean>(false);
-
-  public questionsData = new BehaviorSubject<any>([]);
+  //common
 
   public sideNav = new BehaviorSubject<boolean>(true);
 
   public sideNavButton = new BehaviorSubject<boolean>(false);
 
-  public timer = new BehaviorSubject<number>(null);
+  //Invigilator
 
   public controllerLogin = new BehaviorSubject<boolean>(false);
 
@@ -42,35 +32,54 @@ export class DataService {
 
   public captchaSecretKey = '6LcQosIUAAAAAL7Nz-WSiW1EgrxmvPDHEnKdGAM9';
 
+  //student
+
+  public studentCredentials = new BehaviorSubject<any>({});
+
+  public studentData = new BehaviorSubject<any>(null);
+
+  public warning = new BehaviorSubject<boolean>(null);
+
+  public isNotLoginScreen = new BehaviorSubject<boolean>(false);
+
+  public questionsData = new BehaviorSubject<any>([]);
+
+  public timer = new BehaviorSubject<number>(null);
+
+  public examStartAndTimer = new BehaviorSubject<any>(null);
+
+  //Exam result - Student
+  public examStatus = {};
+
   toggleFullScreen() {
-    let elem =  docElmWithBrowsersFullScreenFunctions; 
-    let methodToBeInvoked = elem.requestFullscreen || 
-     elem.webkitRequestFullscreen || elem['mozRequestFullscreen'] || 
-     elem['msRequestFullscreen']; 
-    if(methodToBeInvoked) methodToBeInvoked.call(elem);
-}
-
-NumberOnly(event: any) {
-  const pattern = /^[0-9]*$/;
-  let inputChar = String.fromCharCode(event.charCode);
-  if (!pattern.test(inputChar)) {
-    event.preventDefault();
-
+    let elem = docElmWithBrowsersFullScreenFunctions;
+    let methodToBeInvoked = elem.requestFullscreen ||
+      elem.webkitRequestFullscreen || elem['mozRequestFullscreen'] ||
+      elem['msRequestFullscreen'];
+    if (methodToBeInvoked) methodToBeInvoked.call(elem);
   }
-}
+
+  NumberOnly(event: any) {
+    const pattern = /^[0-9]*$/;
+    let inputChar = String.fromCharCode(event.charCode);
+    if (!pattern.test(inputChar)) {
+      event.preventDefault();
+
+    }
+  }
 
 
-RemoveMatTableSource(tableSource: any, tableSourceField: Array<string>): any{
-  var table = Object.assign([], tableSource);
-  
-  tableSourceField.forEach(elementField => {
-    table.forEach(element => {
-      element[elementField] = element[elementField]['data'];
+  RemoveMatTableSource(tableSource: any, tableSourceField: Array<string>): any {
+    var table = Object.assign([], tableSource);
+
+    tableSourceField.forEach(elementField => {
+      table.forEach(element => {
+        element[elementField] = element[elementField]['data'];
+      });
     });
-  });
 
-  return table;
-}
+    return table;
+  }
 
 }
 

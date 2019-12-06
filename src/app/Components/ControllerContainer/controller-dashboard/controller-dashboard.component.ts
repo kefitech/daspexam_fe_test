@@ -44,14 +44,15 @@ export class ControllerDashboardComponent implements OnInit, AfterViewInit, OnDe
   @ViewChildren('myPaginator') studentListPaginator: QueryList<ElementRef>;// stepper 1
 
   studentAssignmentExamDetails: Array<object>;// stepper 2
-  studentAssignmentColumns: any = ['sno', 'name', 'hallTicketNumber', 'systemNo', 'qpCode', 'status'];// stepper 2
+  studentAssignmentColumns: any = ['sno', 'name', 'hallTicketNumber', 'systemNo', 'qpCode', 'status', 'verified'];// stepper 2
   studentAssignmentCaption: object = JSON.parse(JSON.stringify({// stepper 1
     caption1: "S/no",
     caption2: "Name",
     caption3: "Hall TicketNo",
     caption4: "System No",
     caption5: "Question Pattern",
-    caption6: "Student Status"
+    caption6: "Student Status",
+    caption7: "Verified"
   }))
 
   @ViewChildren('studentAssignmentPaginatorSize') studentAssignmentListPaginator: QueryList<ElementRef>;// stepper 2
@@ -88,14 +89,12 @@ export class ControllerDashboardComponent implements OnInit, AfterViewInit, OnDe
         if (response.success) {
           this.examDetails = response.data.examDetails;
           this.examDetails = this.examDetails.map(({ verified, shuffleCount, ...rest }) => (
-            { 
-              verified: verified == 1 ? true : false, 
-              shuffleCount: shuffleCount==null?'':shuffleCount, 
-              ...rest 
+            {
+              verified: verified == 1 ? true : false,
+              shuffleCount: shuffleCount == null ? '' : shuffleCount,
+              ...rest
             }));
           this.Stepper1FetchStudentTableRefresh();
-          // if (this.questionShuffled == 'false')
-          //   this.examDetails = this.examDetails.map(({ ...rest }) => ({ verified: false, ...rest }));
           this.Stepper1Verification();// stepper 1
           this.QuestionCountValidCheck();// stepper 1
           if (this.questionShuffled == 'true') {// Stepper 2
@@ -123,9 +122,6 @@ export class ControllerDashboardComponent implements OnInit, AfterViewInit, OnDe
 
   Stepper1FetchStudentTableRefresh(): void {// stepper 1
     this.examDetails.forEach((element, index) => {
-      // var allocatedSeats = element['studentList'].map(({systemNo}) => {return systemNo});
-      // this.allocatedSystems = this.allocatedSystems.concat(allocatedSeats);
-
       element['studentList'] = element['studentList'].map(({ verified, ...rest }) => ({ verified: verified == 1 ? true : false, ...rest }));
       element['studentList'] = new MatTableDataSource<any>(element['studentList']);
       setTimeout(() => {
@@ -150,8 +146,6 @@ export class ControllerDashboardComponent implements OnInit, AfterViewInit, OnDe
   }
 
   NextToStepper2(): void {
-    console.log('click');
-    
     this.stepperInterval = setInterval(() => {
       this.FetchStudentAssignment();
     }, 3600)
@@ -168,6 +162,7 @@ export class ControllerDashboardComponent implements OnInit, AfterViewInit, OnDe
       body = Object.assign(body, this.dataService.controllerData.value);
       this.service.SubmitAllExams(body).subscribe(response => {
         if (response.success) {
+          this.FetchStudents();
           this.submitInterval = setInterval(() => {
             this.FetchStudentAssignment();
           }, 3600)
@@ -196,45 +191,29 @@ export class ControllerDashboardComponent implements OnInit, AfterViewInit, OnDe
     const dialogRef = this.dialog.open(InvigilatorPageStudentVerificationPopupComponent, {
       width: '45%',
       height: '80%',
-      data: { student: rowData, exam: this.examDetails[index] }
+      data: { student: rowData, exam: this.examDetails[index], duration: this.examDetails[index].duration }
     })
     dialogRef.afterClosed().subscribe(response => {
       var submit = dialogRef.componentInstance.isSubmit;
       if (submit) {
-        var passData = {
-          verified: dialogRef.componentInstance.data.student['verified'],
-          examStudentId: rowData['examStudentId']
-        }
-        this.CheckSingleStudentVerification(passData, index, rowIndex);
+        this.CheckSingleStudentVerification(dialogRef.componentInstance.data.student['verified'], index, rowIndex);
       }
     })
   }
 
-  CheckSingleStudentVerification(data: object, index: number, rowIndex: number): void {
+  CheckSingleStudentVerification(verified: boolean, index: number, rowIndex: number): void {//stepper1
     try {
       this.ngxLoader.start();
-      this.service.SingleStudentVerification(data).subscribe(response => {
-        if (response.success) {
-          this.examDetails[index]['studentList']['data'][rowIndex]['verified'] = data['verified'];
-          var isAllVerified = this.examDetails[index]['studentList']['data'].every(s => s.verified == true);
-          if (isAllVerified)
-            this.examDetails[index]['verified'] = true;
-          this.Stepper1Verification();
-          setTimeout(() => {
-            this.examDetails[index]['studentList']['data'].paginator = this.paginator.toArray()[index];
-            this.examDetails[index]['studentList']['data'].sort = this.sort.toArray()[index];
-          }, 10);
-          this.ngxLoader.stop();
-
-        }
-        else {
-          this.toastrService.error(response.message);
-          this.ngxLoader.stop();
-        }
-      }, error => {
-        this.toastrService.error(error.message);
-        this.ngxLoader.stop();
-      })
+      this.examDetails[index]['studentList']['data'][rowIndex]['verified'] = verified;
+      var isAllVerified = this.examDetails[index]['studentList']['data'].every(s => s.verified == true);
+      if (isAllVerified)
+        this.examDetails[index]['verified'] = true;
+      this.Stepper1Verification();
+      setTimeout(() => {
+        this.examDetails[index]['studentList']['data'].paginator = this.paginator.toArray()[index];
+        this.examDetails[index]['studentList']['data'].sort = this.sort.toArray()[index];
+      }, 10);
+      this.ngxLoader.stop();
     }
     catch (e) {
       this.toastrService.error(e);
@@ -260,7 +239,6 @@ export class ControllerDashboardComponent implements OnInit, AfterViewInit, OnDe
 
   FetchStudentAssignment(): void {// stepper 2
     try {
-      this.ngxLoader.start();
       this.service.ExaminationInfoForVerifiedStudents().subscribe(response => {
         if (response.success) {
           this.studentAssignmentExamDetails = response.data.studentList;
@@ -268,10 +246,18 @@ export class ControllerDashboardComponent implements OnInit, AfterViewInit, OnDe
           this.ngxLoader.stop();
           var statusHold = [];
           this.studentAssignmentExamDetails.forEach(masterElement => {
-            if (masterElement['studentList']['data'])
-              var studentStatusCheck = masterElement['studentList']['data'].every(s => s['status'] == 'online');
-            else
-              var studentStatusCheck = masterElement['studentList'].every(s => s['status'] == 'online');
+            if (masterElement['studentList']['data']) {
+              var studentStatusCheck = masterElement['studentList']['data'].every(s =>
+                (s['status'] == 'online' && s['isVerified'] == true) ||
+                (s['isVerified'] == false)
+              );
+            }
+            else {
+              var studentStatusCheck = masterElement['studentList'].every(s =>
+                (s['status'] == 'online' && s['isVerified'] == true) ||
+                (s['isVerified'] == false)
+              );
+            }
             statusHold.push(studentStatusCheck)
           });
           var valid = statusHold.every(s => s == true);
@@ -287,12 +273,42 @@ export class ControllerDashboardComponent implements OnInit, AfterViewInit, OnDe
         }
         else {
           this.toastrService.error(response.message);
-          this.ngxLoader.stop();
         }
       }, error => {
         this.toastrService.error(error.message);
-        this.ngxLoader.stop();
       })
+    }
+    catch (e) {
+      this.toastrService.error(e);
+    }
+  }
+
+  StudentAssignmentSingleStudentVerification(data: object, index: number, rowIndex: number): void {// stepper 2
+    var rowData = Object.assign({}, data);
+    rowData['verified'] = rowData['isVerified'];
+    const dialogRef = this.dialog.open(InvigilatorPageStudentVerificationPopupComponent, {
+      width: '45%',
+      height: '80%',
+      data: { student: rowData, exam: this.studentAssignmentExamDetails[index], duration: this.studentAssignmentExamDetails[index]['duration'] }
+    })
+    dialogRef.afterClosed().subscribe(response => {
+      var submit = dialogRef.componentInstance.isSubmit;
+      if (submit) {
+        this.StudentAssignmentCheckSingleStudentVerification(dialogRef.componentInstance.data.student['verified'], index, rowIndex);
+      }
+    })
+  }
+
+  StudentAssignmentCheckSingleStudentVerification(verified: boolean, index: number, rowIndex: number): void {//stepper2
+    try {
+      this.ngxLoader.start();
+      this.studentAssignmentExamDetails[index]['studentList']['data'][rowIndex]['isVerified'] = verified;
+
+      setTimeout(() => {
+        this.studentAssignmentExamDetails[index]['studentList']['data'].paginator = this.paginator.toArray()[index];
+        this.studentAssignmentExamDetails[index]['studentList']['data'].sort = this.sort.toArray()[index];
+      }, 10);
+      this.ngxLoader.stop();
     }
     catch (e) {
       this.toastrService.error(e);
@@ -302,7 +318,12 @@ export class ControllerDashboardComponent implements OnInit, AfterViewInit, OnDe
 
   Stepper2FetchStudentTableRefresh(): void {// stepper 2
     this.studentAssignmentExamDetails.forEach((element, index) => {
-      element['studentList'] = element['studentList'].map(({ status, ...rest }) => ({ status: status == 1 ? 'offline' : 'online', ...rest }))
+      element['studentList'] = element['studentList'].map(({ status, isVerified, ...rest }) => (
+        {
+          status: status == 1 ? 'offline' : status == 2 ? 'online' : status,
+          isVerified: isVerified == 1 ? true : false,
+          ...rest
+        }))
       element['studentList'] = new MatTableDataSource<any>(element['studentList']);
       setTimeout(() => {
         element['studentList'].paginator = this.paginator.toArray()[this.examDetails.length + index];

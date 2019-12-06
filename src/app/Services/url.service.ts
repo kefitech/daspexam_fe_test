@@ -13,7 +13,7 @@ export class URLService {
   public studentInfo = "api/student_info";
   public hallTicketVerification = "api/conduct_exam/student_login";
   public examDetails = "api/student_exam_info";
-  public questionFetch = "api/student_question_fetch";
+
 
   //Controller verification
   public checkValidControllerURL = "api/exam/session_verification";
@@ -41,6 +41,13 @@ export class URLService {
   public individualStudentTimePauseResume = "api/exam/time-pause-resume";
   public invigilatorExamSubmit = "api/exam/invigilator_exam_submit";
 
+
+  //Student 
+  public checkValidStudentURL = "api/conduct_exam/session_verification";
+
+  public questionFetchURL = "api/conduct_exam/student_question_fetch";
+
+  public checkExamStartsURL = "api/conduct_exam/exam_status_check";
 
 
   public headers = new HttpHeaders({ 'Content-Type': 'application/json; charset=utf-8' });

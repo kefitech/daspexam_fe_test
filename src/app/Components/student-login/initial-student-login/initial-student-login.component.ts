@@ -8,6 +8,7 @@ import { HallticketAuthService } from 'src/app/Services/hallticket-auth.service'
 import { ToastrService } from 'ngx-toastr';
 import { NgxUiLoaderService } from 'ngx-ui-loader';
 import { HallticketPopupComponent } from 'src/app/Popup/hallticket-popup/hallticket-popup.component';
+import { EncryptionService } from 'src/app/Services/encryption.service';
 
 @Component({
   selector: 'app-initial-student-login',
@@ -19,7 +20,7 @@ export class InitialStudentLoginComponent implements OnInit, AfterViewInit {
   constructor(private dataService: DataService, private apiService: StudentLoginAPIService,
     private dialog: MatDialog, private route: ActivatedRoute, private formBuilder: FormBuilder,
     private router: Router, private auth: HallticketAuthService, private toastrService: ToastrService,
-    private ngxLoader: NgxUiLoaderService) { }
+    private ngxLoader: NgxUiLoaderService, private encryptionService: EncryptionService) { }
 
   caption: object;
   studentData: object;
@@ -34,30 +35,15 @@ export class InitialStudentLoginComponent implements OnInit, AfterViewInit {
   }
 
   ngAfterViewInit() {
-    this.EnterHallticket();
+    var studentData = localStorage.getItem('studentData');
+    if (studentData) {
+      var dec = this.encryptionService.decryptUsingAES256(studentData);
+      this.studentData = JSON.parse(JSON.parse(dec));
+    }
+    else
+      this.EnterHallticket();
     this.loadData();
   }
-
-  // ngAfterViewInit() {
-  //   setTimeout(() => {
-  //     this.route.params.subscribe(params => {
-  //       var uid = params["uid"];
-  //       var sessionId = params["sessionid"];
-  //       var examId = params["examid"];
-  //       localStorage.setItem("userId", uid);
-  //       localStorage.setItem("sessionId", sessionId);
-  //       localStorage.setItem("examId", examId);
-  //       this.dataService.body["userId"] = uid;
-  //       this.dataService.body["sessionId"] = sessionId;
-  //       this.dataService.body["examId"] = examId;
-
-  //       if (params)
-  //         this.studentDetails();
-  //     });
-  //   }, 100);
-  // }
-
-
 
   loadData(): void {
     this.caption = {
@@ -74,51 +60,6 @@ export class InitialStudentLoginComponent implements OnInit, AfterViewInit {
       studyCentreCode: "Exam Centre Code"
     };
   }
-
-  // studentDetails(): void {
-  //   try {
-  //     this.ngxLoader.start();
-  //     this.apiService.studentDetailData().subscribe(response => {
-  //       if (response.success) {
-  //         this.ngxLoader.stop();
-  //         this.studentData = response.data.examList[0];
-  //         // this.studentData = {
-  //         //   exam: "Certificate in water management",
-  //         //   examName: "Water management exam",
-  //         //   examDate: "12-02-2018",
-  //         //   examTime: "11:15 A.M",
-  //         //   examDuration: "240",
-  //         //   programmeName: "Certificate in water harvesting",
-  //         //   batchName: "BH08767",
-  //         //   courseName: "Environmental studies",
-  //         //   studyCenter: "Block1",
-  //         //   fullName: "Watson T",
-  //         //   photo: "https://homepages.cae.wisc.edu/~ece533/images/monarch.png",
-  //         //   address1: "Hall Street",
-  //         //   address2: "West-Nagercoil",
-  //         //   city: "Nagercoil",
-  //         //   state: "Tamil Nadu",
-  //         //   country: "India",
-  //         //   semesterType: "Semester",
-  //         //   semester: "2"
-  //         // }
-  //         this.studentData["examDuration"] = this.studentData["examDuration"] + " Minutes";
-  //         this.dataService.studentData.next(this.studentData);
-  //       }
-  //       else {
-  //         this.toastrService.error(response.message);
-  //         this.ngxLoader.stop();
-  //       }
-  //     }, error => {
-  //       this.toastrService.error(error.message);
-  //       this.ngxLoader.stop();
-  //     })
-  //   }
-  //   catch (e) {
-  //     this.toastrService.error(e);
-  //     this.ngxLoader.stop();
-  //   }
-  // }
 
   Submit(): void {
     try {
@@ -147,6 +88,9 @@ export class InitialStudentLoginComponent implements OnInit, AfterViewInit {
         var studentLoginResponse = dialog.componentInstance.studentData;
         this.toastrService.success(studentLoginResponse.message);
         this.studentData = studentLoginResponse.data.examInfo[0];
+        var stringifyStudentData = JSON.stringify(this.studentData);
+        var encryptedStudentData = this.encryptionService.encryptUsingAES256(stringifyStudentData);
+        localStorage.setItem('studentData', encryptedStudentData);
         this.studentData["duration"] = this.studentData["duration"] + " Minutes";
         this.dataService.studentData.next(this.studentData);
         localStorage.setItem("loginUser", 'student');

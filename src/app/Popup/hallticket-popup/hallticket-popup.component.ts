@@ -22,7 +22,7 @@ export class HallticketPopupComponent implements OnInit, AfterViewInit {
     @Inject(MAT_DIALOG_DATA) public data: any, private toastrService: ToastrService, private formBuilder: FormBuilder,
     private service: StudentLoginAPIService, private ngxLoader: NgxUiLoaderService, private datePipe: DatePipe) { }
 
-  maxDate: Date;
+  maxDate: Date = new Date();
 
   formCaption: object = {
     caption1: "Enter your hallticket number",
@@ -62,9 +62,13 @@ export class HallticketPopupComponent implements OnInit, AfterViewInit {
       if (this.hallticketForm.valid) {
         this.service.hallTicketVerification(this.hallticketForm.value).subscribe(response => {
           if (response.success) {
-            
             this.studentData = response;
-            localStorage.setItem('Token', response.data.token)
+            this.dataService.studentCredentials.next({
+              examStudentId: response.data.examStudentId
+            })
+            this.dataService.studentData.next(response.data)
+            localStorage.setItem('Token', response.data.token);
+            localStorage.setItem('examStudentId', response.data.examStudentId);
             this.submit = true;
             this.ngxLoader.stop();
             this.dialogScreen.close();

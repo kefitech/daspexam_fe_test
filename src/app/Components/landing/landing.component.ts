@@ -6,6 +6,9 @@ import { ControllerAuthService } from 'src/app/Services/controller-auth.service'
 import { ControllerAPIService } from 'src/app/Services/controller-api.service';
 import { NgxUiLoaderService } from 'ngx-ui-loader';
 import { ToastrService } from 'ngx-toastr';
+import { StudentLoginAPIService } from 'src/app/Services/student-login-api.service';
+import { HallticketAuthService } from 'src/app/Services/hallticket-auth.service';
+import { EncryptionService } from 'src/app/Services/encryption.service';
 
 @Component({
   selector: 'app-landing',
@@ -14,9 +17,10 @@ import { ToastrService } from 'ngx-toastr';
 })
 export class LandingComponent implements OnInit, AfterViewInit {
 
-  constructor(private dataService: DataService, private router: Router,
+  constructor(private dataService: DataService, private router: Router, private authHallTicket: HallticketAuthService,
     private deviceService: DeviceDetectorService, private auth: ControllerAuthService, private service: ControllerAPIService,
-    private ngxLoader: NgxUiLoaderService, private toastrService: ToastrService) { }
+    private ngxLoader: NgxUiLoaderService, private toastrService: ToastrService, private studentService: StudentLoginAPIService,
+    private encryptionService: EncryptionService) { }
 
   logo: object = {
     img: "../../../assets/Images/Logo.png",
@@ -31,49 +35,30 @@ export class LandingComponent implements OnInit, AfterViewInit {
       userId: localStorage.getItem("userId"),
       sessionId: localStorage.getItem("sessionId")
     })
+    this.dataService.studentCredentials.next({
+      examStudentId: localStorage.getItem("examStudentId")
+    })
     this.dataService.sideNavButton.next(false);
   }
 
   ngAfterViewInit() {
     var loggedInUser = localStorage.getItem("loginUser");
-    if(loggedInUser == 'invigilator')
-    setTimeout(() => {
-      this.checkValidUser();
-    }, 10);
+    if (loggedInUser == 'invigilator') {
+      setTimeout(() => {
+        this.checkValidUser();
+      }, 10);
+    }
+    else if (loggedInUser == 'student') {
+      setTimeout(() => {
+        this.CheckValidStudent();
+      }, 10);
+    }
   }
 
   @HostListener('contextmenu', ['$event'])
   onRightClick(event) {
     event.preventDefault();
   }
-
-  // fullScreen(): void {
-  //   // Trigger fullscreen
-  //   const docElmWithBrowsersFullScreenFunctions = document.documentElement as HTMLElement & {
-  //     mozRequestFullScreen(): Promise<void>;
-  //     webkitRequestFullscreen(): Promise<void>;
-  //     msRequestFullscreen(): Promise<void>;
-  //   };
-
-  //   if (docElmWithBrowsersFullScreenFunctions.mozRequestFullScreen && this.deviceService.browser.toLowerCase() == "firefox") { /* Firefox */
-  //     docElmWithBrowsersFullScreenFunctions.mozRequestFullScreen();
-  //   } else if (docElmWithBrowsersFullScreenFunctions.webkitRequestFullscreen && this.deviceService.browser.toLowerCase() == "chrome") { /* Chrome, Safari and Opera */
-  //     docElmWithBrowsersFullScreenFunctions.webkitRequestFullscreen();
-  //   } else if (docElmWithBrowsersFullScreenFunctions.msRequestFullscreen && this.deviceService.browser.toLowerCase() == "edge") { /* IE/Edge */
-  //     docElmWithBrowsersFullScreenFunctions.msRequestFullscreen();
-  //   }
-  //   this.dataService.warning.next(false);
-  // }
-
-  //   toggleFullScreen() {
-  //    this.dataService.toggleFullScreen()
-  //     this.dataService.warning.next(false);
-  // }
-
-  // @HostListener('window:resize', ['$event'])
-  //   onResize(event){
-  //    event.preventDefault();
-  //   }
 
   sideNavToggle(): void {
     this.dataService.sideNav.next(true);
@@ -185,8 +170,122 @@ export class LandingComponent implements OnInit, AfterViewInit {
           this.ngxLoader.stop();
         }
       }
-      else{
+      else {
         this.router.navigate(["/landing/controller/login"]);
+        this.ngxLoader.stop();
+      }
+    }
+    catch (e) {
+      this.toastrService.error(e);
+      this.ngxLoader.stop();
+    }
+  }
+
+  CheckValidStudent(): void {
+    try {
+      this.ngxLoader.start();
+      var examStudentId = localStorage.getItem('examStudentId');
+      var studentData = localStorage.getItem('studentData');
+      var commonInstruction = localStorage.getItem('studentCommonInstruction');
+      var subjectSpecificInstruction = localStorage.getItem('studentSubjectSpecificInstruction');
+      if (examStudentId && studentData && commonInstruction != 'true' && subjectSpecificInstruction != 'true') {
+        try {
+          this.ngxLoader.start();
+          this.studentService.CheckValidStudent().subscribe(response => {
+            if (response.success) {
+              var studentData = localStorage.getItem('studentData');
+              if (studentData) {
+                var dec = this.encryptionService.decryptUsingAES256(studentData);
+                this.dataService.studentData.next(JSON.parse(JSON.parse(dec)));
+              }
+              this.ngxLoader.stop();
+              this.router.navigate(["/landing/student/initial"]);
+            }
+            else {
+              this.router.navigate(["/landing/student"]);
+              this.toastrService.error(response.message);
+              this.ngxLoader.stop();
+            }
+          }, error => {
+            this.router.navigate(["/landing/student"]);
+            this.toastrService.error(error.message);
+            this.ngxLoader.stop();
+          })
+        }
+        catch (e) {
+          this.router.navigate(["/landing/student"]);
+          this.toastrService.error(e);
+          this.ngxLoader.stop();
+        }
+      }
+      else if (examStudentId && studentData && commonInstruction == 'true' && subjectSpecificInstruction != 'true') {
+        try {
+          this.ngxLoader.start();
+          this.studentService.CheckValidStudent().subscribe(response => {
+            if (response.success) {
+              var studentData = localStorage.getItem('studentData');
+              if (studentData) {
+                var dec = this.encryptionService.decryptUsingAES256(studentData);
+                this.dataService.studentData.next(JSON.parse(JSON.parse(dec)));
+              }
+              this.ngxLoader.stop();
+              this.authHallTicket.hallTicketValid();
+              this.dataService.toggleFullScreen();
+              this.dataService.isNotLoginScreen.next(true);
+              this.router.navigate(["/landing/student/exam"]);
+            }
+            else {
+              this.router.navigate(["/landing/student/initial"]);
+              this.toastrService.error(response.message);
+              this.ngxLoader.stop();
+            }
+          }, error => {
+            this.router.navigate(["/landing/student/initial"]);
+            this.toastrService.error(error.message);
+            this.ngxLoader.stop();
+          })
+        }
+        catch (e) {
+          this.router.navigate(["/landing/student/initial"]);
+          this.toastrService.error(e);
+          this.ngxLoader.stop();
+        }
+      }
+      else if (examStudentId && studentData && commonInstruction == 'true' && subjectSpecificInstruction == 'true') {
+        try {
+          this.ngxLoader.start();
+          this.studentService.CheckValidStudent().subscribe(response => {
+            if (response.success) {
+              var studentData = localStorage.getItem('studentData');
+              if (studentData) {
+                var dec = this.encryptionService.decryptUsingAES256(studentData);
+                this.dataService.studentData.next(JSON.parse(JSON.parse(dec)));
+              }
+              this.ngxLoader.stop();
+              this.authHallTicket.hallTicketValid();
+              this.dataService.toggleFullScreen();
+              this.dataService.isNotLoginScreen.next(true);
+              this.router.navigate(["/landing/student/exam/subjectspecificinstructions"]);
+            }
+            else {
+              this.router.navigate(["/landing/student/exam"]);
+              this.toastrService.error(response.message);
+              this.ngxLoader.stop();
+            }
+          }, error => {
+            this.router.navigate(["/landing/student/exam"]);
+            this.toastrService.error(error.message);
+            this.ngxLoader.stop();
+          })
+        }
+        catch (e) {
+          this.router.navigate(["/landing/student/exam"]);
+          this.toastrService.error(e);
+          this.ngxLoader.stop();
+        }
+      }
+      else {
+        this.router.navigate(["/landing/student"]);
         this.ngxLoader.stop();
       }
     }
