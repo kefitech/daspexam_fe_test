@@ -34,9 +34,10 @@
             </div>
             <div class="row p-2">
                 <div class="col-sm-3 p-2" *ngFor="let exam of examinationData; let i=index">
-                    <button [matTooltip]="exam?.question?.status==0?'Not Visited':(exam?.question?.status==1?
-                        'Visited':exam?.question?.status==2?'Answered':'Marked For Review')" [ngClass]="{'NotVisited': exam?.question?.status==0, 'Visited': exam?.question?.status==1, 
-                'Answered': (exam?.question?.status==2), 'Review': (exam?.question?.status==3)}"
+                    <button [matTooltip]="exam?.status==0?'Not Visited':(exam?.status==1?
+                        'Visited':exam?.status==2?'Answered':'Marked For Review')" 
+                        [ngClass]="{'NotVisited': exam?.status==0, 'Visited': exam?.status==1, 
+                        'Answered': (exam?.status==2), 'Review': (exam?.status==3)}"
                         (click)="GotoQuestion(i)" mat-mini-fab>{{i+1}}</button>
                 </div>
 
@@ -59,43 +60,43 @@
                     Question No: {{i+1}}
                 </div>
                 <div class="row mt-4 Question" *ngIf="i==activeIndex">
-                    <div [ngClass]="{'col-sm-12': !exam?.question?.isImage, 'col-sm-8': exam?.question?.isImage}"
-                        [innerHtml]="exam?.question?.question">
+                    <div [ngClass]="{'col-sm-12': exam?.isImage == 0, 'col-sm-8': exam?.isImage == 1}"
+                        [innerHtml]="exam?.question">
                         <!-- Questions available here -->
                     </div>
                     <div class="col-sm-4">
-                        <div class="row" *ngIf="exam?.question?.imageUrl">
-                            <img class="rounded QuestionImage" [src]="exam?.question?.imageUrl" alt="">
+                        <div class="row" *ngIf="exam?.imageUrl">
+                            <img class="rounded QuestionImage" [src]="exam?.imageUrl" alt="">
                         </div>
-                        <div class="row" *ngIf="exam?.question?.audio">
+                        <div class="row" *ngIf="exam?.audio">
                             <audio controls>
-                                <source [src]="exam?.question?.audio">
+                                <source [src]="exam?.audio">
                             </audio>
                         </div>
-                        <div class="row" *ngIf="exam?.question?.video">
+                        <div class="row" *ngIf="exam?.video">
                             <video width="400" controls>
-                                <source [src]="exam?.question?.video">
+                                <source [src]="exam?.video">
                             </video>
                         </div>
                     </div>
                 </div>
                 <div class="row mt-5" *ngIf="i==activeIndex">
                     <div class="col-sm-3" *ngFor="let options of exam?.options; let j=index">
-                        <mat-radio-button color="primary" [checked]="options?.marked"
-                            (change)="Answer(i, j, exam?.question?.questionId, options?.option, $event)"
+                        <mat-radio-button color="primary" [checked]="exam?.answeredOption == options?.optionId"
+                            (change)="Answer(i, j, exam?.questionId, options?.option, $event)"
                             [value]="options?.optionId">
-                            <span *ngIf="!options?.isImage" [innerHtml]="options?.option">
+                            <span *ngIf="options?.isImage == 0" [innerHtml]="options?.option">
                                 <!-- Options available here -->
                             </span>
-                            <img *ngIf="options?.isImage" class="rounded AnswerImage" [src]="options?.option" alt="">
+                            <img *ngIf="options?.isImage == 1" class="rounded AnswerImage" [src]="options?.option" alt="">
                         </mat-radio-button>
                     </div>
                 </div>
                 <div class="row mt-5" *ngIf="i==activeIndex">
                     <div class="col-sm-8">
-                        <button (click)="MarkASReview(i, exam?.question?.status)" class="MarkReview" mat-raised-button>
-                            <span *ngIf="exam?.question?.status!=3">Mark as review</span>
-                            <span *ngIf="exam?.question?.status==3">Reviewed</span>
+                        <button (click)="MarkASReview(i, exam?.status)" class="MarkReview" mat-raised-button>
+                            <span *ngIf="exam?.status!=3">Mark as review</span>
+                            <span *ngIf="exam?.status==3">Reviewed</span>
                         </button>
                     </div>
                     <div class="col-sm-2">

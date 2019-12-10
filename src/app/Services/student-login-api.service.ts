@@ -14,12 +14,17 @@ export class StudentLoginAPIService {
   //   return this.http.post(this.URLService.baseURL + this.URLService.studentInfo, this.dataService.body);
   // }
 
-  hallTicketVerification(hallticket: string): any{
-    return this.http.post(this.URLService.baseURL + this.URLService.hallTicketVerification, hallticket);
+  hallTicketVerification(body: any): any{
+    return this.http.post(this.URLService.baseURL + this.URLService.hallTicketVerification, body);
   }
 
   CheckValidStudent(): any{
     var body = this.dataService.studentCredentials.value;
     return this.http.post(this.URLService.baseURL + this.URLService.checkValidStudentURL, body);
+  }
+
+  StudentStartExam(): any{
+    var body = this.dataService.studentCredentials.value;
+    return this.http.post(this.URLService.baseURL + this.URLService.studentStartExamURL, body);
   }
 }

@@ -333,8 +333,31 @@ export class ControllerDashboardComponent implements OnInit, AfterViewInit, OnDe
   }
 
   SubmitStepper2(): void {// stepper 2
-    localStorage.setItem('controllerExamStart', 'true');
-    this.router.navigate(['landing/controller/examstart']);
+    try {
+      this.ngxLoader.start();
+      var body = {
+        examList: this.studentAssignmentExamDetails.map(d => {return {e_id: d['e_id']}})
+      }
+      
+      this.service.InvigilatorStartExam(body).subscribe(response => {
+        if (response.success) {
+          localStorage.setItem('controllerExamStart', 'true');
+          this.router.navigate(['landing/controller/examstart']);
+          this.ngxLoader.stop();
+        }
+        else {
+          this.toastrService.error(response.message);
+          this.ngxLoader.stop();
+        }
+      }, error => {
+        this.toastrService.error(error.message);
+        this.ngxLoader.stop();
+      })
+    }
+    catch (e) {
+      this.toastrService.error(e);
+      this.ngxLoader.stop();
+    }
   }
 
   ngOnDestroy() {

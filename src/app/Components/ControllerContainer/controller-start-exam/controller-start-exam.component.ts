@@ -6,6 +6,7 @@ import { CountdownComponent } from 'ngx-countdown';
 import { InvigilatorSMPPopupComponent } from 'src/app/Popup/invigilator-smp-popup/invigilator-smp-popup.component';
 import { ConfirmationPopupComponent } from 'src/app/Popup/confirmation-popup/confirmation-popup.component';
 import { ControllerAPIService } from 'src/app/Services/controller-api.service';
+import { InvigilatorPageStudentVerificationPopupComponent } from 'src/app/Popup/invigilator-page-student-verification-popup/invigilator-page-student-verification-popup.component';
 
 @Component({
   selector: 'app-controller-start-exam',
@@ -19,6 +20,8 @@ export class ControllerStartExamComponent implements OnInit, AfterViewInit, OnDe
 
   masterTimerConfig: any;
   masterSubmitValid: boolean = false;
+
+  totalStableDuration: any;
 
   studentTimerPauseResumeCaption: string = "Do you want to Pause/Resume this student?"
 
@@ -44,10 +47,10 @@ export class ControllerStartExamComponent implements OnInit, AfterViewInit, OnDe
   @ViewChildren('systems') systems: QueryList<ElementRef>;
 
   ngOnInit() {
-    this.FetchExamList();
   }
 
   ngAfterViewInit() {
+    this.FetchExamList();
   }
 
   handleMasterTimerEvent(event): void {
@@ -69,79 +72,34 @@ export class ControllerStartExamComponent implements OnInit, AfterViewInit, OnDe
   FetchExamList(): void {
     try {
       this.ngxLoader.start();
-      // 0 => pause
-      // 1 => Resume
-      // 2 => Completed
-      this.examList = [
-        {
-          examId: 1, examName: "Certificate In Water Harvesting and Management System Exam for November 2019",
-          shuffleCount: '2', verified: true, isSubmit: false, studentList: [
-            {
-              studentId: 1, studentStatus: 1, name: "D. Waltor", time: 120, timerConfig: { leftTime: 120 },
-              hallTicketNumber: "HALL7654", programmeName: "Certificate In Water Harvesting and Management",
-              batch: "BHCIWHM2017", semesterType: "Semester", isSubmit: false, programmeId: 9,
-              semester: '1', systemNo: "556", image: "https://homepages.cae.wisc.edu/~ece533/images/airplane.png",
-              address: "Cross street, Angel Nagar, Dream house, Nagercoil, Kanyakumari District, Pin-629001.",
-              questionPattern: "QN001", courseId: 33 
-            },
-            {
-              studentId: 2, studentStatus: 0, name: "D. Samson", time: 40, timerConfig: { leftTime: 40 },
-              hallTicketNumber: "HALL453", programmeName: "Certificate In Agriculture Management",
-              batch: "BH2019", semesterType: "Weekly", isSubmit: false, programmeId: 12,
-              semester: '4', systemNo: "887", image: "https://homepages.cae.wisc.edu/~ece533/images/airplane.png",
-              address: "Cross street, Angel Nagar, Dream house, Nagercoil, Kanyakumari District, Pin-629001.",
-              questionPattern: "QN009", courseId: 334 
-            },
+      this.service.ExaminationInfoForVerifiedStudents().subscribe(response => {
+        if (response.success) {
+          this.examList = response.data.studentList;
+          console.log(this.examList);
+
+          this.examListCopy = this.examList.map(x => Object.assign({}, x));
+          this.backupSystems = [
+            { value: 'System1', disabled: false },
+            { value: 'System2', disabled: false },
+            { value: 'System3', disabled: false },
+            { value: 'System4', disabled: false },
+            { value: 'System5', disabled: false },
           ]
-        },
-        {
-          examId: 2, examName: "Certificate In Computer Exam for November 2019",
-          shuffleCount: '', verified: true, isSubmit: false, studentList: [
-            {
-              studentId: 3, studentStatus: 1, name: "D. Waltor", time: 20, timerConfig: { leftTime: 20 },
-              hallTicketNumber: "HALL7654", programmeName: "Certificate In Water Harvesting and Management",
-              batch: "BHCIWHM2017", semesterType: "Semester", isSubmit: false, programmeId: 9,
-              semester: '1', systemNo: "556", image: "https://homepages.cae.wisc.edu/~ece533/images/airplane.png",
-              address: "Cross street, Angel Nagar, Dream house, Nagercoil, Kanyakumari District, Pin-629001.",
-              questionPattern: "QN001", courseId: 123
-            },
-            {
-              studentId: 4, studentStatus: 0, name: "D. Samson", time: 50, timerConfig: { leftTime: 50 },
-              hallTicketNumber: "HALL453", programmeName: "Certificate In Agriculture Management",
-              batch: "BH2019", semesterType: "Weekly", isSubmit: false, programmeId: 5,
-              semester: '4', systemNo: "887", image: "https://homepages.cae.wisc.edu/~ece533/images/airplane.png",
-              address: "Cross street, Angel Nagar, Dream house, Nagercoil, Kanyakumari District, Pin-629001.",
-              questionPattern: "QN009", courseId: 44 
-            },
-          ]
+          this.masterTimerConfig = { leftTime: response.data.examDuration * 60 };//, notify: [2 * 60, 9 * 60]
+          this.TableRefresh();
+          setTimeout(() => {
+            this.CheckAllStudentTimer();
+          }, 10);
+          this.ngxLoader.stop();
         }
-        // {
-        //   examId: 2, examName: "Exam Name 2", shuffleCount: '5', verified: true, studentList: [
-        //     {
-        //       name: "Student1", studentStatus: 1, time: 120, timerConfig: { leftTime: 120 },
-        //       hallTicketNumber: "HALL765446546", programme: "Programme1", batch: "batch1",
-        //       semesterType: "Semester1", semester: '1', systemNo: "SYS200765"
-        //     },
-        //     { name: "Student2", studentStatus: 1, time: 120, timerConfig: { leftTime: 120 }, hallTicketNumber: "HALL765867ghd7627", programme: "Programme2", batch: "batch2", semesterType: "Weekly", semester: '1', systemNo: "SYS200765" },
-        //     { name: "Student1", studentStatus: 1, time: 120, timerConfig: { leftTime: 120 }, hallTicketNumber: "HALL765446546", programme: "Programme1", batch: "batch1", semesterType: "Semester1", semester: '1', systemNo: "SYS200765" },
-        //     { name: "Student2", studentStatus: 1, time: 120, timerConfig: { leftTime: 120 }, hallTicketNumber: "HALL765867ghd7627", programme: "Programme2", batch: "batch2", semesterType: "Weekly", semester: '1', systemNo: "SYS200765" },
-        //   ]
-        // },
-      ];
-      this.examListCopy = this.examList.map(x => Object.assign({}, x));
-      this.backupSystems = [
-        { value: 'System1', disabled: false },
-        { value: 'System2', disabled: false },
-        { value: 'System3', disabled: false },
-        { value: 'System4', disabled: false },
-        { value: 'System5', disabled: false },
-      ]
-      this.masterTimerConfig = { leftTime: 10 };//, notify: [2 * 60, 9 * 60]
-      this.TableRefresh();
-      setTimeout(() => {
-        this.CheckAllStudentTimer();
-      }, 10);
-      this.ngxLoader.stop();
+        else {
+          this.toastrService.error(response.message);
+          this.ngxLoader.stop();
+        }
+      }, error => {
+        this.toastrService.error(error.message);
+        this.ngxLoader.stop();
+      })
     }
     catch (e) {
       this.toastrService.error(e);
@@ -156,6 +114,9 @@ export class ControllerStartExamComponent implements OnInit, AfterViewInit, OnDe
         element['studentList'].paginator = this.paginator.toArray()[index];
         element['studentList'].sort = this.sort.toArray()[index];
       }, 10);
+
+      element['studentList']['data'] = element['studentList']['data'].map(({ timeLeft, ...rest }) =>
+        ({ timeLeft: { leftTime: timeLeft * 60 }, ...rest }));
     });
   }
 
@@ -174,28 +135,29 @@ export class ControllerStartExamComponent implements OnInit, AfterViewInit, OnDe
               length = length + this.examList[i]['studentList']['data'].length;
             }
           }
-          // this.ngxLoader.start();
-          // if (!check && status == 1)
-          //   var timeInSec = (this.studentTimer['_results'][length + rowIndex]['i']['value']) / 1000;
+          this.ngxLoader.start();
+          if (!check && status == 3)
+            var timeInSec = (this.studentTimer['_results'][length + rowIndex]['i']['value']) / 1000;
           var body = {
-            type: status == 0 ? 'resume' : 'pause',
+            type: status == 3 ? 'resume' : 'pause',
             time: (this.studentTimer['_results'][length + rowIndex]['i']['value'] / 1000),
-            studentId: this.examList[index]['studentList']['data'][rowIndex]['studentId'],
+            studentId: this.examList[index]['studentList']['data'][rowIndex]['examStudentId'],
             examId: this.examList[index]['examId']
           }
+          console.log(body);
           
-          // this.service.TimePauseresume(body).subscribe(response => {
-          //   if (response.success) {
-          this.StudentTimePauseResumeConfig(index, rowIndex, status, check);
-          //   }
-          //   else {
-          //     this.toastrService.error(response.message);
-          //     this.ngxLoader.stop();
-          //   }
-          // }, error => {
-          //   this.toastrService.error(error.message);
-          //   this.ngxLoader.stop();
-          // })
+          this.service.TimePauseresume(body).subscribe(response => {
+            if (response.success) {
+              this.StudentTimePauseResumeConfig(index, rowIndex, status, check);
+            }
+            else {
+              this.toastrService.error(response.message);
+              this.ngxLoader.stop();
+            }
+          }, error => {
+            this.toastrService.error(error.message);
+            this.ngxLoader.stop();
+          })
         }
         catch (e) {
           this.toastrService.error(e);
@@ -213,12 +175,12 @@ export class ControllerStartExamComponent implements OnInit, AfterViewInit, OnDe
       }
     }
     if (!check)
-      this.examList[index]['studentList']['data'][rowIndex]['studentStatus'] = status == 0 ? 1 : 0;
-    if (status == 1)
+      this.examList[index]['studentList']['data'][rowIndex]['status'] = status == 3 ? 4 : 3;
+    if (status == 3)
       this.studentTimer['_results'][length + rowIndex].pause();
-    else if (status == 0)
+    else if (status == 4)
       this.studentTimer['_results'][length + rowIndex].resume();
-    if (!check && status == 1) {
+    if (!check && status == 3) {
       this.examList[index]['studentList']['data'][rowIndex]['time'] =
         (this.studentTimer['_results'][length + rowIndex]['i']['value'] / 1000);
     }
@@ -232,12 +194,12 @@ export class ControllerStartExamComponent implements OnInit, AfterViewInit, OnDe
       // ({systemNo, systems: this.backupSystems.concat(systemNo), ...rest}));//system dropdown setup
 
       examList['studentList']['data'].forEach((row, rowIndex) => {
-        if (row['studentStatus'] == 0)
+        if (row['status'] == 4)
           pauseIndex.push({ row: rowIndex, parent: examIndex });
       });
     });
     pauseIndex.forEach(element => {
-      this.StudentTimePauseResumeConfig(element.parent, element.row, 1, true);
+      this.StudentTimePauseResumeConfig(element.parent, element.row, 3, true);
     });
   }
 
@@ -272,7 +234,8 @@ export class ControllerStartExamComponent implements OnInit, AfterViewInit, OnDe
           length = length + this.examList[i]['studentList']['data'].length;
         }
       }
-      this.studentTimer['_results'][length + rowIndex].stop();
+      if (this.studentTimer['_results'][length + rowIndex])
+        this.studentTimer['_results'][length + rowIndex].stop();
       this.examList[index]['studentList']['data'][rowIndex]['studentStatus'] = 2;
     }
   }
@@ -286,7 +249,7 @@ export class ControllerStartExamComponent implements OnInit, AfterViewInit, OnDe
   }
 
   Submit(type: string, examIndex?: number, rowIndex?: number, examId?: number, data?: object): void {
-   var title = type == 'student'?"Do you want to submit exam for this student?":type == 'exam'?"Do you want to submit all students in this exam?":"Do you want to submit all exams?";
+    var title = type == 'student' ? "Do you want to submit exam for this student?" : type == 'exam' ? "Do you want to submit all students in this exam?" : "Do you want to submit all exams?";
     const dialogRef = this.dialog.open(ConfirmationPopupComponent, {
       width: '40%',
       data: { title: title }
@@ -363,13 +326,13 @@ export class ControllerStartExamComponent implements OnInit, AfterViewInit, OnDe
       var time = [];
       for (startVal; startVal < endVal; startVal++) {
         this.studentTimer['_results'][startVal].pause();
-        time.push(this.studentTimer['_results'][startVal]['i']['value']/1000);
+        time.push(this.studentTimer['_results'][startVal]['i']['value'] / 1000);
       }
-      if(status)
-      this.examList[examIndex]['isSubmit'] = status;
+      if (status)
+        this.examList[examIndex]['isSubmit'] = status;
       this.examList[examIndex]['studentList']['data'].forEach((element, index) => {
-        if(status)
-        element['isSubmit'] = status;
+        if (status)
+          element['isSubmit'] = status;
         element['time'] = time[index];
       });
 
@@ -381,16 +344,50 @@ export class ControllerStartExamComponent implements OnInit, AfterViewInit, OnDe
       var length = 0;
       this.examList.forEach((element, examIndex) => {
         element['studentList']['data'].forEach((studentData) => {
-          if(status)
-          studentData['isSubmit'] = status;
-          studentData['time'] = this.studentTimer['_results'][length]['i']['value']/1000;
+          if (status)
+            studentData['isSubmit'] = status;
+          studentData['time'] = this.studentTimer['_results'][length]['i']['value'] / 1000;
           this.studentTimer['_results'][length].pause();
           length++;
         });
         element['isSubmit'] = status;
       });
-      
+
       this.masterSubmitValid = !status;
+    }
+  }
+
+  SingleStudentVerification(data: object, index: number, rowIndex: number): void {// stepper 1
+    var rowData = Object.assign({}, data);
+    console.log(this.masterTimer);
+
+    const dialogRef = this.dialog.open(InvigilatorPageStudentVerificationPopupComponent, {
+      width: '45%',
+      height: '80%',
+      data: { student: rowData, exam: this.examList[index], duration: this.examList[index]['duration'] }
+    })
+    dialogRef.afterClosed().subscribe(response => {
+      var submit = dialogRef.componentInstance.isSubmit;
+      if (submit) {
+        this.CheckSingleStudentVerification(dialogRef.componentInstance.data.student['verified'], index, rowIndex);
+      }
+    })
+  }
+
+  CheckSingleStudentVerification(verified: boolean, index: number, rowIndex: number): void {
+    try {
+      this.ngxLoader.start();
+      this.examList[index]['studentList']['data'][rowIndex]['isVerified'] = verified;
+
+      setTimeout(() => {
+        this.examList[index]['studentList']['data'].paginator = this.paginator.toArray()[index];
+        this.examList[index]['studentList']['data'].sort = this.sort.toArray()[index];
+      }, 10);
+      this.ngxLoader.stop();
+    }
+    catch (e) {
+      this.toastrService.error(e);
+      this.ngxLoader.stop();
     }
   }
 
