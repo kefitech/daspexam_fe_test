@@ -1,5 +1,5 @@
 <div class="container">
-    <div class="col-sm-12">
+    <div class="col-sm-12" *ngIf="examList.length > 0">
 
         <!-- Timer heading protion -->
         <div class="row mt-3">
@@ -71,7 +71,7 @@
                             {{headerCaption?.caption5}} </mat-header-cell>
                         <mat-cell *matCellDef="let element; let i=index">
                             <countdown #studentTimer (event)="handleStudentTimerEvent($event, index, i)"
-                                [config]="element?.timerConfig"></countdown>
+                                [config]="element?.timeLeft"></countdown>
                         </mat-cell>
                     </ng-container>
 
@@ -80,18 +80,21 @@
                         <mat-header-cell class="tableHeader d-flex justify-content-center" *matHeaderCellDef>
                             {{headerCaption?.caption6}} </mat-header-cell>
                         <mat-cell *matCellDef="let element; let i=index">
-                            <button [disabled]="element?.studentStatus == 2 || element?.isSubmit" [ngClass]="{'Pause': element?.studentStatus == 0, 
-                                'Resume': element?.studentStatus == 1, 
-                                'Stop': element?.studentStatus == 2 || element?.isSubmit}"
-                                [matTooltip]="element?.studentStatus == 1?'Pause Time!':'Resume Time!'"
-                                (click)="StudentTimerPauseResume(index, i, element?.studentStatus)" mat-icon-button>
-                                <mat-icon *ngIf="element?.studentStatus == 2 || element?.isSubmit">stop</mat-icon>
-                                <mat-icon *ngIf="element?.studentStatus == 1 && !element?.isSubmit">pause</mat-icon>
-                                <mat-icon *ngIf="element?.studentStatus == 0 && !element?.isSubmit">play_arrow
+                            <button [disabled]="element?.status == 1 || element?.status == 2 ||
+                            element?.status == 5 || element?.isSubmit" 
+                            [ngClass]="{
+                                'Pause': element?.status == 4, 
+                                'Resume': element?.status == 3, 
+                                'Stop': element?.status == 5 || element?.isSubmit}"
+                                [matTooltip]="element?.status == 3?'Pause Time!':'Resume Time!'"
+                                (click)="StudentTimerPauseResume(index, i, element?.status)" mat-icon-button>
+                                <mat-icon *ngIf="element?.status == 5 || element?.isSubmit">stop</mat-icon>
+                                <mat-icon *ngIf="element?.status == 3 && !element?.isSubmit">pause</mat-icon>
+                                <mat-icon *ngIf="element?.status == 4 && !element?.isSubmit">play_arrow
                                 </mat-icon>
                             </button>
-                            <button [disabled]="element?.studentStatus == 1 
-                            || element?.studentStatus == 2 
+                            <button [disabled]="element?.status == 3 
+                            || element?.status == 5 
                             || element?.isSubmit" color="primary" [matMenuTriggerFor]="systems" matTooltip="Reallocate"
                                 mat-icon-button>
                                 <mat-icon>shuffle</mat-icon>
@@ -108,16 +111,23 @@
                                 </span>
                             </mat-menu>
                             <button (click)="StudentSMP(element)"
-                                [disabled]="element?.studentStatus == 1 || element?.studentStatus == 2 || element?.isSubmit"
+                                [disabled]="element?.status == 3 || element?.status == 5 || element?.isSubmit"
                                 color="warn" matTooltip="SMP" mat-icon-button>
                                 <mat-icon>bug_report</mat-icon>
                             </button>
                             <button (click)="Submit('student', index, i, exam?.examId, element)"
-                                [class.DefaultButton]="element?.studentStatus == 1 || element?.isSubmit"
-                                [disabled]="element?.studentStatus == 1 || element?.isSubmit" class="SuccessIcon"
+                                [class.DefaultButton]="element?.status == 3 || element?.isSubmit"
+                                [disabled]="element?.status == 3 || element?.isSubmit" class="SuccessIcon"
                                 matTooltip="Save" mat-icon-button>
                                 <mat-icon>save</mat-icon>
                             </button>
+                            <button *ngIf="element?.isVerified" [disabled]="element?.isVerified" style="color: green" mat-icon-button>
+                                <mat-icon>done_all</mat-icon>
+                               </button>
+                               <button matTooltip="Verify Now" (click)="SingleStudentVerification(element, index, i)" 
+                               *ngIf="!element?.isVerified" color="primary" mat-icon-button>
+                                <mat-icon>vpn_key</mat-icon>
+                               </button>
                         </mat-cell>
                     </ng-container>
 

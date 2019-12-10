@@ -56,6 +56,11 @@ export class ControllerAPIService {
     return this.http.post(this.URLService.baseURL + this.URLService.examVerifiedStudentFetchURL, this.dataService.controllerData.value);
   }
 
+  InvigilatorStartExam(body: object): any{
+    body = Object.assign(body, this.dataService.controllerData.value)
+    return this.http.post(this.URLService.baseURL + this.URLService.invigilatorStartExamURL, body);
+  }
+
   //------------------implemented-------------------
 
   StudentSMPCheck(body: any): any{

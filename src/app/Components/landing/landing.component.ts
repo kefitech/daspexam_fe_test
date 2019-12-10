@@ -9,6 +9,7 @@ import { ToastrService } from 'ngx-toastr';
 import { StudentLoginAPIService } from 'src/app/Services/student-login-api.service';
 import { HallticketAuthService } from 'src/app/Services/hallticket-auth.service';
 import { EncryptionService } from 'src/app/Services/encryption.service';
+import { QuestionService } from 'src/app/Services/question.service';
 
 @Component({
   selector: 'app-landing',
@@ -20,7 +21,7 @@ export class LandingComponent implements OnInit, AfterViewInit {
   constructor(private dataService: DataService, private router: Router, private authHallTicket: HallticketAuthService,
     private deviceService: DeviceDetectorService, private auth: ControllerAuthService, private service: ControllerAPIService,
     private ngxLoader: NgxUiLoaderService, private toastrService: ToastrService, private studentService: StudentLoginAPIService,
-    private encryptionService: EncryptionService) { }
+    private encryptionService: EncryptionService, private questionService: QuestionService) { }
 
   logo: object = {
     img: "../../../assets/Images/Logo.png",
@@ -42,15 +43,28 @@ export class LandingComponent implements OnInit, AfterViewInit {
   }
 
   ngAfterViewInit() {
+
     var loggedInUser = localStorage.getItem("loginUser");
     if (loggedInUser == 'invigilator') {
       setTimeout(() => {
         this.checkValidUser();
-      }, 10);
+      }, 100);
     }
     else if (loggedInUser == 'student') {
       setTimeout(() => {
         this.CheckValidStudent();
+      }, 10);
+    }
+    var questionFetch = localStorage.getItem("questionFetch");
+    var studentData = localStorage.getItem('studentData');
+    if (questionFetch == 'true' && loggedInUser == 'student') {
+      setTimeout(() => {
+        this.fetchQuestions()
+      }, 10);
+    }
+    if (studentData && loggedInUser == 'student') {
+      setTimeout(() => {
+        this.FetchStudentDetails()
       }, 10);
     }
   }
@@ -188,16 +202,13 @@ export class LandingComponent implements OnInit, AfterViewInit {
       var studentData = localStorage.getItem('studentData');
       var commonInstruction = localStorage.getItem('studentCommonInstruction');
       var subjectSpecificInstruction = localStorage.getItem('studentSubjectSpecificInstruction');
-      if (examStudentId && studentData && commonInstruction != 'true' && subjectSpecificInstruction != 'true') {
+      var examStarts = localStorage.getItem('studentExamStart');
+      if (examStudentId && studentData && commonInstruction != 'true' && 
+      subjectSpecificInstruction != 'true' && examStarts != 'true') {
         try {
           this.ngxLoader.start();
           this.studentService.CheckValidStudent().subscribe(response => {
             if (response.success) {
-              var studentData = localStorage.getItem('studentData');
-              if (studentData) {
-                var dec = this.encryptionService.decryptUsingAES256(studentData);
-                this.dataService.studentData.next(JSON.parse(JSON.parse(dec)));
-              }
               this.ngxLoader.stop();
               this.router.navigate(["/landing/student/initial"]);
             }
@@ -218,19 +229,15 @@ export class LandingComponent implements OnInit, AfterViewInit {
           this.ngxLoader.stop();
         }
       }
-      else if (examStudentId && studentData && commonInstruction == 'true' && subjectSpecificInstruction != 'true') {
+      else if (examStudentId && studentData && commonInstruction == 'true' 
+      && subjectSpecificInstruction != 'true' && examStarts != 'true') {
         try {
           this.ngxLoader.start();
           this.studentService.CheckValidStudent().subscribe(response => {
             if (response.success) {
-              var studentData = localStorage.getItem('studentData');
-              if (studentData) {
-                var dec = this.encryptionService.decryptUsingAES256(studentData);
-                this.dataService.studentData.next(JSON.parse(JSON.parse(dec)));
-              }
               this.ngxLoader.stop();
               this.authHallTicket.hallTicketValid();
-              this.dataService.toggleFullScreen();
+              // this.dataService.toggleFullScreen();
               this.dataService.isNotLoginScreen.next(true);
               this.router.navigate(["/landing/student/exam"]);
             }
@@ -251,19 +258,15 @@ export class LandingComponent implements OnInit, AfterViewInit {
           this.ngxLoader.stop();
         }
       }
-      else if (examStudentId && studentData && commonInstruction == 'true' && subjectSpecificInstruction == 'true') {
+      else if (examStudentId && studentData && commonInstruction == 'true' && 
+      subjectSpecificInstruction == 'true' && examStarts != 'true') {
         try {
           this.ngxLoader.start();
           this.studentService.CheckValidStudent().subscribe(response => {
             if (response.success) {
-              var studentData = localStorage.getItem('studentData');
-              if (studentData) {
-                var dec = this.encryptionService.decryptUsingAES256(studentData);
-                this.dataService.studentData.next(JSON.parse(JSON.parse(dec)));
-              }
               this.ngxLoader.stop();
               this.authHallTicket.hallTicketValid();
-              this.dataService.toggleFullScreen();
+              // this.dataService.toggleFullScreen();
               this.dataService.isNotLoginScreen.next(true);
               this.router.navigate(["/landing/student/exam/subjectspecificinstructions"]);
             }
@@ -284,6 +287,35 @@ export class LandingComponent implements OnInit, AfterViewInit {
           this.ngxLoader.stop();
         }
       }
+      else if (examStudentId && studentData && commonInstruction == 'true' && 
+      subjectSpecificInstruction == 'true' && examStarts == 'true') {
+        try {
+          this.ngxLoader.start();
+          this.studentService.CheckValidStudent().subscribe(response => {
+            if (response.success) {
+              this.ngxLoader.stop();
+              this.authHallTicket.hallTicketValid();
+              // this.dataService.toggleFullScreen();
+              this.dataService.isNotLoginScreen.next(true);
+              this.router.navigate(["/landing/student/exam/progress"]);
+            }
+            else {
+              this.router.navigate(["/landing/student/exam/commoninstructions"]);
+              this.toastrService.error(response.message);
+              this.ngxLoader.stop();
+            }
+          }, error => {
+            this.router.navigate(["/landing/student/exam/commoninstructions"]);
+            this.toastrService.error(error.message);
+            this.ngxLoader.stop();
+          })
+        }
+        catch (e) {
+          this.router.navigate(["/landing/student/exam/commoninstructions"]);
+          this.toastrService.error(e);
+          this.ngxLoader.stop();
+        }
+      }
       else {
         this.router.navigate(["/landing/student"]);
         this.ngxLoader.stop();
@@ -295,7 +327,57 @@ export class LandingComponent implements OnInit, AfterViewInit {
     }
   }
 
-  LogoutController(): void {
+  fetchQuestions(): void {
+    try {
+      this.questionService.questionFetch().subscribe(response => {
+        if (response.success) {
+          localStorage.setItem('questionFetch', 'true');
+          this.dataService.questionsData.next(response.data.questionList);
+          this.CheckExamStarts();
+        }
+        else {
+          this.toastrService.error(response.message);
+        }
+      }, error => {
+        this.toastrService.error(error.message);
+      })
+    }
+    catch (e) {
+      this.toastrService.error(e.message);
+    }
+  }
+
+  CheckExamStarts(): void {
+    try {
+      this.questionService.CheckExamStarts().subscribe(response => {
+        if (response.success) {
+          this.dataService.examStartAndTimer.next(response.data);
+        }
+        else {
+          this.toastrService.error(response.message);
+        }
+      }, error => {
+        this.toastrService.error(error.message);
+      })
+    }
+    catch (e) {
+      this.toastrService.error(e.message);
+    }
+  }
+
+  FetchStudentDetails(): void {
+    try {
+      var studentData = localStorage.getItem('studentData');
+      var dec = this.encryptionService.decryptUsingAES256(studentData);
+      this.dataService.studentData.next(JSON.parse(JSON.parse(dec)));
+    }
+    catch (e) {
+      this.toastrService.error(e);
+    }
+  }
+
+  Logout(): void {
+    var loginType = localStorage.getItem('loginUser');
     localStorage.removeItem("userId");
     localStorage.removeItem("sessionId");
     localStorage.removeItem("email");
@@ -304,11 +386,26 @@ export class LandingComponent implements OnInit, AfterViewInit {
     localStorage.removeItem('controllerExamStart');
     localStorage.removeItem("loginUser");
     localStorage.removeItem("Token");
+    localStorage.removeItem("studentData");
+    localStorage.removeItem("studentSubjectSpecificInstruction");
+    localStorage.removeItem("examStudentId");
+    localStorage.removeItem("studentCommonInstruction");
+    localStorage.removeItem('studentExamStart');
     this.dataService.controllerLogin.next(false);
     this.dataService.controllerData.next(null);
     this.auth.controllerLogoutAuth();
-    this.router.navigate(["/landing/controller/login"]);
-    window.location.reload();
+    if (loginType == 'invigilator') {
+      this.router.navigate(["/landing/controller/login"]);
+      window.location.reload();
+    }
+    else {
+      this.dataService.studentCredentials.next({});
+      this.dataService.studentData.next({});
+      this.router.navigate(["/landing/student/initial"]);
+      setTimeout(() => {
+        window.location.reload();
+      }, 10);
+    }
   }
 
 

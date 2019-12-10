@@ -35,9 +35,10 @@ export class CommonInstructionsComponent implements OnInit, AfterViewInit, OnDes
     try{
       this.apiService.questionFetch().subscribe(response => {
         if(response.success){
-          console.log(response.data.questionList);
-          
+          localStorage.setItem('questionFetch', 'true');
           this.dataService.questionsData.next(response.data.questionList);
+          this.dataService.questionFetch.next(true);
+          this.CheckExamStarts();
           this.pageInitInterval = setInterval(() => {
             this.CheckExamStarts();
           }, 3600)

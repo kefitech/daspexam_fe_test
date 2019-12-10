@@ -36,6 +36,8 @@ export class URLService {
 
   public examVerifiedStudentFetchURL = "api/conduct_exam/verified_student_list";
 
+  public invigilatorStartExamURL = "api/conduct_exam/invigilator_start_exam";
+
   public individualStudentSMP = "api/exam/smp_verify";
   public individualStudentSMPBlock = "api/exam/smp_block";
   public individualStudentTimePauseResume = "api/exam/time-pause-resume";
@@ -44,6 +46,8 @@ export class URLService {
 
   //Student 
   public checkValidStudentURL = "api/conduct_exam/session_verification";
+
+  public studentStartExamURL = "api/conduct_exam/student_start_exam";
 
   public questionFetchURL = "api/conduct_exam/student_question_fetch";
 
@@ -59,7 +63,7 @@ export class URLService {
         this.baseURL = response["URL"];
         this.cloudBaseURL = response["CLOUD_URL"];
       }
-      else{
+      else {
         console.log("Unable to set Base URL");
       }
     })
@@ -73,7 +77,7 @@ export class URLService {
       },
       error => {
         console.log(error);
-        
+
         console.log("Base URL error");
       }
     );

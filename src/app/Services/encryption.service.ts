@@ -35,4 +35,21 @@ export class EncryptionService {
     return decrypted.toString();
   }
 
+  DecryptEncryption(array: any, masterElementFields: string[], subElementFields: string[]): any {
+    if (array.length > 0) {
+      array.forEach(masterElement => {
+        masterElementFields.forEach(masterField => {
+          masterElement[masterField] = this.decryptUsingAES256(masterElement[masterField]);
+        });
+        masterElement.options.forEach(subElement => {
+          subElementFields.forEach(subElementField => {
+            subElement[subElementField] = this.decryptUsingAES256(subElement[subElementField]);
+          });
+        });
+      });
+
+      return array;
+    }
+  }
+
 }

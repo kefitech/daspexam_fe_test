@@ -42,6 +42,8 @@ export class DataService {
 
   public isNotLoginScreen = new BehaviorSubject<boolean>(false);
 
+  public questionFetch = new BehaviorSubject<boolean>(false);
+
   public questionsData = new BehaviorSubject<any>([]);
 
   public timer = new BehaviorSubject<number>(null);

@@ -1,9 +1,5 @@
 import { Component, OnInit, Inject } from '@angular/core';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material';
-import { DataService } from 'src/app/Services/data.service';
-import { NgxUiLoaderService } from 'ngx-ui-loader';
-import { ToastrService } from 'ngx-toastr';
-import { ControllerAPIService } from 'src/app/Services/controller-api.service';
 
 @Component({
   selector: 'app-confirmation-popup',
