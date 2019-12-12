@@ -31,7 +31,7 @@ export class InitialStudentLoginComponent implements OnInit, AfterViewInit {
   ngOnInit() {
     // this.showPopup();
     // this.Interval();
-    this.dataService.studentData.next(null);
+    // this.dataService.studentData.next(null);
   }
 
   ngAfterViewInit() {

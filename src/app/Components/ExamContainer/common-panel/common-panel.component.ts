@@ -6,6 +6,7 @@ import { ExamAPIService } from 'src/app/Services/exam-api.service';
 import { MatDialog } from '@angular/material';
 import { WarningComponent } from 'src/app/Popup/warning/warning.component';
 import { Router } from '@angular/router';
+import { NgxUiLoaderService } from 'ngx-ui-loader';
 
 @Component({
   selector: 'app-common-panel',
@@ -16,23 +17,27 @@ export class CommonPanelComponent implements OnInit {
 
   constructor(private dataService: DataService, private deviceService: DeviceDetectorService,
     private toastrService: ToastrService, private apiService: ExamAPIService, private dialog: MatDialog,
-    private router: Router) { }
+    private router: Router, private ngxLoader: NgxUiLoaderService) { }
 
   fullScr: boolean = false;
   winHeight: number;
 
   ngOnInit() {
+    var SMP = localStorage.getItem('SMP');
+    if (SMP == 'true') {
+      this.sendWarning();
+    }
     this.fullScr = true;
     this.winHeight = window.innerHeight;
   }
 
   @HostListener('window:resize', ['$event'])
-  onResize(event){
-    if(this.winHeight < window.innerHeight)
-    this.winHeight = window.innerHeight;
-      if( window.innerHeight != this.winHeight) {
-        this.sendWarning();
-       }
+  onResize(event) {
+    if (this.winHeight < window.innerHeight)
+      this.winHeight = window.innerHeight;
+    if (window.innerHeight != this.winHeight) {
+      this.sendWarning();
+    }
   }
 
   // @HostListener('contextmenu', ['$event'])
@@ -43,7 +48,7 @@ export class CommonPanelComponent implements OnInit {
   @HostListener('document:keypress', ['$event'])
   handleKeyboardEvent(event: KeyboardEvent) {
     event.preventDefault();
-    
+
   }
 
   // *mouse click event
@@ -57,14 +62,33 @@ export class CommonPanelComponent implements OnInit {
     event.preventDefault();
   }
 
-  sendWarning(): void{
+  sendWarning(): void {
+    localStorage.setItem('SMP', 'true');
     this.dataService.warning.next(true);
     this.router.navigate(['/initial']);
-    this.dialog.open(WarningComponent, 
-      { 
-        minWidth: '35%',
-        disableClose: true
-      });
+    try {
+      this.apiService.MarkStudentSMP().subscribe(response => {
+        if(response.success){
+          this.toastrService.success(response.message);
+          this.dialog.open(WarningComponent,
+            {
+              minWidth: '35%',
+              disableClose: true
+            });
+        }
+        else{
+          this.toastrService.error(response.message);
+          this.ngxLoader.stop();
+        }
+      }, error => {
+        this.toastrService.error(error.message);
+        this.ngxLoader.stop();
+      })
+    }
+    catch (e) {
+      this.toastrService.error(e);
+      this.ngxLoader.stop();
+    }
   }
 
 }

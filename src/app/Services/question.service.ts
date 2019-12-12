@@ -17,6 +17,7 @@ export class QuestionService {
 
   CheckExamStarts(): any{
     var body = this.dataService.studentCredentials.value;
+    if(this.dataService.studentData.value)
     body['examId'] = this.dataService.studentData.value.examId;
     return this.http.post(this.URLService.baseURL + this.URLService.checkExamStartsURL, body);
   }

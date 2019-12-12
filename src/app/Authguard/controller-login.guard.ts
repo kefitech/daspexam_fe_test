@@ -16,7 +16,7 @@ export class ControllerLoginGuard implements CanActivate {
         return true;
       }
       else{
-        this.myRoute.navigate(['/landing/controller']);
+        this.myRoute.navigate(['/landing/invigilator']);
       }
   }
   

@@ -1,7 +1,7 @@
 <mat-horizontal-stepper [linear]="true" #stepper>
 
   <!-- Student Verification -->
-  <mat-step [completed]="stepper1Valid && questionShuffled == 'true' && questionCountValid">
+  <mat-step [completed]="stepper1Valid && questionCountValid && examDetails[0]?.examVerified == 1">
     <ng-template matStepLabel>Verification</ng-template>
     <div class="container">
       <div class="col-sm-12 p-2 Table" *ngFor="let exam of examDetails; let index=index">
@@ -110,7 +110,7 @@
           </mat-form-field>
         </div> -->
         <div class="col-sm-1">
-          <button [disabled]="!stepper1Valid || questionShuffled == 'true' || !questionCountValid" mat-raised-button
+          <button [disabled]="!stepper1Valid || questionShuffled == 'true' || !questionCountValid || examDetails[0]?.examVerified == 1" mat-raised-button
             class="Submit" mwlConfirmationPopover
             [popoverTitle]="popoverTitleSubmitStepper1"
             [popoverMessage]="popoverMessageSubmitStepper1"
@@ -118,7 +118,7 @@
             (confirm)="SubmitStepper1()">Submit</button>
         </div>
         <div class="col-sm-1">
-          <button (click)="NextToStepper2()" [disabled]="!(questionShuffled == 'true') || !stepper1Valid || !questionCountValid" mat-raised-button
+          <button (click)="NextToStepper2()" [disabled]="!stepper1Valid || !questionCountValid || examDetails[0]?.examVerified == 0" mat-raised-button
             color="primary" matStepperNext>Next</button>
         </div>
       </div>

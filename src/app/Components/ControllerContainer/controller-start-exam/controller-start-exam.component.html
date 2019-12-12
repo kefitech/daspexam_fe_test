@@ -1,10 +1,10 @@
 <div class="container">
-    <div class="col-sm-12" *ngIf="examList.length > 0">
+    <div class="col-sm-12 pb-3" *ngIf="examList.length > 0">
 
         <!-- Timer heading protion -->
         <div class="row mt-3">
             <div class="col-sm-10 d-flex justify-content-center MasterTimer">
-                <countdown #masterTimer [config]="masterTimerConfig" (event)="handleMasterTimerEvent($event)">
+               <span *ngIf="!isExamStarted">Time Remaining to start Exam &nbsp;&nbsp;</span> <countdown #masterTimer [config]="masterTimerConfig" (event)="handleMasterTimerEvent($event)">
                 </countdown>
             </div>
             <div class="col-sm-2 pt-2">
@@ -81,43 +81,43 @@
                             {{headerCaption?.caption6}} </mat-header-cell>
                         <mat-cell *matCellDef="let element; let i=index">
                             <button [disabled]="element?.status == 1 || element?.status == 2 ||
-                            element?.status == 5 || element?.isSubmit" 
+                            element?.status == 5 || element?.status == 6" 
                             [ngClass]="{
                                 'Pause': element?.status == 4, 
                                 'Resume': element?.status == 3, 
-                                'Stop': element?.status == 5 || element?.isSubmit}"
+                                'Stop': element?.status == 5 || element?.status == 6}"
                                 [matTooltip]="element?.status == 3?'Pause Time!':'Resume Time!'"
                                 (click)="StudentTimerPauseResume(index, i, element?.status)" mat-icon-button>
-                                <mat-icon *ngIf="element?.status == 5 || element?.isSubmit">stop</mat-icon>
-                                <mat-icon *ngIf="element?.status == 3 && !element?.isSubmit">pause</mat-icon>
-                                <mat-icon *ngIf="element?.status == 4 && !element?.isSubmit">play_arrow
+                                <mat-icon *ngIf="element?.status == 5 || element?.status == 6">stop</mat-icon>
+                                <mat-icon *ngIf="element?.status == 3">pause</mat-icon>
+                                <mat-icon *ngIf="element?.status == 4">play_arrow
                                 </mat-icon>
                             </button>
                             <button [disabled]="element?.status == 3 
                             || element?.status == 5 
-                            || element?.isSubmit" color="primary" [matMenuTriggerFor]="systems" matTooltip="Reallocate"
+                            || element?.status == 6" color="primary" [matMenuTriggerFor]="systems" matTooltip="Reallocate"
                                 mat-icon-button>
                                 <mat-icon>shuffle</mat-icon>
                             </button>
                             <mat-menu #systems="matMenu">
                                 <span *ngFor="let data of backupSystems; let j=index">
                                     <button [disabled]="data?.disabled"
-                                        (click)="SystemChange(element?.systemNo, data?.value, index, i, j)"
+                                        (click)="SystemChange(element?.systemId, element?.systemNo, data?.systemId, data?.systemCode, index, i, j)"
                                         mat-menu-item>
                                         <mat-icon>desktop_windows</mat-icon>
                                         <!-- <mat-icon color="warn" *ngIf="data?.removed">close</mat-icon> -->
-                                        <span>{{data?.value}}</span>
+                                        <span>{{data?.systemCode}}</span>
                                     </button>
                                 </span>
                             </mat-menu>
                             <button (click)="StudentSMP(element)"
-                                [disabled]="element?.status == 3 || element?.status == 5 || element?.isSubmit"
+                                [disabled]="element?.status == 3 || element?.status == 5 || element?.status == 6"
                                 color="warn" matTooltip="SMP" mat-icon-button>
                                 <mat-icon>bug_report</mat-icon>
                             </button>
                             <button (click)="Submit('student', index, i, exam?.examId, element)"
-                                [class.DefaultButton]="element?.status == 3 || element?.isSubmit"
-                                [disabled]="element?.status == 3 || element?.isSubmit" class="SuccessIcon"
+                                [class.DefaultButton]="element?.status == 3 || element?.status == 6"
+                                [disabled]="element?.status == 3 || element?.status == 6" class="SuccessIcon"
                                 matTooltip="Save" mat-icon-button>
                                 <mat-icon>save</mat-icon>
                             </button>
@@ -146,7 +146,7 @@
                 </div>
                 <div class="col-sm-12 d-flex justify-content-end p-2">
                     <button (click)="Submit('exam', index, '', exam?.examId)"
-                        [disabled]="!masterSubmitValid || exam?.isSubmit" mat-raised-button
+                        [disabled]="!masterSubmitValid || element?.status == 6" mat-raised-button
                         class="Submit">Submit</button>
                 </div>
                 <!-- </div> -->

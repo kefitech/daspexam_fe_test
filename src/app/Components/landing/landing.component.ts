@@ -29,6 +29,8 @@ export class LandingComponent implements OnInit, AfterViewInit {
   }
   user: object;
 
+  sideNavVisible: boolean = false;
+
 
   ngOnInit() {
     this.dataService.controllerData.next({
@@ -97,21 +99,21 @@ export class LandingComponent implements OnInit, AfterViewInit {
               this.dataService.controllerData.next(controller);
               this.auth.controllerLoginAuth();
               this.ngxLoader.stop();
-              this.router.navigate(["/landing/controller/instruction"]);
+              this.router.navigate(["/landing/invigilator/instruction"]);
             }
             else {
-              this.router.navigate(["/landing/controller/login"]);
+              this.router.navigate(["/landing/invigilator/login"]);
               this.toastrService.error(response.message);
               this.ngxLoader.stop();
             }
           }, error => {
-            this.router.navigate(["/landing/controller/login"]);
+            this.router.navigate(["/landing/invigilator/login"]);
             this.toastrService.error(error.message);
             this.ngxLoader.stop();
           })
         }
         catch (e) {
-          this.router.navigate(["/landing/controller/login"]);
+          this.router.navigate(["/landing/invigilator/login"]);
           this.toastrService.error(e);
           this.ngxLoader.stop();
         }
@@ -131,21 +133,21 @@ export class LandingComponent implements OnInit, AfterViewInit {
               this.dataService.controllerData.next(controller);
               this.auth.controllerLoginAuth();
               this.ngxLoader.stop();
-              this.router.navigate(["/landing/controller/dashboard"]);
+              this.router.navigate(["/landing/invigilator/dashboard"]);
             }
             else {
-              this.router.navigate(["/landing/controller/login"]);
+              this.router.navigate(["/landing/invigilator/login"]);
               this.toastrService.error(response.message);
               this.ngxLoader.stop();
             }
           }, error => {
-            this.router.navigate(["/landing/controller/login"]);
+            this.router.navigate(["/landing/invigilator/login"]);
             this.toastrService.error(error.message);
             this.ngxLoader.stop();
           })
         }
         catch (e) {
-          this.router.navigate(["/landing/controller/login"]);
+          this.router.navigate(["/landing/invigilator/login"]);
           this.toastrService.error(e);
           this.ngxLoader.stop();
         }
@@ -165,27 +167,27 @@ export class LandingComponent implements OnInit, AfterViewInit {
               this.dataService.controllerData.next(controller);
               this.auth.controllerLoginAuth();
               this.ngxLoader.stop();
-              this.router.navigate(["/landing/controller/examstart"]);
+              this.router.navigate(["/landing/invigilator/examstart"]);
             }
             else {
-              this.router.navigate(["/landing/controller/login"]);
+              this.router.navigate(["/landing/invigilator/login"]);
               this.toastrService.error(response.message);
               this.ngxLoader.stop();
             }
           }, error => {
-            this.router.navigate(["/landing/controller/login"]);
+            this.router.navigate(["/landing/invigilator/login"]);
             this.toastrService.error(error.message);
             this.ngxLoader.stop();
           })
         }
         catch (e) {
-          this.router.navigate(["/landing/controller/login"]);
+          this.router.navigate(["/landing/invigilator/login"]);
           this.toastrService.error(e);
           this.ngxLoader.stop();
         }
       }
       else {
-        this.router.navigate(["/landing/controller/login"]);
+        this.router.navigate(["/landing/invigilator/login"]);
         this.ngxLoader.stop();
       }
     }
@@ -203,8 +205,8 @@ export class LandingComponent implements OnInit, AfterViewInit {
       var commonInstruction = localStorage.getItem('studentCommonInstruction');
       var subjectSpecificInstruction = localStorage.getItem('studentSubjectSpecificInstruction');
       var examStarts = localStorage.getItem('studentExamStart');
-      if (examStudentId && studentData && commonInstruction != 'true' && 
-      subjectSpecificInstruction != 'true' && examStarts != 'true') {
+      if (examStudentId && studentData && commonInstruction != 'true' &&
+        subjectSpecificInstruction != 'true' && examStarts != 'true') {
         try {
           this.ngxLoader.start();
           this.studentService.CheckValidStudent().subscribe(response => {
@@ -229,8 +231,8 @@ export class LandingComponent implements OnInit, AfterViewInit {
           this.ngxLoader.stop();
         }
       }
-      else if (examStudentId && studentData && commonInstruction == 'true' 
-      && subjectSpecificInstruction != 'true' && examStarts != 'true') {
+      else if (examStudentId && studentData && commonInstruction == 'true'
+        && subjectSpecificInstruction != 'true' && examStarts != 'true') {
         try {
           this.ngxLoader.start();
           this.studentService.CheckValidStudent().subscribe(response => {
@@ -258,8 +260,8 @@ export class LandingComponent implements OnInit, AfterViewInit {
           this.ngxLoader.stop();
         }
       }
-      else if (examStudentId && studentData && commonInstruction == 'true' && 
-      subjectSpecificInstruction == 'true' && examStarts != 'true') {
+      else if (examStudentId && studentData && commonInstruction == 'true' &&
+        subjectSpecificInstruction == 'true' && examStarts != 'true') {
         try {
           this.ngxLoader.start();
           this.studentService.CheckValidStudent().subscribe(response => {
@@ -287,8 +289,8 @@ export class LandingComponent implements OnInit, AfterViewInit {
           this.ngxLoader.stop();
         }
       }
-      else if (examStudentId && studentData && commonInstruction == 'true' && 
-      subjectSpecificInstruction == 'true' && examStarts == 'true') {
+      else if (examStudentId && studentData && commonInstruction == 'true' &&
+        subjectSpecificInstruction == 'true' && examStarts == 'true') {
         try {
           this.ngxLoader.start();
           this.studentService.CheckValidStudent().subscribe(response => {
@@ -395,7 +397,7 @@ export class LandingComponent implements OnInit, AfterViewInit {
     this.dataService.controllerData.next(null);
     this.auth.controllerLogoutAuth();
     if (loginType == 'invigilator') {
-      this.router.navigate(["/landing/controller/login"]);
+      this.router.navigate(["/landing/invigilator/login"]);
       window.location.reload();
     }
     else {

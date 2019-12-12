@@ -177,7 +177,7 @@ export class ControllerLoginComponent implements OnInit, AfterViewInit {
           localStorage.setItem("userId", userId);
           localStorage.setItem("sessionId", sessionId);
           localStorage.setItem("loginUser", 'invigilator');
-          this.router.navigate(["/landing/controller/instruction"]);
+          this.router.navigate(["/landing/invigilator/instruction"]);
         }
         else {
           this.toastrService.error(response.message);

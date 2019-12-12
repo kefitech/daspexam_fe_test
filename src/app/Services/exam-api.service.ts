@@ -16,4 +16,15 @@ export class ExamAPIService {
   //   return this.http.post(this.URLService.baseURL + this.URLService.examDetails, data);
   // }
 
+  UnlockStudentSMP(body: any): any {
+    body = Object.assign(body, this.dataService.studentCredentials.value);
+    return this.http.post(this.URLService.baseURL + this.URLService.UnlockStudentSMPURL, body);
+  }
+
+  MarkStudentSMP(): any {
+    var body = this.dataService.studentCredentials.value;
+    body['timeRemains'] = localStorage.getItem('freq');
+    return this.http.post(this.URLService.baseURL + this.URLService.markStudentSMPURL, body);
+  }
+
 }

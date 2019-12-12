@@ -38,9 +38,17 @@ export class URLService {
 
   public invigilatorStartExamURL = "api/conduct_exam/invigilator_start_exam";
 
+  public individualStudentTimePauseURL = "api/conduct_exam/invigilator_time_pause";
+
+  public individualStudentTimeResumeURL = "api/conduct_exam/invigilator_time_resume";
+
+  public fetchReservedSystemsURL = "api/conduct_exam/fetch_res_systems";
+
+
+
+
   public individualStudentSMP = "api/exam/smp_verify";
   public individualStudentSMPBlock = "api/exam/smp_block";
-  public individualStudentTimePauseResume = "api/exam/time-pause-resume";
   public invigilatorExamSubmit = "api/exam/invigilator_exam_submit";
 
 
@@ -52,6 +60,10 @@ export class URLService {
   public questionFetchURL = "api/conduct_exam/student_question_fetch";
 
   public checkExamStartsURL = "api/conduct_exam/exam_status_check";
+
+  public markStudentSMPURL = "api/conduct_exam/smp_mark";
+
+  public UnlockStudentSMPURL = "api/conduct_exam/smp_otp_verification";
 
 
   public headers = new HttpHeaders({ 'Content-Type': 'application/json; charset=utf-8' });

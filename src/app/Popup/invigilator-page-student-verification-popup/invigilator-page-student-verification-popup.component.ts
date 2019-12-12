@@ -90,8 +90,7 @@ export class InvigilatorPageStudentVerificationPopupComponent implements OnInit 
       this.ngxLoader.start();
       var body = {
         verified: this.data.student['verified'],
-        examStudentId: this.data.student['examStudentId'],
-        timeRemains: this.data.duration
+        examStudentId: this.data.student['examStudentId']
       }
       this.service.SingleStudentVerification(body).subscribe(response => {
         if (response.success) {

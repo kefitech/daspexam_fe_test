@@ -7,8 +7,8 @@
     <div class="row">
         <mat-form-field appearance="outline" class="FormField">
             <mat-label>{{formCaption}}</mat-label>
-            <input type="password" formControlName="key" matInput [placeholder]="formCaption">
-            <mat-error *ngIf="lockForm.get('key').hasError('required')">
+            <input type="password" formControlName="smpOtp" matInput [placeholder]="formCaption">
+            <mat-error *ngIf="lockForm.get('smpOtp').hasError('required')">
                     {{error?.required}}
                 </mat-error>
         </mat-form-field>

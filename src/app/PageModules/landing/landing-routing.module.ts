@@ -6,7 +6,7 @@ import { PageNotFoundComponent } from 'src/app/Components/page-not-found/page-no
 
 const routes: Routes = [
   { path: '', component: LandingComponent, children: [
-    { path: 'controller', 
+    { path: 'invigilator', 
       loadChildren: () => import ("../controller-login/controller-login.module").then(m => m.ControllerLoginModule) },
     { path: 'student', 
       loadChildren: () => import ("../student-login/student-login.module").then(m => m.StudentLoginModule) },
