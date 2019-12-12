@@ -85,7 +85,7 @@
                         <mat-radio-button color="primary" [checked]="exam?.answeredOption == options?.optionId"
                             (change)="Answer(i, j, exam?.questionId, options?.option, $event)"
                             [value]="options?.optionId">
-                            <span *ngIf="options?.isImage == 0" [innerHtml]="options?.option">
+                            <span style="word-wrap: break-word;" *ngIf="options?.isImage == 0" [innerHtml]="options?.option">
                                 <!-- Options available here -->
                             </span>
                             <img *ngIf="options?.isImage == 1" class="rounded AnswerImage" [src]="options?.option" alt="">

@@ -22,7 +22,7 @@ export class ExamStartComponent implements OnInit, OnDestroy {
   timerConfig: any;
   // time: number;
   sideNav: boolean = false;
-  examinationData: any;
+  examinationData: any = [];
   activeIndex: number = 0;
   answers: any = [];
 
@@ -47,7 +47,7 @@ export class ExamStartComponent implements OnInit, OnDestroy {
     })
 
     this.questionSubscription = this.dataService.questionsData.subscribe(response => {
-      if (this.examinationData) {
+      if (response.length>0) {
         console.log(response);
         this.examinationData = this.encryptionService.DecryptEncryption(response, ['question'], ['option']);
         console.log(this.examinationData);
@@ -73,9 +73,9 @@ export class ExamStartComponent implements OnInit, OnDestroy {
         if (response) {
           localStorage.setItem("freq", this.countdown["left"])
         }
-        else if (!response) {
-          this.dataService.studentData.value["examDuration"] = parseInt(localStorage.getItem("freq")) / 60000 + " Minutes";
-        }
+        // else if (!response) {
+        //   this.dataService.studentData.value["examDuration"] = parseInt(localStorage.getItem("freq")) / 60000 + " Minutes";
+        // }
       }
 
     })

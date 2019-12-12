@@ -289,7 +289,7 @@ export class ControllerDashboardComponent implements OnInit, AfterViewInit, OnDe
     const dialogRef = this.dialog.open(InvigilatorPageStudentVerificationPopupComponent, {
       width: '45%',
       height: '80%',
-      data: { student: rowData, exam: this.studentAssignmentExamDetails[index], duration: this.studentAssignmentExamDetails[index]['duration'] }
+      data: { student: rowData, exam: this.studentAssignmentExamDetails[index] }
     })
     dialogRef.afterClosed().subscribe(response => {
       var submit = dialogRef.componentInstance.isSubmit;
@@ -342,7 +342,7 @@ export class ControllerDashboardComponent implements OnInit, AfterViewInit, OnDe
       this.service.InvigilatorStartExam(body).subscribe(response => {
         if (response.success) {
           localStorage.setItem('controllerExamStart', 'true');
-          this.router.navigate(['landing/controller/examstart']);
+          this.router.navigate(['landing/invigilator/examstart']);
           this.ngxLoader.stop();
         }
         else {

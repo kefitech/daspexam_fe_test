@@ -43,7 +43,7 @@ export class ControllerInstructionsComponent implements OnInit, AfterViewInit {
   Accept(): void {
     localStorage.setItem('AcceptInstruction', 'true');
     this.auth.controllerLoginAuth();
-    this.router.navigate(['landing/controller/dashboard']);
+    this.router.navigate(['landing/invigilator/dashboard']);
   }
 
 }
