@@ -38,17 +38,17 @@ export class ControllerAPIService {
   }
 
   studentFaceRecognition(body): any {
-    body = Object.assign(body, this.dataService.controllerData.value)
+    body = Object.assign(body, this.dataService.controllerData.value);
     return this.http.post(this.URLService.baseURL + this.URLService.studentFaceRecognitionURL, body);
   }
 
   SingleStudentVerification(body: object): any {
-    body = Object.assign(body, this.dataService.controllerData.value)
+    body = Object.assign(body, this.dataService.controllerData.value);
     return this.http.post(this.URLService.baseURL + this.URLService.singleStudentVerifyURL, body);
   }
 
   SubmitAllExams(body: object): any {
-    body = Object.assign(body, this.dataService.controllerData.value)
+    body = Object.assign(body, this.dataService.controllerData.value);
     return this.http.post(this.URLService.baseURL + this.URLService.submitAllExamsURL, body);
   }
 
@@ -57,12 +57,17 @@ export class ControllerAPIService {
   }
 
   InvigilatorStartExam(body: object): any {
-    body = Object.assign(body, this.dataService.controllerData.value)
+    body = Object.assign(body, this.dataService.controllerData.value);
     return this.http.post(this.URLService.baseURL + this.URLService.invigilatorStartExamURL, body);
   }
 
   FetchReservedSystems(): any{
     return this.http.post(this.URLService.baseURL + this.URLService.fetchReservedSystemsURL, this.dataService.controllerData.value);
+  }
+
+  SystemChange(body: object): any{
+    body = Object.assign(body, this.dataService.controllerData.value);
+    return this.http.post(this.URLService.baseURL + this.URLService.individualStudentSystemChange, body);
   }
 
   //------------------implemented-------------------

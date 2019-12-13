@@ -23,7 +23,7 @@ export class ExamAPIService {
 
   MarkStudentSMP(): any {
     var body = this.dataService.studentCredentials.value;
-    body['timeRemains'] = localStorage.getItem('freq');
+    body['timeRemains'] = Math.round(parseInt(localStorage.getItem('freq'))/6000);
     return this.http.post(this.URLService.baseURL + this.URLService.markStudentSMPURL, body);
   }
 

@@ -1,29 +1,29 @@
 <div class="col-sm-12">
     <div class="row d-flex justify-content-center">
-        <h5 class="font-weight-bold">{{studentDetails?.studentName}}</h5>
+        <h5 class="font-weight-bold">{{studentDetails?.name}}</h5>
     </div>
     <div class="row">
         <div class="col-sm-11 pt-2">
             <h6 class="font-weight-bold">No of SMP attempts</h6>
         </div>
         <div class="col-sm-1">
-            <button style="outline: none; cursor: default;" mat-mini-fab color="warn">{{studentDetails?.attempts}}</button>
+            <button style="outline: none; cursor: default;" mat-mini-fab color="warn">{{studentDetails?.smpCount}}</button>
         </div>
     </div>
-    <div class="row" *ngFor="let data of studentDetails?.warnings; let index=index; let first=first; let last=last">
+    <div class="row">
         <div class="col-sm-6 font-weight-bold d-flex justify-content-center">
-            {{data?.caption}} <span class="text-danger">*</span>
+            Warning{{studentDetails?.smpCount}} <span class="text-danger">*</span>
         </div>
         <div class="col-sm-6 d-flex justify-content-center">
-               <span *ngIf="!data?.entered" class="font-weight-bold">{{data?.key}}</span>
-               <span *ngIf="data?.entered" class="font-weight-bold text-danger strikethrough">
+               <span *ngIf="studentDetails?.smpOtp" class="font-weight-bold">{{studentDetails?.smpOtp}}</span>
+               <!-- <span *ngIf="data?.entered" class="font-weight-bold text-danger strikethrough">
                     <span class="text-dark">{{data?.key}}</span>
-                  </span>
+                  </span> -->
             </div>
     </div>
     <div class="row m-4 d-flex justify-content-end">
         <div class="col-sm-3">
-            <button (click)="Block()" mat-raised-button class="Submit" [disabled]="studentDetails?.attempts < 3">Block</button>
+            <button (click)="Block()" mat-raised-button class="Submit" [disabled]="studentDetails?.smpCount < 3">Block</button>
         </div>
         <div class="col-sm-3">
             <button mat-raised-button color="warn" (click)="Close()">Close</button>

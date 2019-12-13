@@ -44,7 +44,7 @@ export class URLService {
 
   public fetchReservedSystemsURL = "api/conduct_exam/fetch_res_systems";
 
-
+  public individualStudentSystemChange = "api/conduct_exam/stud_system_change";
 
 
   public individualStudentSMP = "api/exam/smp_verify";

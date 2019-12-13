@@ -65,8 +65,8 @@
                         <!-- Questions available here -->
                     </div>
                     <div class="col-sm-4">
-                        <div class="row" *ngIf="exam?.imageUrl">
-                            <img class="rounded QuestionImage" [src]="exam?.imageUrl" alt="">
+                        <div class="row" *ngIf="exam?.isImage == 1">
+                            <img class="rounded QuestionImage" [src]="exam?.imgUrl" alt="">
                         </div>
                         <div class="row" *ngIf="exam?.audio">
                             <audio controls>
