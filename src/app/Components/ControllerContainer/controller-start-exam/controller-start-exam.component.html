@@ -81,7 +81,7 @@
                             {{headerCaption?.caption6}} </mat-header-cell>
                         <mat-cell *matCellDef="let element; let i=index">
                             <button [disabled]="element?.status == 1 || element?.status == 2 ||
-                            element?.status == 5 || element?.status == 6" 
+                            element?.status == 5 || element?.status == 6 || !isExamStarted" 
                             [ngClass]="{
                                 'Pause': element?.status == 4, 
                                 'Resume': element?.status == 3, 
@@ -95,14 +95,14 @@
                             </button>
                             <button [disabled]="element?.status == 3 
                             || element?.status == 5 
-                            || element?.status == 6" color="primary" [matMenuTriggerFor]="systems" matTooltip="Reallocate"
+                            || element?.status == 6 || !isExamStarted" color="primary" [matMenuTriggerFor]="systems" matTooltip="Reallocate"
                                 mat-icon-button>
                                 <mat-icon>shuffle</mat-icon>
                             </button>
                             <mat-menu #systems="matMenu">
                                 <span *ngFor="let data of backupSystems; let j=index">
                                     <button [disabled]="data?.disabled"
-                                        (click)="SystemChange(element?.systemId, element?.systemNo, data?.systemId, data?.systemCode, index, i, j)"
+                                        (click)="SystemChange(element?.systemId, element?.systemNo, data?.systemId, data?.systemCode, index, i, j, element?.examStudentId)"
                                         mat-menu-item>
                                         <mat-icon>desktop_windows</mat-icon>
                                         <!-- <mat-icon color="warn" *ngIf="data?.removed">close</mat-icon> -->
@@ -111,13 +111,13 @@
                                 </span>
                             </mat-menu>
                             <button (click)="StudentSMP(element)"
-                                [disabled]="element?.status == 3 || element?.status == 5 || element?.status == 6"
+                                [disabled]="element?.status == 3 || element?.status == 5 || element?.status == 6 || !isExamStarted"
                                 color="warn" matTooltip="SMP" mat-icon-button>
                                 <mat-icon>bug_report</mat-icon>
                             </button>
                             <button (click)="Submit('student', index, i, exam?.examId, element)"
                                 [class.DefaultButton]="element?.status == 3 || element?.status == 6"
-                                [disabled]="element?.status == 3 || element?.status == 6" class="SuccessIcon"
+                                [disabled]="element?.status == 3 || element?.status == 6 || !isExamStarted" class="SuccessIcon"
                                 matTooltip="Save" mat-icon-button>
                                 <mat-icon>save</mat-icon>
                             </button>

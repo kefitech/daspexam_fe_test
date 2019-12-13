@@ -71,7 +71,7 @@ export class ExamStartComponent implements OnInit, OnDestroy {
 
       if (response != null) {
         if (response) {
-          localStorage.setItem("freq", this.countdown["left"])
+          localStorage.setItem("freq", this.countdown["left"]);
         }
         // else if (!response) {
         //   this.dataService.studentData.value["examDuration"] = parseInt(localStorage.getItem("freq")) / 60000 + " Minutes";

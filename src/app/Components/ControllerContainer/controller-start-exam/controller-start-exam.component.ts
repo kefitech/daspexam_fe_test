@@ -57,7 +57,7 @@ export class ControllerStartExamComponent implements OnInit, AfterViewInit, OnDe
     var timeLeft = event.left / 60000;
 
     if (event.action == "start") {
-      if (this.isExamStarted)
+      if (this.isExamStarted && timeLeft != 0)
         this.toastrService.success("Examination started");
     }
     else if (event.action == "notify") {
@@ -108,19 +108,12 @@ export class ControllerStartExamComponent implements OnInit, AfterViewInit, OnDe
     }
   }
 
-  FetchReservedSystems(): void{
+  FetchReservedSystems(): void {
     try {
       this.ngxLoader.start();
       this.service.FetchReservedSystems().subscribe(response => {
         if (response.success) {
           this.backupSystems = response.data.reservedSystems;
-          // [
-          //   { value: 'System1', disabled: false },
-          //   { value: 'System2', disabled: false },
-          //   { value: 'System3', disabled: false },
-          //   { value: 'System4', disabled: false },
-          //   { value: 'System5', disabled: false },
-          // ];
           this.ngxLoader.stop();
         }
         else {
@@ -235,10 +228,35 @@ export class ControllerStartExamComponent implements OnInit, AfterViewInit, OnDe
   }
 
   SystemChange(oldSystemId: number, oldSystemValue: string, reservedSystemId: number,
-    reservedSystemValue: string, index: number, rowIndex: number, optIndex: number): void {
-    this.examList[index]['studentList']['data'][rowIndex]['systemNo'] = reservedSystemValue;
-    this.examList[index]['studentList']['data'][rowIndex]['systemId'] = reservedSystemId;
-    this.backupSystems.splice(optIndex, 1)
+    reservedSystemValue: string, index: number, rowIndex: number, optIndex: number, examStudentId: number): void {
+    try {
+      this.ngxLoader.start();
+      var body = {
+        examStudentId: examStudentId,
+        newSystemId: reservedSystemId,
+        preSystemId: oldSystemId
+      }
+      this.service.SystemChange(body).subscribe(response => {
+        if (response.success) {
+          this.examList[index]['studentList']['data'][rowIndex]['systemNo'] = reservedSystemValue;
+          this.examList[index]['studentList']['data'][rowIndex]['systemId'] = reservedSystemId;
+          this.backupSystems.splice(optIndex, 1);
+          this.toastrService.success(response.message);
+          this.ngxLoader.stop();
+        }
+        else {
+          this.toastrService.error(response.message);
+          this.ngxLoader.stop();
+        }
+      }, error => {
+        this.toastrService.error(error.message);
+        this.ngxLoader.stop();
+      })
+    }
+    catch (e) {
+      this.toastrService.error(e);
+      this.ngxLoader.stop();
+    }
     // this.backupSystems[optIndex]['value'] = oldValue;
     // this.backupSystems[optIndex]['removed'] = true;
   }

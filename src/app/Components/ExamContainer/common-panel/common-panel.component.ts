@@ -36,7 +36,7 @@ export class CommonPanelComponent implements OnInit {
     if (this.winHeight < window.innerHeight)
       this.winHeight = window.innerHeight;
     if (window.innerHeight != this.winHeight) {
-      this.sendWarning();
+      this.MarkSMP();
     }
   }
 
@@ -66,9 +66,22 @@ export class CommonPanelComponent implements OnInit {
     localStorage.setItem('SMP', 'true');
     this.dataService.warning.next(true);
     this.router.navigate(['/initial']);
+    this.dialog.open(WarningComponent,
+      {
+        minWidth: '35%',
+        disableClose: true
+      });
+  }
+
+  MarkSMP(): void {
     try {
+      this.ngxLoader.start();
+      localStorage.setItem('SMP', 'true');
+      this.dataService.warning.next(true);
+      this.router.navigate(['/initial']);
       this.apiService.MarkStudentSMP().subscribe(response => {
-        if(response.success){
+        if (response.success) {
+          this.ngxLoader.stop();
           this.toastrService.success(response.message);
           this.dialog.open(WarningComponent,
             {
@@ -76,9 +89,8 @@ export class CommonPanelComponent implements OnInit {
               disableClose: true
             });
         }
-        else{
+        else {
           this.toastrService.error(response.message);
-          this.ngxLoader.stop();
         }
       }, error => {
         this.toastrService.error(error.message);
