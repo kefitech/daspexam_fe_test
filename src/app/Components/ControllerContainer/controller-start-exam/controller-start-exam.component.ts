@@ -65,7 +65,10 @@ export class ControllerStartExamComponent implements OnInit, AfterViewInit, OnDe
     }
     else if (event.action == "done") {
       if (!this.isExamStarted) {
-        this.FetchExamList();
+        this.ngxLoader.start();
+        setTimeout(() => {
+          this.FetchExamList();
+        }, 10);
       }
       else {
         this.masterSubmitValid = true;
@@ -133,6 +136,9 @@ export class ControllerStartExamComponent implements OnInit, AfterViewInit, OnDe
 
   TableRefresh(): void {
     this.examList.forEach((element, index) => {
+      // if(!this.isExamStarted){
+      //   element['studentList'] = element['studentList'].map(({timeLeft, ...rest}) => ({timeLeft: {leftTime: 0}, ...rest}));
+      // }
       element['studentList'] = new MatTableDataSource<any>(element['studentList']);
       setTimeout(() => {
         element['studentList'].paginator = this.paginator.toArray()[index];
@@ -140,7 +146,7 @@ export class ControllerStartExamComponent implements OnInit, AfterViewInit, OnDe
       }, 10);
 
       element['studentList']['data'] = element['studentList']['data'].map(({ timeLeft, ...rest }) =>
-        ({ timeLeft: { leftTime: timeLeft * 60 }, ...rest }));
+        ({ timeLeft: { leftTime: !this.isExamStarted?0:timeLeft=='null'?0:timeLeft * 60 }, ...rest }));
     });
   }
 
@@ -164,7 +170,7 @@ export class ControllerStartExamComponent implements OnInit, AfterViewInit, OnDe
           //   var timeInSec = (this.studentTimer['_results'][length + rowIndex]['i']['value']) / 1000;
           var body = {
             type: status == 3 ? 'pause' : status == 4 ? 'resume' : '',
-            timeRemains: Math.round((this.studentTimer['_results'][length + rowIndex]['i']['value'] / 1000) / 60),
+            // timeRemains: Math.round((this.studentTimer['_results'][length + rowIndex]['i']['value'] / 1000) / 60),
             examStudentId: this.examList[index]['studentList']['data'][rowIndex]['examStudentId']
           }
 
@@ -287,7 +293,8 @@ export class ControllerStartExamComponent implements OnInit, AfterViewInit, OnDe
       }
       if (this.studentTimer['_results'][length + rowIndex])
         this.studentTimer['_results'][length + rowIndex].stop();
-      this.examList[index]['studentList']['data'][rowIndex]['studentStatus'] = 2;
+      if (this.examList[index]['studentList']['data'])
+        this.examList[index]['studentList']['data'][rowIndex]['studentStatus'] = 2;
     }
   }
 
@@ -311,41 +318,52 @@ export class ControllerStartExamComponent implements OnInit, AfterViewInit, OnDe
         var body;
         if (type == 'student') {
           body = {
-            examDetails: [this.examList[examIndex]['studentList']['data'][rowIndex]].map(({ ...rest }) => ({ examId: examId, ...rest }))
+            studentExamDetails: this.examList[examIndex]['studentList']['data'][rowIndex]
+              .map(({ studentSystemId, examStudentId, ...rest }) =>
+                ({ std_sys_id: studentSystemId, exam_student_id: examStudentId, exam_id: examId, ...rest }))
           }
         }
         else if (type == 'exam') {
           body = {
-            examDetails: this.examList[examIndex]['studentList']['data'].map(({ ...rest }) => ({ examId: examId, ...rest }))
+            studentExamDetails: this.examList[examIndex]['studentList']['data']
+              .map(({ studentSystemId, examStudentId, ...rest }) =>
+                ({ std_sys_id: studentSystemId, exam_student_id: examStudentId, exam_id: examId, ...rest }))
+                .filter(f => (f.isVerified == 1 && f.status != 6))
           }
         }
         else if (type == 'all') {
           var studentList = [];
           this.examList.forEach(element => {
-            studentList = studentList.concat(element['studentList']['data'].map(({ ...rest }) => ({ examId: element['examId'], ...rest })));
+            studentList = studentList.concat(element['studentList']['data']
+              .map(({ studentSystemId, examStudentId, ...rest }) =>
+                ({ std_sys_id: studentSystemId, exam_student_id: examStudentId, exam_id: element['examId'], ...rest }))
+                .filter(f => (f.isVerified == 1 && f.status != 6)));
           });
           body = {
-            examDetails: studentList
+            studentExamDetails: studentList
           }
         }
+        console.log(body);
+        
         this.SaveFunctionalitiesOnTable(type, false, examIndex, rowIndex);
         try {
-          // this.ngxLoader.start();
-          // this.service.SubmitExam(body).subscribe(response => {
-          //   if (response.success) {
-          // if (type == 'student') {
-          //   this.examList[examIndex]['studentList']['data'][rowIndex]['isSubmit'] = true;
-          // }
-          this.SaveFunctionalitiesOnTable(type, true, examIndex, rowIndex);
-          //   }
-          //   else {
-          //     this.toastrService.error(response.message);
-          //     this.ngxLoader.stop();
-          //   }
-          // }, error => {
-          //   this.toastrService.error(error.message);
-          //   this.ngxLoader.stop();
-          // })
+          this.ngxLoader.start();
+
+          this.service.SubmitExam(body).subscribe(response => {
+            if (response.success) {
+              if (type == 'student') {
+                this.examList[examIndex]['studentList']['data'][rowIndex]['isSubmit'] = true;
+              }
+              this.SaveFunctionalitiesOnTable(type, true, examIndex, rowIndex);
+            }
+            else {
+              this.toastrService.error(response.message);
+              this.ngxLoader.stop();
+            }
+          }, error => {
+            this.toastrService.error(error.message);
+            this.ngxLoader.stop();
+          })
         }
         catch (e) {
           this.toastrService.error(e);
@@ -357,13 +375,26 @@ export class ControllerStartExamComponent implements OnInit, AfterViewInit, OnDe
 
   SaveFunctionalitiesOnTable(type: string, status: boolean, examIndex?: number, rowIndex?: number): void {
     if (type == 'student') {
-      this.examList[examIndex]['studentList']['data'][rowIndex]['isSubmit'] = status;
-      var isSingleExamsDone = this.examList[examIndex]['studentList']['data'].every(d => d.isSubmit == true);
-      if (isSingleExamsDone && status)
-        this.examList[examIndex]['isSubmit'] = status;
-      let allExamsDone = this.examList.every(d => d['isSubmit'] == true);
-      if (allExamsDone && status)
+      this.examList[examIndex]['studentList']['data'][rowIndex]['status'] = 6;
+      var isSingleExamsDone = this.examList[examIndex]['studentList']['data'].filter(f => f.isVerified == 1)
+      .every(d => d.status == 6);
+      if (isSingleExamsDone && status){
+        // this.examList[examIndex]['isSubmit'] = status;
+        this.examList[examIndex]['studentList']['data'] = this.examList[examIndex]['studentList']['data']
+        .map(({status, isVerified, ...rest}) => ({status: isVerified == 1?6:status, ...rest}));
+      }
+      // let allExamsDone = this.examList.every(d => d['isSubmit'] == true);
+      var allExamsDone;
+      this.examList.forEach(element => {
+        allExamsDone = element['studentList']['data']
+        .filter(f => f.isVerified == 1)
+        .every(e => e.status == 6);
+      })
+      if (allExamsDone && status){
         this.masterSubmitValid = !status;
+      }
+      console.log(this.examList);
+      
     }
     else if (type == 'exam') {
       let length = 0;
@@ -379,32 +410,43 @@ export class ControllerStartExamComponent implements OnInit, AfterViewInit, OnDe
         this.studentTimer['_results'][startVal].pause();
         time.push(this.studentTimer['_results'][startVal]['i']['value'] / 1000);
       }
-      if (status)
-        this.examList[examIndex]['isSubmit'] = status;
+      if (status){
+        this.examList[examIndex]['studentList']['data'] = this.examList[examIndex]['studentList']['data']
+        .map(({status, isVerified, ...rest}) => ({status: isVerified == 1?6:status, ...rest}));
+      }
+        // this.examList[examIndex]['isSubmit'] = status;
       this.examList[examIndex]['studentList']['data'].forEach((element, index) => {
-        if (status)
-          element['isSubmit'] = status;
+        // if (status)
+          // element['status'] = status;
         element['time'] = time[index];
       });
 
-      let allExamsDone = this.examList.every(d => d['isSubmit'] == true);
+      var allExamsDone;
+      this.examList.forEach(element => {
+        allExamsDone = element['studentList']['data']
+        .filter(f => f.isVerified == 1)
+        .every(e => e.status == 6);
+      })
       if (allExamsDone)
         this.masterSubmitValid = !status;
+        console.log(this.examList);
     }
     else if (type == 'all') {
-      var length = 0;
+      // var length = 0;
       this.examList.forEach((element, examIndex) => {
         element['studentList']['data'].forEach((studentData) => {
-          if (status)
-            studentData['isSubmit'] = status;
-          studentData['time'] = this.studentTimer['_results'][length]['i']['value'] / 1000;
-          this.studentTimer['_results'][length].pause();
-          length++;
+          // if (status)
+          //   studentData['isSubmit'] = status;
+          // studentData['time'] = this.studentTimer['_results'][length]['i']['value'] / 1000;
+          // this.studentTimer['_results'][length].pause();
+          // length++;
+          studentData.map(({status, isVerified, ...rest}) => ({status: isVerified == 1?6:status, ...rest}));
         });
-        element['isSubmit'] = status;
+        // element['isSubmit'] = status;
       });
 
       this.masterSubmitValid = !status;
+      console.log(this.examList);
     }
   }
 

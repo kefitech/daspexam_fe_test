@@ -22,9 +22,25 @@ export class ExamAPIService {
   }
 
   MarkStudentSMP(): any {
-    var body = this.dataService.studentCredentials.value;
-    body['timeRemains'] = Math.round(parseInt(localStorage.getItem('freq'))/6000);
-    return this.http.post(this.URLService.baseURL + this.URLService.markStudentSMPURL, body);
+    // var body = this.dataService.studentCredentials.value;
+    // body['timeRemains'] = Math.round(parseInt(localStorage.getItem('freq'))/6000);
+    return this.http.post(this.URLService.baseURL + this.URLService.markStudentSMPURL, this.dataService.studentCredentials.value);
+  }
+
+  StudentResponseSubmit(body: any): any {
+    var data = Object.assign({}, {responseList: body}, this.dataService.studentCredentials.value);
+    console.log(data);
+    
+    // body['timeRemains'] = Math.round(parseInt(localStorage.getItem('freq'))/6000);
+    return this.http.post(this.URLService.baseURL + this.URLService.StudentResponseSubmitURL, data);
+  }
+
+  StudentExamSubmit(): any{
+    return this.http.post(this.URLService.baseURL + this.URLService.studentExamSubmitURL, this.dataService.studentCredentials.value);
+  }
+
+  StudentExamSummary(): any{
+    return this.http.post(this.URLService.baseURL + this.URLService.studentExamSummaryURL, this.dataService.studentCredentials.value);
   }
 
 }

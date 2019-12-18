@@ -70,12 +70,14 @@ export class ControllerAPIService {
     return this.http.post(this.URLService.baseURL + this.URLService.individualStudentSystemChange, body);
   }
 
+  IndividualStudentSMPList(body: any): any {
+    body = Object.assign(body, this.dataService.controllerData.value);
+    return this.http.post(this.URLService.baseURL + this.URLService.individualStudentSMPListURL, body);
+  }
+
   //------------------implemented-------------------
 
-  StudentSMPCheck(body: any): any {
-    body = Object.assign(body, this.dataService.controllerData.value);
-    return this.http.post(this.URLService.baseURL + this.URLService.individualStudentSMP, body);
-  }
+  
 
   StudentSMPBlock(body: any): any {
     body = Object.assign(body, this.dataService.controllerData.value);

@@ -79,6 +79,6 @@ export class CommonInstructionsComponent implements OnInit, AfterViewInit, OnDes
   }
 
   ngOnDestroy(){
-    clearInterval(this.pageInitInterval);
+    // clearInterval(this.pageInitInterval);
   }
 }

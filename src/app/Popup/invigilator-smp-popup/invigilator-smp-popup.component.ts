@@ -23,43 +23,34 @@ export class InvigilatorSMPPopupComponent implements OnInit, AfterViewInit {
   }
 
   ngAfterViewInit() {
-    this.studentDetails = this.data.student;
+    this.StudentSMPCheck();
   }
 
-  // StudentSMPCheck(): void {
-  //   this.studentDetails = {
-  //     studentName: "Sunderson.J",
-  //     attempts: 3,
-  //     warnings: [
-  //       {caption: "Warning1", key: "123456789", entered: true},
-  //       {caption: "Warning2", key: "555555555", entered: true},
-  //       {caption: "Warning3", key: "222222222", entered: false}
-  //     ]
-  //   }
-    // try {
-    //   this.ngxLoader.start();
-    //   var body = {
-    //     studentId: this.data.studentId
-    //   }
-    //   this.service.StudentSMPCheck(body).subscribe(response => {
-    //     if (response) {
-    //       this.ngxLoader.stop();
-    //       this.studentDetails = response.data;
-    //     }
-    //     else {
-    //       this.toastrService.error(response.message);
-    //       this.ngxLoader.stop();
-    //     }
-    //   }, error => {
-    //     this.toastrService.error(error.message);
-    //     this.ngxLoader.stop();
-    //   })
-    // }
-    // catch (e) {
-    //   this.toastrService.error(e);
-    //   this.ngxLoader.stop();
-    // }
-  // }
+  StudentSMPCheck(): void {
+    try {
+      this.ngxLoader.start();
+      var body = {
+        examStudentId: this.data.student.examStudentId
+      }
+      this.service.IndividualStudentSMPList(body).subscribe(response => {
+        if (response) {
+          this.ngxLoader.stop();
+          this.studentDetails = response.data.studentDetails[0];
+        }
+        else {
+          this.toastrService.error(response.message);
+          this.ngxLoader.stop();
+        }
+      }, error => {
+        this.toastrService.error(error.message);
+        this.ngxLoader.stop();
+      })
+    }
+    catch (e) {
+      this.toastrService.error(e);
+      this.ngxLoader.stop();
+    }
+  }
 
   Close(): void{
     this.dialogScreen.close();
