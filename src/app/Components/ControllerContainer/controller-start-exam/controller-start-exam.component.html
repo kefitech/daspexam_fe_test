@@ -80,22 +80,22 @@
                         <mat-header-cell class="tableHeader d-flex justify-content-center" *matHeaderCellDef>
                             {{headerCaption?.caption6}} </mat-header-cell>
                         <mat-cell *matCellDef="let element; let i=index">
-                            <button [disabled]="element?.status == 1 || element?.status == 2 ||
-                            element?.status == 5 || element?.status == 6 || !isExamStarted" 
+                            <button [disabled]="element?.status == 1 || 
+                            element?.status == 5 || element?.status == 6 || !isExamStarted || element?.isVerified == 0"
                             [ngClass]="{
                                 'Pause': element?.status == 4, 
-                                'Resume': element?.status == 3, 
+                                'Resume': element?.status == 2 || element?.status == 3, 
                                 'Stop': element?.status == 5 || element?.status == 6}"
                                 [matTooltip]="element?.status == 3?'Pause Time!':'Resume Time!'"
                                 (click)="StudentTimerPauseResume(index, i, element?.status)" mat-icon-button>
-                                <mat-icon *ngIf="element?.status == 5 || element?.status == 6">stop</mat-icon>
-                                <mat-icon *ngIf="element?.status == 3">pause</mat-icon>
+                                <mat-icon *ngIf="element?.status == 5 || element?.status == 6 || element?.isVerified == 0 || !isExamStarted">stop</mat-icon>
+                                <mat-icon *ngIf="(element?.status == 2 || element?.status == 3) && isExamStarted">pause</mat-icon>
                                 <mat-icon *ngIf="element?.status == 4">play_arrow
                                 </mat-icon>
                             </button>
-                            <button [disabled]="element?.status == 3 
+                            <button [disabled]="element?.status == 2 || element?.status == 3 
                             || element?.status == 5 
-                            || element?.status == 6 || !isExamStarted" color="primary" [matMenuTriggerFor]="systems" matTooltip="Reallocate"
+                            || element?.status == 6 || !isExamStarted || element?.isVerified == 0" color="primary" [matMenuTriggerFor]="systems" matTooltip="Reallocate"
                                 mat-icon-button>
                                 <mat-icon>shuffle</mat-icon>
                             </button>
@@ -111,13 +111,14 @@
                                 </span>
                             </mat-menu>
                             <button (click)="StudentSMP(element)"
-                                [disabled]="element?.status == 3 || element?.status == 5 || element?.status == 6 || !isExamStarted"
+                                [disabled]="element?.status == 2 || element?.status == 3 || element?.status == 5 
+                                || element?.status == 6 || !isExamStarted || element?.isVerified == 0"
                                 color="warn" matTooltip="SMP" mat-icon-button>
                                 <mat-icon>bug_report</mat-icon>
                             </button>
                             <button (click)="Submit('student', index, i, exam?.examId, element)"
-                                [class.DefaultButton]="element?.status == 3 || element?.status == 6"
-                                [disabled]="element?.status == 3 || element?.status == 6 || !isExamStarted" class="SuccessIcon"
+                                [class.DefaultButton]="element?.status == 2 || element?.status == 3 || element?.status == 6 || !isExamStarted || element?.isVerified == 0"
+                                [disabled]="element?.status == 2 || element?.status == 3 || element?.status == 6 || !isExamStarted || element?.isVerified == 0" class="SuccessIcon"
                                 matTooltip="Save" mat-icon-button>
                                 <mat-icon>save</mat-icon>
                             </button>

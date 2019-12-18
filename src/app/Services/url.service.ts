@@ -46,10 +46,12 @@ export class URLService {
 
   public individualStudentSystemChange = "api/conduct_exam/stud_system_change";
 
+  public invigilatorExamSubmit = "api/conduct_exam/invigilator_exam_submit";
 
-  public individualStudentSMP = "api/exam/smp_verify";
+  public individualStudentSMPListURL = "api/conduct_exam/smp_student_list";
+
+  //not implemented
   public individualStudentSMPBlock = "api/exam/smp_block";
-  public invigilatorExamSubmit = "api/exam/invigilator_exam_submit";
 
 
   //Student 
@@ -64,6 +66,12 @@ export class URLService {
   public markStudentSMPURL = "api/conduct_exam/smp_mark";
 
   public UnlockStudentSMPURL = "api/conduct_exam/smp_otp_verification";
+
+  public StudentResponseSubmitURL = "api/conduct_exam/student_response_submission";
+
+  public studentExamSubmitURL = "api/conduct_exam/student_exam_submission";
+
+  public studentExamSummaryURL = "api/conduct_exam/student_response_fetch";
 
 
   public headers = new HttpHeaders({ 'Content-Type': 'application/json; charset=utf-8' });

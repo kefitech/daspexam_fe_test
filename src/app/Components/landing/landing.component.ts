@@ -1,4 +1,4 @@
-import { Component, OnInit, HostListener, AfterViewInit } from '@angular/core';
+import { Component, OnInit, HostListener, AfterViewInit, OnDestroy } from '@angular/core';
 import { DataService } from 'src/app/Services/data.service';
 import { Router } from '@angular/router';
 import { DeviceDetectorService } from 'ngx-device-detector';
@@ -16,7 +16,7 @@ import { QuestionService } from 'src/app/Services/question.service';
   templateUrl: './landing.component.html',
   styleUrls: ['./landing.component.scss']
 })
-export class LandingComponent implements OnInit, AfterViewInit {
+export class LandingComponent implements OnInit, AfterViewInit, OnDestroy {
 
   constructor(private dataService: DataService, private router: Router, private authHallTicket: HallticketAuthService,
     private deviceService: DeviceDetectorService, private auth: ControllerAuthService, private service: ControllerAPIService,
@@ -30,6 +30,8 @@ export class LandingComponent implements OnInit, AfterViewInit {
   user: object;
 
   sideNavVisible: boolean = false;
+
+  private pageInitInterval: any = null;
 
 
   ngOnInit() {
@@ -335,7 +337,10 @@ export class LandingComponent implements OnInit, AfterViewInit {
         if (response.success) {
           localStorage.setItem('questionFetch', 'true');
           this.dataService.questionsData.next(response.data.questionList);
-          this.CheckExamStarts();
+
+          this.pageInitInterval = setInterval(() => {
+            this.CheckExamStarts();
+          }, 3600)
         }
         else {
           this.toastrService.error(response.message);
@@ -354,6 +359,7 @@ export class LandingComponent implements OnInit, AfterViewInit {
       this.questionService.CheckExamStarts().subscribe(response => {
         if (response.success) {
           this.dataService.examStartAndTimer.next(response.data);
+          clearInterval(this.pageInitInterval);
         }
         else {
           this.toastrService.error(response.message);
@@ -389,6 +395,7 @@ export class LandingComponent implements OnInit, AfterViewInit {
     localStorage.removeItem("loginUser");
     localStorage.removeItem("Token");
     localStorage.removeItem("studentData");
+    localStorage.removeItem("questionFetch");
     localStorage.removeItem("studentSubjectSpecificInstruction");
     localStorage.removeItem("examStudentId");
     localStorage.removeItem("studentCommonInstruction");
@@ -408,6 +415,10 @@ export class LandingComponent implements OnInit, AfterViewInit {
         window.location.reload();
       }, 10);
     }
+  }
+
+  ngOnDestroy(){
+    clearInterval(this.pageInitInterval);
   }
 
 

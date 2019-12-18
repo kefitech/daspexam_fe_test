@@ -6,9 +6,13 @@ import { NgxUiLoaderService } from 'ngx-ui-loader';
 import { MatDialog } from '@angular/material';
 import { ExamSummaryComponent } from 'src/app/Popup/exam-summary/exam-summary.component';
 import { CountdownComponent } from 'ngx-countdown';
-import { ExamSubmitComponent } from 'src/app/Popup/exam-submit/exam-submit.component';
 import { Subscription } from 'rxjs';
 import { EncryptionService } from 'src/app/Services/encryption.service';
+import { ExamAPIService } from 'src/app/Services/exam-api.service';
+// 0 not visited
+//   // 1 Visited but not answered
+//   // 2 Answered
+//   // 3 Review
 
 @Component({
   selector: 'app-exam-start',
@@ -18,7 +22,8 @@ import { EncryptionService } from 'src/app/Services/encryption.service';
 export class ExamStartComponent implements OnInit, OnDestroy {
 
   constructor(private toastrService: ToastrService, private router: Router, private dataService: DataService,
-    private dialog: MatDialog, private encryptionService: EncryptionService) { }
+    private dialog: MatDialog, private encryptionService: EncryptionService, private examService: ExamAPIService,
+    private ngxLoader: NgxUiLoaderService) { }
   timerConfig: any;
   // time: number;
   sideNav: boolean = false;
@@ -47,15 +52,32 @@ export class ExamStartComponent implements OnInit, OnDestroy {
     })
 
     this.questionSubscription = this.dataService.questionsData.subscribe(response => {
-      if (response.length>0) {
+      if (response.length > 0) {
         console.log(response);
         this.examinationData = this.encryptionService.DecryptEncryption(response, ['question'], ['option']);
         console.log(this.examinationData);
+        this.examinationData = this.examinationData.map(({ options, ...rest }) => ({ options: this.dataService.shuffle(options), ...rest }));
+
+
         var checkFirstQuestion = this.examinationData.every(m => m.status == 0);
 
-        if (checkFirstQuestion)
+        if (checkFirstQuestion) {
           this.examinationData[0]["status"] = 1;
+          this.answers.push({
+            std_res_id: this.examinationData[0]["studentResponseId"],
+            status: this.examinationData[0]["status"],
+            option_id: this.examinationData[0]["answeredOption"]
+          })
+        }
         else {
+          var answeredQuestions = this.examinationData.filter(f => f.answeredOption != 0);
+          answeredQuestions.forEach(element => {
+            this.answers.push({
+              std_res_id: element["studentResponseId"],
+              status: element["status"],
+              option_id: element["answeredOption"]
+            })
+          });
           // for (var i = 0; i < checkFirstQuestion.length; i++) {
           //   var option = checkFirstQuestion[i].options.filter(op => op.marked == true);
           //   this.answers.push({
@@ -67,18 +89,18 @@ export class ExamStartComponent implements OnInit, OnDestroy {
       }
     })
 
-    this.warningSubscription = this.dataService.warning.subscribe(response => {
+    // this.warningSubscription = this.dataService.warning.subscribe(response => {
 
-      if (response != null) {
-        if (response) {
-          localStorage.setItem("freq", this.countdown["left"]);
-        }
-        // else if (!response) {
-        //   this.dataService.studentData.value["examDuration"] = parseInt(localStorage.getItem("freq")) / 60000 + " Minutes";
-        // }
-      }
+    //   if (response != null) {
+    //     if (response) {
+    //       localStorage.setItem("freq", this.countdown["left"]);
+    //     }
+    //     // else if (!response) {
+    //     //   this.dataService.studentData.value["examDuration"] = parseInt(localStorage.getItem("freq")) / 60000 + " Minutes";
+    //     // }
+    //   }
 
-    })
+    // })
 
     // var time = new Date("09-13-2019 18:00:00");
     // var now = new Date();
@@ -129,9 +151,9 @@ export class ExamStartComponent implements OnInit, OnDestroy {
         this.toastrService.warning("You have " + timeLeft + " minutes left");
       }
       else if (event.action == "done") {
-        this.submitDisable = true;
+        this.submitDisable = false;
         this.toastrService.success("Examination completed");
-        this.examSubmit();
+        // this.examSubmit();
       }
     }
   }
@@ -140,35 +162,38 @@ export class ExamStartComponent implements OnInit, OnDestroy {
     this.activeIndex = index;
     if (this.examinationData[index]["status"] == 0)
       this.examinationData[index]["status"] = 1;
-    var exists = this.answers.filter(q => q.questionId == this.examinationData[index].questionId);
+    var exists = this.answers.filter(q => q.std_res_id == this.examinationData[index].studentResponseId);
     if (exists.length == 0) {
       this.answers.push({
-        questionId: this.examinationData[index]["questionId"],
-        status: this.examinationData[index]["status"], option: ""
+        std_res_id: this.examinationData[index]["studentResponseId"],
+        status: this.examinationData[index]["status"],
+        option_id: 0
       });
     }
     else {
-      var optIndex = this.answers.findIndex(q => q.questionId == exists[0].questionId);
+      var optIndex = this.answers.findIndex(q => q.std_res_id == exists[0].std_res_id);
       this.answers[optIndex]["status"] = this.examinationData[index]["status"];
     }
+    this.StudentResponseSubmit();
   }
 
-  Answer(Qindex: number, Aindex: number, questionId: number, answer: string, event: any): void {
-    for (var i = 0; i < this.examinationData[Qindex]["options"].length; i++) {
-      this.examinationData[Qindex]["options"][i]["marked"] = false;
-    }
-    this.examinationData[Qindex]["options"][Aindex]["marked"] = event.source.checked;
+  Answer(Qindex: number, Aindex: number, studentResponseId: number, event: any): void {
+    // for (var i = 0; i < this.examinationData[Qindex]["options"].length; i++) {
+    this.examinationData[Qindex]["answeredOption"] = 0;
+    // }
+    this.examinationData[Qindex]["answeredOption"] = event.value;
     this.examinationData[Qindex]["status"] = 2;
 
-    var exists = this.answers.filter(q => q.questionId == questionId)
+    var exists = this.answers.filter(q => q.std_res_id == studentResponseId)
     if (exists.length == 0) {
-      this.answers.push({ questionId: questionId, status: this.examinationData[Qindex]["status"], option: answer });
+      this.answers.push({ std_res_id: studentResponseId, status: this.examinationData[Qindex]["status"], option_id: event.value });
     }
     else {
-      var index = this.answers.findIndex(q => q.questionId == questionId);
+      var index = this.answers.findIndex(q => q.std_res_id == studentResponseId);
       this.answers[index]["status"] = this.examinationData[Qindex]["status"];
-      this.answers[index]["option"] = answer;
+      this.answers[index]["option_id"] = event.value;
     }
+    this.StudentResponseSubmit();
   }
 
   MarkASReview(index: number, status: number): void {
@@ -177,17 +202,20 @@ export class ExamStartComponent implements OnInit, OnDestroy {
     else
       this.examinationData[index]["status"] = 3;
 
-    var exists = this.answers.filter(q => q.questionId == this.examinationData[index].questionId);
+    var exists = this.answers.filter(q => q.std_res_id == this.examinationData[index].studentResponseId);
     if (exists.length == 0) {
       this.answers.push({
-        questionId: this.examinationData[index]["questionId"],
-        status: this.examinationData[index]["status"], option: ""
+        std_res_id: this.examinationData[index]["studentResponseId"],
+        status: this.examinationData[index]["status"],
+        option_id: 0
       });
     }
     else {
-      var optIndex = this.answers.findIndex(q => q.questionId == exists[0].questionId);
+      var optIndex = this.answers.findIndex(q => q.std_res_id == exists[0].std_res_id);
       this.answers[optIndex]["status"] = this.examinationData[index]["status"];
     }
+
+    this.StudentResponseSubmit();
   }
 
   Navigate(type: string, index: number, first: boolean, last: boolean): void {
@@ -204,45 +232,98 @@ export class ExamStartComponent implements OnInit, OnDestroy {
         this.examinationData[index]["status"] = 1;
     }
 
-    var exists = this.answers.filter(q => q.questionId == this.examinationData[index].questionId);
+    var exists = this.answers.filter(q => q.std_res_id == this.examinationData[index].studentResponseId);
     if (exists.length == 0) {
       this.answers.push({
-        questionId: this.examinationData[index]["questionId"],
-        status: this.examinationData[index]["status"], option: ""
+        std_res_id: this.examinationData[index]["studentResponseId"],
+        status: this.examinationData[index]["status"],
+        option_id: 0
       });
     }
     else {
-      var optIndex = this.answers.findIndex(q => q.questionId == exists[0].questionId);
+      var optIndex = this.answers.findIndex(q => q.std_res_id == exists[0].std_res_id);
       this.answers[optIndex]["status"] = this.examinationData[index]["status"];
     }
+    this.StudentResponseSubmit();
+
+    console.log(this.answers);
+
 
   }
 
   Submit(): void {
-    var notVisited = this.examinationData.filter(nv => nv.question.status == 0);
-    var visitedNotAnswered = this.examinationData.filter(nv => nv.question.status == 1);
-    var answered = this.examinationData.filter(nv => nv.question.status == 2);
-    var reviewed = this.examinationData.filter(nv => nv.question.status == 3);
+    // var notVisited = this.examinationData.filter(nv => nv.question.status == 0);
+    // var visitedNotAnswered = this.examinationData.filter(nv => nv.question.status == 1);
+    // var answered = this.examinationData.filter(nv => nv.question.status == 2);
+    // var reviewed = this.examinationData.filter(nv => nv.question.status == 3);
 
-    this.dataService.examStatus["notVisited"] = notVisited.length;
-    this.dataService.examStatus["visitedNotAnswered"] = visitedNotAnswered.length;
-    this.dataService.examStatus["answered"] = answered.length;
-    this.dataService.examStatus["reviewed"] = reviewed.length;
-
-    this.router.navigate(['/initial']);
-    this.dialog.open(ExamSummaryComponent,
-      {
-        minWidth: '35%',
-        disableClose: true
-      });
+    // this.dataService.examStatus["notVisited"] = notVisited.length;
+    // this.dataService.examStatus["visitedNotAnswered"] = visitedNotAnswered.length;
+    // this.dataService.examStatus["answered"] = answered.length;
+    // this.dataService.examStatus["reviewed"] = reviewed.length;
+    try {
+      this.ngxLoader.start();
+      this.examService.StudentExamSubmit().subscribe(response => {
+        if (response.success) {
+          this.router.navigate(['/initial']);
+          this.ngxLoader.stop();
+          this.dialog.open(ExamSummaryComponent,
+            {
+              minWidth: '35%',
+              disableClose: true
+            });
+        }
+        else {
+          this.toastrService.error(response.message);
+          this.ngxLoader.stop();
+        }
+      }, error => {
+        this.toastrService.error(error.message);
+        this.ngxLoader.stop();
+      })
+    }
+    catch (e) {
+      this.toastrService.error(e.message);
+      this.ngxLoader.stop();
+    }
   }
 
-  examSubmit(): void {
-    this.dialog.open(ExamSubmitComponent,
-      {
-        minWidth: '35%',
-        disableClose: true
+
+  ClearResponse(index: number): void {
+    var exists = this.answers.filter(q => q.std_res_id == this.examinationData[index].studentResponseId);
+    this.examinationData[index]["answeredOption"] = 0;
+    this.examinationData[index]["status"] = 1;
+    if (exists.length > 0) {
+      var optIndex = this.answers.findIndex(q => q.std_res_id == exists[0].std_res_id);
+      this.answers[optIndex]["option_id"] = 0;
+      this.answers[optIndex]["status"] = 1;
+    }
+    else {
+      this.answers.push({
+        std_res_id: this.examinationData[index]["studentResponseId"],
+        status: this.examinationData[index]["status"],
+        option_id: 0
       });
+    }
+    this.StudentResponseSubmit();
+  }
+
+  StudentResponseSubmit(): void {
+    try {
+      this.examService.StudentResponseSubmit(this.answers).subscribe(response => {
+        if (response.success) {
+          //each and every response submit success
+        }
+        else {
+          this.toastrService.error(response.message);
+        }
+      }, error => {
+        this.toastrService.error(error.message);
+      })
+    }
+    catch (e) {
+      this.toastrService.error(e.message);
+    }
   }
 
   ngOnDestroy() {
