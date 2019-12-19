@@ -22,7 +22,7 @@ export class SubjectSpecificInstructionComponent implements OnInit, AfterViewIni
   subscription: Subscription;
 
   ngOnInit() {
-    localStorage.setItem('studentSubjectSpecificInstruction', 'true');
+    sessionStorage.setItem('studentSubjectSpecificInstruction', 'true');
     this.subscription = this.dataService.studentData.subscribe(response => {
       if (response) {
         this.user = response;

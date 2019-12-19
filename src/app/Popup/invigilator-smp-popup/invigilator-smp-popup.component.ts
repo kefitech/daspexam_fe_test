@@ -19,6 +19,8 @@ export class InvigilatorSMPPopupComponent implements OnInit, AfterViewInit {
 
   studentDetails: object = {};
 
+  isBlock: boolean = false;
+
   ngOnInit() {
   }
 
@@ -60,12 +62,13 @@ export class InvigilatorSMPPopupComponent implements OnInit, AfterViewInit {
     try {
       this.ngxLoader.start();
       var body = {
-        studentId: this.data.studentId
+        examStudentId: this.data.student.examStudentId
       }
       this.service.StudentSMPBlock(body).subscribe(response => {
         if (response) {
           this.ngxLoader.stop();
-          this.studentDetails = response.data;
+          this.isBlock = true;
+          this.dialogScreen.close();
         }
         else {
           this.toastrService.error(response.message);

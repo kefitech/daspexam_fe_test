@@ -36,19 +36,19 @@ export class LandingComponent implements OnInit, AfterViewInit, OnDestroy {
 
   ngOnInit() {
     this.dataService.controllerData.next({
-      email: localStorage.getItem("email"),
-      userId: localStorage.getItem("userId"),
-      sessionId: localStorage.getItem("sessionId")
+      email: sessionStorage.getItem("email"),
+      userId: sessionStorage.getItem("userId"),
+      sessionId: sessionStorage.getItem("sessionId")
     })
     this.dataService.studentCredentials.next({
-      examStudentId: localStorage.getItem("examStudentId")
+      examStudentId: sessionStorage.getItem("examStudentId")
     })
     this.dataService.sideNavButton.next(false);
   }
 
   ngAfterViewInit() {
 
-    var loggedInUser = localStorage.getItem("loginUser");
+    var loggedInUser = sessionStorage.getItem("loginUser");
     if (loggedInUser == 'invigilator') {
       setTimeout(() => {
         this.checkValidUser();
@@ -59,11 +59,14 @@ export class LandingComponent implements OnInit, AfterViewInit, OnDestroy {
         this.CheckValidStudent();
       }, 10);
     }
-    var questionFetch = localStorage.getItem("questionFetch");
-    var studentData = localStorage.getItem('studentData');
-    if (questionFetch == 'true' && loggedInUser == 'student') {
+    // var questionFetch = sessionStorage.getItem("questionFetch");
+    var studentData = sessionStorage.getItem('studentData');
+    if (loggedInUser == 'student') {
       setTimeout(() => {
-        this.fetchQuestions()
+        this.pageInitInterval = setInterval(() => {
+          this.dataService.examStartAndTimer.next('');
+          this.fetchQuestions();
+        }, 3600)
       }, 10);
     }
     if (studentData && loggedInUser == 'student') {
@@ -85,17 +88,17 @@ export class LandingComponent implements OnInit, AfterViewInit, OnDestroy {
   checkValidUser(): void {
     try {
       this.ngxLoader.start();
-      var acceptInstruction = localStorage.getItem('AcceptInstruction');
-      var controllerStartExam = localStorage.getItem('controllerExamStart');
-      if (localStorage.getItem("userId") && !acceptInstruction && !controllerStartExam) {
+      var acceptInstruction = sessionStorage.getItem('AcceptInstruction');
+      var controllerStartExam = sessionStorage.getItem('controllerExamStart');
+      if (sessionStorage.getItem("userId") && !acceptInstruction && !controllerStartExam) {
         try {
           this.ngxLoader.start();
           this.service.CheckValidController().subscribe(response => {
             if (response.success) {
               var controller = {
-                userId: localStorage.getItem("userId"),
-                sessionId: localStorage.getItem("sessionId"),
-                email: localStorage.getItem("email")
+                userId: sessionStorage.getItem("userId"),
+                sessionId: sessionStorage.getItem("sessionId"),
+                email: sessionStorage.getItem("email")
               }
               this.dataService.controllerLogin.next(true);
               this.dataService.controllerData.next(controller);
@@ -120,16 +123,16 @@ export class LandingComponent implements OnInit, AfterViewInit, OnDestroy {
           this.ngxLoader.stop();
         }
       }
-      else if (localStorage.getItem("userId") && (acceptInstruction && acceptInstruction == 'true')
+      else if (sessionStorage.getItem("userId") && (acceptInstruction && acceptInstruction == 'true')
         && !controllerStartExam) {
         try {
           this.ngxLoader.start();
           this.service.CheckValidController().subscribe(response => {
             if (response.success) {
               var controller = {
-                userId: localStorage.getItem("userId"),
-                sessionId: localStorage.getItem("sessionId"),
-                email: localStorage.getItem("email"),
+                userId: sessionStorage.getItem("userId"),
+                sessionId: sessionStorage.getItem("sessionId"),
+                email: sessionStorage.getItem("email"),
               }
               this.dataService.controllerLogin.next(true);
               this.dataService.controllerData.next(controller);
@@ -154,16 +157,16 @@ export class LandingComponent implements OnInit, AfterViewInit, OnDestroy {
           this.ngxLoader.stop();
         }
       }
-      else if (localStorage.getItem("userId") && (acceptInstruction && acceptInstruction == 'true')
+      else if (sessionStorage.getItem("userId") && (acceptInstruction && acceptInstruction == 'true')
         && (controllerStartExam && controllerStartExam == 'true')) {
         try {
           this.ngxLoader.start();
           this.service.CheckValidController().subscribe(response => {
             if (response.success) {
               var controller = {
-                userId: localStorage.getItem("userId"),
-                sessionId: localStorage.getItem("sessionId"),
-                email: localStorage.getItem("email"),
+                userId: sessionStorage.getItem("userId"),
+                sessionId: sessionStorage.getItem("sessionId"),
+                email: sessionStorage.getItem("email"),
               }
               this.dataService.controllerLogin.next(true);
               this.dataService.controllerData.next(controller);
@@ -202,11 +205,11 @@ export class LandingComponent implements OnInit, AfterViewInit, OnDestroy {
   CheckValidStudent(): void {
     try {
       this.ngxLoader.start();
-      var examStudentId = localStorage.getItem('examStudentId');
-      var studentData = localStorage.getItem('studentData');
-      var commonInstruction = localStorage.getItem('studentCommonInstruction');
-      var subjectSpecificInstruction = localStorage.getItem('studentSubjectSpecificInstruction');
-      var examStarts = localStorage.getItem('studentExamStart');
+      var examStudentId = sessionStorage.getItem('examStudentId');
+      var studentData = sessionStorage.getItem('studentData');
+      var commonInstruction = sessionStorage.getItem('studentCommonInstruction');
+      var subjectSpecificInstruction = sessionStorage.getItem('studentSubjectSpecificInstruction');
+      var examStarts = sessionStorage.getItem('studentExamStart');
       if (examStudentId && studentData && commonInstruction != 'true' &&
         subjectSpecificInstruction != 'true' && examStarts != 'true') {
         try {
@@ -335,12 +338,10 @@ export class LandingComponent implements OnInit, AfterViewInit, OnDestroy {
     try {
       this.questionService.questionFetch().subscribe(response => {
         if (response.success) {
-          localStorage.setItem('questionFetch', 'true');
+          sessionStorage.setItem('questionFetch', 'true');
           this.dataService.questionsData.next(response.data.questionList);
 
-          this.pageInitInterval = setInterval(() => {
             this.CheckExamStarts();
-          }, 3600)
         }
         else {
           this.toastrService.error(response.message);
@@ -375,7 +376,7 @@ export class LandingComponent implements OnInit, AfterViewInit, OnDestroy {
 
   FetchStudentDetails(): void {
     try {
-      var studentData = localStorage.getItem('studentData');
+      var studentData = sessionStorage.getItem('studentData');
       var dec = this.encryptionService.decryptUsingAES256(studentData);
       this.dataService.studentData.next(JSON.parse(JSON.parse(dec)));
     }
@@ -385,21 +386,21 @@ export class LandingComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   Logout(): void {
-    var loginType = localStorage.getItem('loginUser');
-    localStorage.removeItem("userId");
-    localStorage.removeItem("sessionId");
-    localStorage.removeItem("email");
-    localStorage.removeItem("AcceptInstruction");
-    localStorage.removeItem("questionShuffled");
-    localStorage.removeItem('controllerExamStart');
-    localStorage.removeItem("loginUser");
-    localStorage.removeItem("Token");
-    localStorage.removeItem("studentData");
-    localStorage.removeItem("questionFetch");
-    localStorage.removeItem("studentSubjectSpecificInstruction");
-    localStorage.removeItem("examStudentId");
-    localStorage.removeItem("studentCommonInstruction");
-    localStorage.removeItem('studentExamStart');
+    var loginType = sessionStorage.getItem('loginUser');
+    sessionStorage.removeItem("userId");
+    sessionStorage.removeItem("sessionId");
+    sessionStorage.removeItem("email");
+    sessionStorage.removeItem("AcceptInstruction");
+    sessionStorage.removeItem("questionShuffled");
+    sessionStorage.removeItem('controllerExamStart');
+    sessionStorage.removeItem("loginUser");
+    sessionStorage.removeItem("Token");
+    sessionStorage.removeItem("studentData");
+    sessionStorage.removeItem("questionFetch");
+    sessionStorage.removeItem("studentSubjectSpecificInstruction");
+    sessionStorage.removeItem("examStudentId");
+    sessionStorage.removeItem("studentCommonInstruction");
+    sessionStorage.removeItem('studentExamStart');
     this.dataService.controllerLogin.next(false);
     this.dataService.controllerData.next(null);
     this.auth.controllerLogoutAuth();
@@ -417,8 +418,8 @@ export class LandingComponent implements OnInit, AfterViewInit, OnDestroy {
     }
   }
 
-  ngOnDestroy(){
-    clearInterval(this.pageInitInterval);
+  ngOnDestroy() {
+    // clearInterval(this.pageInitInterval);
   }
 
 

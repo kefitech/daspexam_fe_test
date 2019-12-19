@@ -44,14 +44,16 @@ export class URLService {
 
   public fetchReservedSystemsURL = "api/conduct_exam/fetch_res_systems";
 
-  public individualStudentSystemChange = "api/conduct_exam/stud_system_change";
+  public individualStudentSystemChangeURL = "api/conduct_exam/stud_system_change";
 
-  public invigilatorExamSubmit = "api/conduct_exam/invigilator_exam_submit";
+  public invigilatorExamSubmitURL = "api/conduct_exam/invigilator_exam_submit";
 
   public individualStudentSMPListURL = "api/conduct_exam/smp_student_list";
 
-  //not implemented
-  public individualStudentSMPBlock = "api/exam/smp_block";
+  public individualStudentSMPBlockURL = "api/conduct_exam/student_exam_block";
+
+  public lateComerTimeConfigURL = "api/conduct_exam/late_comers_student_list";
+
 
 
   //Student 

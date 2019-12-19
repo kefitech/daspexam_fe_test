@@ -24,7 +24,7 @@ export class ControllerInstructionsComponent implements OnInit, AfterViewInit {
     try {
       this.service.ExamFetchFromMainServer().subscribe(response => {
         if (response.success) {
-          localStorage.setItem('Token', response.data.token);
+          sessionStorage.setItem('Token', response.data.token);
           this.examFetchCompleted = true;
         }
         else{
@@ -41,7 +41,7 @@ export class ControllerInstructionsComponent implements OnInit, AfterViewInit {
   }
 
   Accept(): void {
-    localStorage.setItem('AcceptInstruction', 'true');
+    sessionStorage.setItem('AcceptInstruction', 'true');
     this.auth.controllerLoginAuth();
     this.router.navigate(['landing/invigilator/dashboard']);
   }

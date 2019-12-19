@@ -39,11 +39,11 @@ export class EncryptionService {
     if (array.length > 0) {
       array.forEach(masterElement => {
         masterElementFields.forEach(masterField => {
-          masterElement[masterField] = this.decryptUsingAES256(masterElement[masterField]);
+          masterElement[masterField] = this.decryptUsingAES256(masterElement[masterField]).replace(/"/g,'');
         });
         masterElement.options.forEach(subElement => {
           subElementFields.forEach(subElementField => {
-            subElement[subElementField] = this.decryptUsingAES256(subElement[subElementField]);
+            subElement[subElementField] = this.decryptUsingAES256(subElement[subElementField]).replace(/"/g,'');
           });
         });
       });

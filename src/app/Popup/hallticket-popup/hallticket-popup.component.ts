@@ -67,8 +67,8 @@ export class HallticketPopupComponent implements OnInit, AfterViewInit {
               examStudentId: response.data.examStudentId
             })
             this.dataService.studentData.next(response.data)
-            localStorage.setItem('Token', response.data.token);
-            localStorage.setItem('examStudentId', response.data.examStudentId);
+            sessionStorage.setItem('Token', response.data.token);
+            sessionStorage.setItem('examStudentId', response.data.examStudentId);
             this.submit = true;
             this.ngxLoader.stop();
             this.dialogScreen.close();

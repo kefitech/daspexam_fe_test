@@ -67,21 +67,7 @@ export class ControllerAPIService {
 
   SystemChange(body: object): any{
     body = Object.assign(body, this.dataService.controllerData.value);
-    return this.http.post(this.URLService.baseURL + this.URLService.individualStudentSystemChange, body);
-  }
-
-  IndividualStudentSMPList(body: any): any {
-    body = Object.assign(body, this.dataService.controllerData.value);
-    return this.http.post(this.URLService.baseURL + this.URLService.individualStudentSMPListURL, body);
-  }
-
-  //------------------implemented-------------------
-
-  
-
-  StudentSMPBlock(body: any): any {
-    body = Object.assign(body, this.dataService.controllerData.value);
-    return this.http.post(this.URLService.baseURL + this.URLService.individualStudentSMPBlock, body);
+    return this.http.post(this.URLService.baseURL + this.URLService.individualStudentSystemChangeURL, body);
   }
 
   TimePauseresume(body: any): any {
@@ -94,9 +80,23 @@ export class ControllerAPIService {
     return this.http.post(this.URLService.baseURL + URL, body);
   }
 
+  IndividualStudentSMPList(body: any): any {
+    body = Object.assign(body, this.dataService.controllerData.value);
+    return this.http.post(this.URLService.baseURL + this.URLService.individualStudentSMPListURL, body);
+  }
+
+  StudentSMPBlock(body: any): any {
+    body = Object.assign(body, this.dataService.controllerData.value);
+    return this.http.post(this.URLService.baseURL + this.URLService.individualStudentSMPBlockURL, body);
+  }
+
   SubmitExam(body: any): any {
     body = Object.assign(body, this.dataService.controllerData.value);
-    return this.http.post(this.URLService.baseURL + this.URLService.invigilatorExamSubmit, body);
+    return this.http.post(this.URLService.baseURL + this.URLService.invigilatorExamSubmitURL, body);
+  }
+
+  LateComerTimeConfig(): any {
+    return this.http.post(this.URLService.baseURL + this.URLService.lateComerTimeConfigURL, this.dataService.controllerData.value);
   }
 
 }

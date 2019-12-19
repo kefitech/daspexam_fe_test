@@ -35,7 +35,8 @@ export class CommonPanelComponent implements OnInit {
   onResize(event) {
     if (this.winHeight < window.innerHeight)
       this.winHeight = window.innerHeight;
-    if (window.innerHeight != this.winHeight) {
+    var alreadyMarked = localStorage.getItem('SMP');
+    if (window.innerHeight != this.winHeight && alreadyMarked != 'true') {
       this.MarkSMP();
     }
   }

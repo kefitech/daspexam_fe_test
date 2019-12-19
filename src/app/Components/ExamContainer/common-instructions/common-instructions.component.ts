@@ -15,70 +15,71 @@ import { QuestionService } from 'src/app/Services/question.service';
 export class CommonInstructionsComponent implements OnInit, AfterViewInit, OnDestroy {
 
   constructor(private router: Router, private toastrService: ToastrService,
-    private ngxLoader: NgxUiLoaderService, private apiService: QuestionService, private dataService: DataService ) { }
+    private ngxLoader: NgxUiLoaderService, private apiService: QuestionService, private dataService: DataService) { }
 
 
-    private pageInitInterval: any = null;
-  
+  private pageInitInterval: any = null;
+
   ngOnInit() {
-    
+
   }
 
-  ngAfterViewInit(){
-    localStorage.setItem('studentCommonInstruction', 'true');
+  ngAfterViewInit() {
+    sessionStorage.setItem('studentCommonInstruction', 'true');
     setTimeout(() => {
-      this.fetchQuestions();
+      this.pageInitInterval = setInterval(() => {
+        this.dataService.examStartAndTimer.next('');
+        this.fetchQuestions();
+      }, 3600)
     }, 10);
   }
 
-  fetchQuestions(): void{
-    try{
+  fetchQuestions(): void {
+    try {
       this.apiService.questionFetch().subscribe(response => {
-        if(response.success){
-          localStorage.setItem('questionFetch', 'true');
+        if (response.success) {
+          sessionStorage.setItem('questionFetch', 'true');
           this.dataService.questionsData.next(response.data.questionList);
           this.dataService.questionFetch.next(true);
           this.CheckExamStarts();
-          this.pageInitInterval = setInterval(() => {
-            this.CheckExamStarts();
-          }, 3600)
+          this.CheckExamStarts();
         }
-        else{
+        else {
           this.toastrService.error(response.message);
         }
       }, error => {
         this.toastrService.error(error.message);
       })
     }
-    catch (e){
+    catch (e) {
       this.toastrService.error(e.message);
     }
   }
 
-  CheckExamStarts(): void{
-    try{
+  CheckExamStarts(): void {
+    try {
       this.apiService.CheckExamStarts().subscribe(response => {
-        if(response.success){
+        if (response.success) {
           this.dataService.examStartAndTimer.next(response.data);
           clearInterval(this.pageInitInterval);
         }
-        else{
+        else {
           this.toastrService.error(response.message);
         }
       }, error => {
         this.toastrService.error(error.message);
       })
     }
-    catch (e){
+    catch (e) {
       this.toastrService.error(e.message);
     }
   }
 
-  Next(): void{
+  Next(): void {
     this.router.navigate(['/landing/student/exam/subjectspecificinstructions']);
   }
 
-  ngOnDestroy(){
+  ngOnDestroy() {
     // clearInterval(this.pageInitInterval);
   }
 }

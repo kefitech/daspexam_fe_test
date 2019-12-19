@@ -79,7 +79,7 @@ export class ControllerDashboardComponent implements OnInit, AfterViewInit, OnDe
 
   ngAfterViewInit() {
     this.FetchStudents();// stepper 1
-    this.questionShuffled = localStorage.getItem('questionShuffled');
+    this.questionShuffled = sessionStorage.getItem('questionShuffled');
   }
 
   FetchStudents(): void {// stepper 1
@@ -168,7 +168,7 @@ export class ControllerDashboardComponent implements OnInit, AfterViewInit, OnDe
           }, 3600)
           this.ngxLoader.stop();
           this.questionShuffled = "true";
-          localStorage.setItem('questionShuffled', 'true');
+          sessionStorage.setItem('questionShuffled', 'true');
         }
         else {
           this.toastrService.error(response.message);
@@ -341,7 +341,7 @@ export class ControllerDashboardComponent implements OnInit, AfterViewInit, OnDe
       
       this.service.InvigilatorStartExam(body).subscribe(response => {
         if (response.success) {
-          localStorage.setItem('controllerExamStart', 'true');
+          sessionStorage.setItem('controllerExamStart', 'true');
           this.router.navigate(['landing/invigilator/examstart']);
           this.ngxLoader.stop();
         }

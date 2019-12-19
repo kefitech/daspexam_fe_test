@@ -23,6 +23,9 @@ export class ControllerStartExamComponent implements OnInit, AfterViewInit, OnDe
 
   totalStableDuration: any;
 
+  private lateComerObservable: any = null;
+  private lateComerObservableOnPageLoad: any = null;
+
   studentTimerPauseResumeCaption: string = "Do you want to Pause/Resume this student?"
 
   isExamStarted: boolean;
@@ -51,6 +54,9 @@ export class ControllerStartExamComponent implements OnInit, AfterViewInit, OnDe
 
   ngAfterViewInit() {
     this.FetchExamList();
+    this.lateComerObservableOnPageLoad = setInterval(() => {
+      this.LateComersTimeConfiguration();
+    }, 1000);
   }
 
   handleMasterTimerEvent(event): void {
@@ -68,7 +74,7 @@ export class ControllerStartExamComponent implements OnInit, AfterViewInit, OnDe
         this.ngxLoader.start();
         setTimeout(() => {
           this.FetchExamList();
-        }, 10);
+        }, 500);
       }
       else {
         this.masterSubmitValid = true;
@@ -86,8 +92,6 @@ export class ControllerStartExamComponent implements OnInit, AfterViewInit, OnDe
           this.FetchReservedSystems();
           this.isExamStarted = response.data.isExamStarted;
           this.examList = response.data.studentList;
-          console.log(this.examList);
-
           this.examListCopy = this.examList.map(x => Object.assign({}, x));
           this.masterTimerConfig = { leftTime: response.data.examDuration * 60 };//, notify: [2 * 60, 9 * 60]
           this.TableRefresh();
@@ -136,9 +140,6 @@ export class ControllerStartExamComponent implements OnInit, AfterViewInit, OnDe
 
   TableRefresh(): void {
     this.examList.forEach((element, index) => {
-      // if(!this.isExamStarted){
-      //   element['studentList'] = element['studentList'].map(({timeLeft, ...rest}) => ({timeLeft: {leftTime: 0}, ...rest}));
-      // }
       element['studentList'] = new MatTableDataSource<any>(element['studentList']);
       setTimeout(() => {
         element['studentList'].paginator = this.paginator.toArray()[index];
@@ -146,7 +147,7 @@ export class ControllerStartExamComponent implements OnInit, AfterViewInit, OnDe
       }, 10);
 
       element['studentList']['data'] = element['studentList']['data'].map(({ timeLeft, ...rest }) =>
-        ({ timeLeft: { leftTime: !this.isExamStarted?0:timeLeft=='null'?0:timeLeft * 60 }, ...rest }));
+        ({ timeLeft: { leftTime: !this.isExamStarted ? 0 : timeLeft == 'null' ? 0 : timeLeft * 60 }, ...rest }));
     });
   }
 
@@ -166,14 +167,10 @@ export class ControllerStartExamComponent implements OnInit, AfterViewInit, OnDe
             }
           }
           this.ngxLoader.start();
-          // if (!check && status == 3)
-          //   var timeInSec = (this.studentTimer['_results'][length + rowIndex]['i']['value']) / 1000;
           var body = {
-            type: status == 3 ? 'pause' : status == 4 ? 'resume' : '',
-            // timeRemains: Math.round((this.studentTimer['_results'][length + rowIndex]['i']['value'] / 1000) / 60),
+            type: status == 3 || status == 2 ? 'pause' : status == 4 ? 'resume' : '',
             examStudentId: this.examList[index]['studentList']['data'][rowIndex]['examStudentId']
           }
-
 
           this.service.TimePauseresume(body).subscribe(response => {
             if (response.success) {
@@ -205,12 +202,12 @@ export class ControllerStartExamComponent implements OnInit, AfterViewInit, OnDe
       }
     }
     if (!check)
-      this.examList[index]['studentList']['data'][rowIndex]['status'] = status == 3 ? 4 : 3;
-    if (status == 3)
+      this.examList[index]['studentList']['data'][rowIndex]['status'] = (status == 3 || status == 2) ? 4 : status == 4 ? 3 : status;
+    if (status == 3 || status == 2)
       this.studentTimer['_results'][length + rowIndex].pause();
     else if (status == 4)
       this.studentTimer['_results'][length + rowIndex].resume();
-    if (!check && status == 3) {
+    if (!check && (status == 3 || status == 2)) {
       this.examList[index]['studentList']['data'][rowIndex]['time'] =
         (this.studentTimer['_results'][length + rowIndex]['i']['value'] / 1000);
     }
@@ -219,12 +216,8 @@ export class ControllerStartExamComponent implements OnInit, AfterViewInit, OnDe
   CheckAllStudentTimer(): void {
     var pauseIndex = [];
     this.examList.forEach((examList, examIndex) => {
-      // examList['studentList']['data'] = 
-      // examList['studentList']['data'].map(({systemNo, ...rest}) => 
-      // ({systemNo, systems: this.backupSystems.concat(systemNo), ...rest}));//system dropdown setup
-
       examList['studentList']['data'].forEach((row, rowIndex) => {
-        if (row['status'] == 4)
+        if (row['status'] == 4 || row['status'] == 5 || row['status'] == 6)
           pauseIndex.push({ row: rowIndex, parent: examIndex });
       });
     });
@@ -263,24 +256,7 @@ export class ControllerStartExamComponent implements OnInit, AfterViewInit, OnDe
       this.toastrService.error(e);
       this.ngxLoader.stop();
     }
-    // this.backupSystems[optIndex]['value'] = oldValue;
-    // this.backupSystems[optIndex]['removed'] = true;
   }
-
-  // SystemChange(value: string, index: number, rowIndex: number): void{
-  //   var filteredValue = value.replace(/<\/?[^>]+(>|$)/g, "");
-  //   var backupArrayIndex = this.backupSystems.findIndex(d => d==value);
-  //   this.backupSystems.push('<s><span>' + this.examListCopy[index]['studentList'][rowIndex]['systemNo'] + '</span></s>');
-  //   this.backupSystems.splice(backupArrayIndex, 1);
-  //   this.examListCopy[index]['studentList'][rowIndex]['systemNo'] = filteredValue;
-  //   var duplicate = this.examListCopy.map(x => Object.assign({}, x));
-  //   this.examList[index]['studentList']['data'][rowIndex]['systemNo'] = duplicate[index]['studentList'][rowIndex]['systemNo'];
-  //   this.examList.forEach((examList, examIndex) => {
-  //     examList['studentList']['data'] = 
-  //     examList['studentList']['data'].map(({systemNo, ...rest}) => 
-  //     ({systemNo, systems: this.backupSystems.concat(systemNo), ...rest}));//system dropdown setup
-  //   })
-  // }
 
   handleStudentTimerEvent(event: any, index: number, rowIndex: number): void {
 
@@ -298,11 +274,18 @@ export class ControllerStartExamComponent implements OnInit, AfterViewInit, OnDe
     }
   }
 
-  StudentSMP(data: object): void {
+  StudentSMP(data: object, index: number, rowIndex: number): void {
     const dialogRef = this.dialog.open(InvigilatorSMPPopupComponent, {
       width: '40%',
       // height: '100%',
       data: { student: data }
+    });
+    dialogRef.afterClosed().subscribe(response => {
+      var isBlocked = dialogRef.componentInstance.isBlock;
+      if (isBlocked) {
+        this.examList[index]['studentList']['data'][rowIndex]['status'] = 5;
+        this.examList[index]['studentList']['data'][rowIndex]['timeLeft'] = { leftTime: 0 };
+      }
     })
   }
 
@@ -318,43 +301,39 @@ export class ControllerStartExamComponent implements OnInit, AfterViewInit, OnDe
         var body;
         if (type == 'student') {
           body = {
-            studentExamDetails: this.examList[examIndex]['studentList']['data'][rowIndex]
-              .map(({ studentSystemId, examStudentId, ...rest }) =>
-                ({ std_sys_id: studentSystemId, exam_student_id: examStudentId, exam_id: examId, ...rest }))
+            studentExamDetails: [this.examList[examIndex]['studentList']['data'][rowIndex]]
+              .map(({ studentSystemId, examStudentId, examTableId, ...rest }) =>
+                ({ std_sys_id: studentSystemId, exam_student_id: examStudentId, exam_id: examTableId, ...rest }))
           }
         }
         else if (type == 'exam') {
           body = {
             studentExamDetails: this.examList[examIndex]['studentList']['data']
-              .map(({ studentSystemId, examStudentId, ...rest }) =>
-                ({ std_sys_id: studentSystemId, exam_student_id: examStudentId, exam_id: examId, ...rest }))
-                .filter(f => (f.isVerified == 1 && f.status != 6))
+              .map(({ studentSystemId, examStudentId, examTableId, ...rest }) =>
+                ({ std_sys_id: studentSystemId, exam_student_id: examStudentId, exam_id: examTableId, ...rest }))
+              .filter(f => (f.isVerified == 1 && f.status != 6))
           }
         }
         else if (type == 'all') {
           var studentList = [];
           this.examList.forEach(element => {
             studentList = studentList.concat(element['studentList']['data']
-              .map(({ studentSystemId, examStudentId, ...rest }) =>
-                ({ std_sys_id: studentSystemId, exam_student_id: examStudentId, exam_id: element['examId'], ...rest }))
-                .filter(f => (f.isVerified == 1 && f.status != 6)));
+              .map(({ studentSystemId, examStudentId, examTableId, ...rest }) =>
+                ({ std_sys_id: studentSystemId, exam_student_id: examStudentId, exam_id: examTableId, ...rest }))
+              .filter(f => (f.isVerified == 1 && f.status != 6)));
           });
           body = {
             studentExamDetails: studentList
           }
         }
-        console.log(body);
-        
-        this.SaveFunctionalitiesOnTable(type, false, examIndex, rowIndex);
         try {
           this.ngxLoader.start();
 
           this.service.SubmitExam(body).subscribe(response => {
             if (response.success) {
-              if (type == 'student') {
-                this.examList[examIndex]['studentList']['data'][rowIndex]['isSubmit'] = true;
-              }
-              this.SaveFunctionalitiesOnTable(type, true, examIndex, rowIndex);
+              this.SaveFunctionalitiesOnTable(type, examIndex, rowIndex);
+
+              this.ngxLoader.stop();
             }
             else {
               this.toastrService.error(response.message);
@@ -373,86 +352,73 @@ export class ControllerStartExamComponent implements OnInit, AfterViewInit, OnDe
     })
   }
 
-  SaveFunctionalitiesOnTable(type: string, status: boolean, examIndex?: number, rowIndex?: number): void {
+  SaveFunctionalitiesOnTable(type: string, examIndex?: number, rowIndex?: number): void {
     if (type == 'student') {
       this.examList[examIndex]['studentList']['data'][rowIndex]['status'] = 6;
+      this.examList[examIndex]['studentList']['data'][rowIndex]['timeLeft'] = { leftTime: 0 };
       var isSingleExamsDone = this.examList[examIndex]['studentList']['data'].filter(f => f.isVerified == 1)
-      .every(d => d.status == 6);
-      if (isSingleExamsDone && status){
-        // this.examList[examIndex]['isSubmit'] = status;
+        .every(d => d.status == 6);
+      if (isSingleExamsDone) {
         this.examList[examIndex]['studentList']['data'] = this.examList[examIndex]['studentList']['data']
-        .map(({status, isVerified, ...rest}) => ({status: isVerified == 1?6:status, ...rest}));
+          .map(({ status, isVerified, ...rest }) => ({ status: isVerified == 1 ? 6 : status, isVerified, ...rest }));
       }
-      // let allExamsDone = this.examList.every(d => d['isSubmit'] == true);
       var allExamsDone;
       this.examList.forEach(element => {
         allExamsDone = element['studentList']['data']
-        .filter(f => f.isVerified == 1)
-        .every(e => e.status == 6);
+          .filter(f => f.isVerified == 1)
+          .every(e => e.status == 6);
       })
-      if (allExamsDone && status){
-        this.masterSubmitValid = !status;
+      if (allExamsDone) {
+        this.masterSubmitValid = false;
       }
-      console.log(this.examList);
-      
     }
     else if (type == 'exam') {
-      let length = 0;
-      if (examIndex > 0) {
-        for (var i = 0; i < examIndex; i++) {
-          length = length + this.examList[i]['studentList']['data'].length;
-        }
-      }
-      let startVal = length;
-      let endVal = length + this.examList[examIndex]['studentList']['data'].length;
-      var time = [];
-      for (startVal; startVal < endVal; startVal++) {
-        this.studentTimer['_results'][startVal].pause();
-        time.push(this.studentTimer['_results'][startVal]['i']['value'] / 1000);
-      }
-      if (status){
-        this.examList[examIndex]['studentList']['data'] = this.examList[examIndex]['studentList']['data']
-        .map(({status, isVerified, ...rest}) => ({status: isVerified == 1?6:status, ...rest}));
-      }
-        // this.examList[examIndex]['isSubmit'] = status;
-      this.examList[examIndex]['studentList']['data'].forEach((element, index) => {
-        // if (status)
-          // element['status'] = status;
-        element['time'] = time[index];
-      });
+      // let length = 0;
+      // if (examIndex > 0) {
+      //   for (var i = 0; i < examIndex; i++) {
+      //     length = length + this.examList[i]['studentList']['data'].length;
+      //   }
+      // }
+      // let startVal = length;
+      // let endVal = length + this.examList[examIndex]['studentList']['data'].length;
+      // var time = [];
+      // for (startVal; startVal < endVal; startVal++) {
+      //   this.studentTimer['_results'][startVal].pause();
+      //   time.push(this.studentTimer['_results'][startVal]['i']['value'] / 1000);
+      // }
+      this.examList[examIndex]['studentList']['data'] = this.examList[examIndex]['studentList']['data']
+        .map(({ status, isVerified, timeLeft, ...rest }) =>
+          ({ status: isVerified == 1 ? 6 : status, isVerified, timeLeft: isVerified == 1 ? { leftTime: 0 } : timeLeft, ...rest }));
+      // this.examList[examIndex]['isSubmit'] = status;
+      // this.examList[examIndex]['studentList']['data'].forEach((element, index) => {
+      //   // if (status)
+      //   // element['status'] = status;
+      //   element['time'] = time[index];
+      // });
 
       var allExamsDone;
       this.examList.forEach(element => {
         allExamsDone = element['studentList']['data']
-        .filter(f => f.isVerified == 1)
-        .every(e => e.status == 6);
+          .filter(f => f.isVerified == 1)
+          .every(e => e.status == 6);
       })
       if (allExamsDone)
-        this.masterSubmitValid = !status;
-        console.log(this.examList);
+        this.masterSubmitValid = false;
     }
     else if (type == 'all') {
-      // var length = 0;
       this.examList.forEach((element, examIndex) => {
-        element['studentList']['data'].forEach((studentData) => {
-          // if (status)
-          //   studentData['isSubmit'] = status;
-          // studentData['time'] = this.studentTimer['_results'][length]['i']['value'] / 1000;
-          // this.studentTimer['_results'][length].pause();
-          // length++;
-          studentData.map(({status, isVerified, ...rest}) => ({status: isVerified == 1?6:status, ...rest}));
-        });
-        // element['isSubmit'] = status;
+        element['studentList']['data'] = element['studentList']['data']
+          .map(({ status, isVerified, timeLeft, ...rest }) =>
+            ({ status: isVerified == 1 ? 6 : status, isVerified, timeLeft: isVerified == 1 ? { leftTime: 0 } : timeLeft, ...rest }));
+
       });
 
-      this.masterSubmitValid = !status;
-      console.log(this.examList);
+      this.masterSubmitValid = false;
     }
   }
 
   SingleStudentVerification(data: object, index: number, rowIndex: number): void {// stepper 1
     var rowData = Object.assign({}, data);
-    console.log(this.masterTimer);
 
     const dialogRef = this.dialog.open(InvigilatorPageStudentVerificationPopupComponent, {
       width: '45%',
@@ -463,6 +429,9 @@ export class ControllerStartExamComponent implements OnInit, AfterViewInit, OnDe
       var submit = dialogRef.componentInstance.isSubmit;
       if (submit) {
         this.CheckSingleStudentVerification(dialogRef.componentInstance.data.student['verified'], index, rowIndex);
+        this.lateComerObservable = setInterval(() => {
+          this.LateComersTimeConfiguration();
+        }, 1000);
       }
     })
   }
@@ -484,7 +453,47 @@ export class ControllerStartExamComponent implements OnInit, AfterViewInit, OnDe
     }
   }
 
+  LateComersTimeConfiguration(): void {
+    try {
+      // this.ngxLoader.start();
+      this.service.LateComerTimeConfig().subscribe(response => {
+        if (response.success) {
+          var copy = response.data.studentList.map(d => Object.assign({}, d));
+          var mergeAll = [];
+          copy.forEach(element => {
+            mergeAll = mergeAll.concat(element.studentList);
+          });
+          mergeAll.forEach(data => {
+            if (data.isExamStarted == 1 && this.examList.length > 0) {
+              var examIndex = this.examList.findIndex(e => e['examTableId'] == data.examId);
+              var rowIndex = this.examList[examIndex]['studentList']['data'].findIndex(st => st.examStudentId == data.examStudentId);
+              if (this.examList[examIndex]['studentList']['data'][rowIndex]['timeLeft']['leftTime'] == 0) {
+                this.examList[examIndex]['studentList']['data'][rowIndex]['timeLeft'] = { leftTime: data.timeLeft * 60 };
+                this.examList[examIndex]['studentList']['data'][rowIndex]['status'] = data.status;
+              }
+            }
+          });
+          var isAllStarted = mergeAll.every(d => d.isExamStarted == 1);
+          if (mergeAll.length == 0 || isAllStarted){
+            clearInterval(this.lateComerObservable);
+            clearInterval(this.lateComerObservableOnPageLoad);
+          }
+        }
+      }, error => {
+        this.toastrService.error(error.message);
+        // this.ngxLoader.stop();
+      })
+      // this.ngxLoader.stop();
+    }
+    catch (e) {
+      this.toastrService.error(e);
+      // this.ngxLoader.stop();
+    }
+  }
+
   ngOnDestroy() {
+    clearInterval(this.lateComerObservable);
+    clearInterval(this.lateComerObservableOnPageLoad);
   }
 
 }
