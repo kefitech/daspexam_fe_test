@@ -45,6 +45,7 @@ export class WarningComponent implements OnInit {
               this.dataService.warning.next(false);
               // this.dataService.toggleFullScreen();
               localStorage.removeItem('SMP');
+              sessionStorage.removeItem('studentExamStart');
               this.dialogScreen.close();
               this.toastrService.success(response.message);
               this.router.navigate(['/landing/student']);

@@ -28,14 +28,14 @@ export class ExamSummaryComponent implements OnInit, AfterViewInit {
       this.examService.StudentExamSummary().subscribe(response => {
         if (response.success) {
           this.result = response.data;
-          localStorage.removeItem("loginUser");
-          localStorage.removeItem("Token");
-          localStorage.removeItem("studentData");
-          localStorage.removeItem("studentSubjectSpecificInstruction");
-          localStorage.removeItem("questionFetch");
-          localStorage.removeItem("examStudentId");
-          localStorage.removeItem("studentCommonInstruction");
-          localStorage.removeItem('studentExamStart');
+          sessionStorage.removeItem("loginUser");
+          sessionStorage.removeItem("Token");
+          sessionStorage.removeItem("studentData");
+          sessionStorage.removeItem("studentSubjectSpecificInstruction");
+          sessionStorage.removeItem("questionFetch");
+          sessionStorage.removeItem("examStudentId");
+          sessionStorage.removeItem("studentCommonInstruction");
+          sessionStorage.removeItem('studentExamStart');
           this.dataService.studentCredentials.next({});
           this.dataService.studentData.next({});
           this.ngxLoader.stop();

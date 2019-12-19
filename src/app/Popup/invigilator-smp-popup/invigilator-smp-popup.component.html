@@ -2,7 +2,7 @@
     <div class="row d-flex justify-content-center">
         <h5 class="font-weight-bold">{{studentDetails?.studentName}}</h5>
     </div>
-    <div class="row">
+    <div class="row" *ngIf="studentDetails?.smpCount > 0">
         <div class="col-sm-11 pt-2">
             <h6 class="font-weight-bold">No of SMP attempts</h6>
         </div>
@@ -10,9 +10,12 @@
             <button style="outline: none; cursor: default;" mat-mini-fab color="warn">{{studentDetails?.smpCount}}</button>
         </div>
     </div>
-    <div class="row">
+    <div class="row d-flex justify-content-center" *ngIf="studentDetails?.smpCount == 0">
+       ** No SMP still available **
+    </div>
+    <div class="row" *ngIf="studentDetails?.smpCount > 0">
         <div class="col-sm-6 font-weight-bold d-flex justify-content-center">
-            Warning{{studentDetails?.smpCount}} <span class="text-danger">*</span>
+            Warning &nbsp;&nbsp;{{studentDetails?.smpCount}} <span class="text-danger">*</span>
         </div>
         <div class="col-sm-6 d-flex justify-content-center">
                <span *ngIf="studentDetails?.smpOtp" class="font-weight-bold">{{studentDetails?.smpOtp}}</span>

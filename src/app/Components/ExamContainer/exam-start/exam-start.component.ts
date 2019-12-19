@@ -33,7 +33,7 @@ export class ExamStartComponent implements OnInit, OnDestroy {
 
   submitDisable: boolean = true;
 
-  warningSubscription: Subscription;
+  // warningSubscription: Subscription;
   questionSubscription: Subscription;
   timerSubscription: Subscription;
   sideNavSubscription: Subscription;
@@ -41,7 +41,7 @@ export class ExamStartComponent implements OnInit, OnDestroy {
   @ViewChild('cd1', { static: false }) private countdown: CountdownComponent;
 
   ngOnInit() {
-    localStorage.setItem('studentExamStart', 'true');
+    sessionStorage.setItem('studentExamStart', 'true');
     this.dataService.sideNavButton.next(true);
 
     this.timerSubscription = this.dataService.examStartAndTimer.subscribe(response => {
@@ -330,7 +330,7 @@ export class ExamStartComponent implements OnInit, OnDestroy {
     this.sideNavSubscription.unsubscribe();
     this.timerSubscription.unsubscribe();
     this.questionSubscription.unsubscribe();
-    this.warningSubscription.unsubscribe();
+    // this.warningSubscription.unsubscribe();
   }
 
 

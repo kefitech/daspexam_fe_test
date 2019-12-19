@@ -35,7 +35,7 @@ export class InitialStudentLoginComponent implements OnInit, AfterViewInit {
   }
 
   ngAfterViewInit() {
-    var studentData = localStorage.getItem('studentData');
+    var studentData = sessionStorage.getItem('studentData');
     if (studentData) {
       var dec = this.encryptionService.decryptUsingAES256(studentData);
       this.studentData = JSON.parse(JSON.parse(dec));
@@ -89,10 +89,10 @@ export class InitialStudentLoginComponent implements OnInit, AfterViewInit {
         this.studentData = studentLoginResponse.data.examInfo[0];
         var stringifyStudentData = JSON.stringify(this.studentData);
         var encryptedStudentData = this.encryptionService.encryptUsingAES256(stringifyStudentData);
-        localStorage.setItem('studentData', encryptedStudentData);
+        sessionStorage.setItem('studentData', encryptedStudentData);
         this.studentData["duration"] = this.studentData["duration"] + " Minutes";
         this.dataService.studentData.next(this.studentData);
-        localStorage.setItem("loginUser", 'student');
+        sessionStorage.setItem("loginUser", 'student');
       }
     }, error => {
       this.toastrService.error(error);

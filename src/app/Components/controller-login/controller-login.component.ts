@@ -173,10 +173,10 @@ export class ControllerLoginComponent implements OnInit, AfterViewInit {
           this.auth.controllerLoginAuth();
           this.ngxLoader.stop();
 
-          localStorage.setItem("email", email);
-          localStorage.setItem("userId", userId);
-          localStorage.setItem("sessionId", sessionId);
-          localStorage.setItem("loginUser", 'invigilator');
+          sessionStorage.setItem("email", email);
+          sessionStorage.setItem("userId", userId);
+          sessionStorage.setItem("sessionId", sessionId);
+          sessionStorage.setItem("loginUser", 'invigilator');
           this.router.navigate(["/landing/invigilator/instruction"]);
         }
         else {
