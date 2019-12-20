@@ -11,6 +11,7 @@ import { ConfirmationPopoverModule } from 'angular-confirmation-popover';
 import { CountdownModule } from 'ngx-countdown';
 import { InvigilatorSMPPopupComponent } from 'src/app/Popup/invigilator-smp-popup/invigilator-smp-popup.component';
 import { ConfirmationPopupComponent } from 'src/app/Popup/confirmation-popup/confirmation-popup.component';
+import { InvigilatorExamSummaryComponent } from 'src/app/Popup/invigilator-exam-summary/invigilator-exam-summary.component';
 
 @NgModule({
   declarations: [
@@ -29,7 +30,8 @@ import { ConfirmationPopupComponent } from 'src/app/Popup/confirmation-popup/con
   entryComponents: [InvigilatorOTPPopupComponent,
     InvigilatorPageStudentVerificationPopupComponent,
     InvigilatorSMPPopupComponent,
-    ConfirmationPopupComponent
+    ConfirmationPopupComponent,
+    InvigilatorExamSummaryComponent
   ],
 })
 export class ControllerLoginModule { }

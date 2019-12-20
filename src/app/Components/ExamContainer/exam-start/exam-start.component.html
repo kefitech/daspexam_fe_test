@@ -34,11 +34,11 @@
             </div>
             <div class="row p-2">
                 <div class="col-sm-3 p-2" *ngFor="let exam of examinationData; let i=index">
-                    <button [disabled]="!submitDisable" [matTooltip]="exam?.status==0?'Not Visited':(exam?.status==1?
-                        'Visited':exam?.status==2?'Answered':'Marked For Review')" 
-                        [ngClass]="{'NotVisited': exam?.status==0, 'Visited': exam?.status==1, 
-                        'Answered': (exam?.status==2), 'Review': (exam?.status==3)}"
-                        (click)="GotoQuestion(i)" mat-mini-fab>{{i+1}}</button>
+                    <button [class.Disabled]="!submitDisable" [disabled]="!submitDisable" [matTooltip]="exam?.status==0?'Not Visited':(exam?.status==1?
+                        'Visited':exam?.status==2?'Answered':'Marked For Review')" [ngClass]="{'NotVisited': exam?.status==0, 
+                        'Visited': exam?.status==1, 
+                        'Answered': (exam?.status==2), 
+                        'Review': (exam?.status==3)}" (click)="GotoQuestion(i)" mat-mini-fab>{{i+1}}</button>
                 </div>
 
             </div>
@@ -71,8 +71,8 @@
                             </div>
                             <div *ngIf="exam?.isVideo == 1" class="col-sm-7">
                                 <video class="w-100" controls>
-                                <source [src]="exam?.videoFile">
-                            </video>
+                                    <source [src]="exam?.videoFile">
+                                </video>
                             </div>
                         </div>
                         <!-- Questions available here -->
@@ -85,30 +85,33 @@
                 </div>
                 <div class="row mt-5" *ngIf="i==activeIndex">
                     <div class="col-sm-3" *ngFor="let options of exam?.options; let j=index">
-                        <mat-radio-button [disabled]="!submitDisable" color="primary" [checked]="exam?.answeredOption == options?.optionId"
-                            (change)="Answer(i, j, exam?.studentResponseId, $event)"
-                            [value]="options?.optionId">
-                            <span style="word-wrap: break-word;" *ngIf="options?.isImage == 0" [innerHtml]="options?.option">
+                        <mat-radio-button [disabled]="!submitDisable" color="primary"
+                            [checked]="exam?.answeredOption == options?.optionId"
+                            (change)="Answer(i, j, exam?.studentResponseId, $event)" [value]="options?.optionId">
+                            <span style="word-wrap: break-word;" *ngIf="options?.isImage == 0"
+                                [innerHtml]="options?.option">
                                 <!-- Options available here -->
                             </span>
-                            <img *ngIf="options?.isImage == 1" class="rounded AnswerImage" [src]="options?.option" alt="">
+                            <img *ngIf="options?.isImage == 1" class="rounded AnswerImage" [src]="options?.option"
+                                alt="">
                         </mat-radio-button>
                     </div>
                 </div>
                 <div class="row mt-5" *ngIf="i==activeIndex">
                     <div class="col-sm-2">
-                        <button [disabled]="!submitDisable" (click)="MarkASReview(i, exam?.status)" class="MarkReview" mat-raised-button>
+                        <button [class.Disabled]="!submitDisable" [disabled]="!submitDisable" (click)="MarkASReview(i, exam?.status)" class="MarkReview"
+                            mat-raised-button>
                             <span *ngIf="exam?.status!=3">Mark as review</span>
                             <span *ngIf="exam?.status==3">Reviewed</span>
                         </button>
                     </div>
                     <div class="col-sm-6">
-                        <button [disabled]="!submitDisable" (click)="ClearResponse(i)" mat-raised-button color="warn">
+                        <button [class.Disabled]="!submitDisable" [disabled]="!submitDisable" (click)="ClearResponse(i)" mat-raised-button color="warn">
                             Clear Response
                         </button>
                     </div>
                     <div class="col-sm-2">
-                        <button matTooltip="Previous" *ngIf="!first" (click)="Navigate('previous', i, first, last)"
+                        <button [class.Disabled]="!submitDisable" matTooltip="Previous" *ngIf="!first" (click)="Navigate('previous', i, first, last)"
                             class="Submit" mat-flat-button>
                             <span>Previous</span>
                             <!-- <mat-icon *ngIf="!first">
@@ -117,8 +120,8 @@
                         </button>
                     </div>
                     <div class="col-sm-2">
-                        <button [disabled]="!submitDisable" [matTooltip]="last?'Save':'Save and Next'" (click)="Navigate('next', i, first, last)"
-                            class="Submit" mat-flat-button>
+                        <button [class.Disabled]="!submitDisable" [disabled]="!submitDisable" [matTooltip]="last?'Save':'Save and Next'"
+                            (click)="Navigate('next', i, first, last)" class="Submit" mat-flat-button>
                             <span *ngIf="!last">Save and Next</span>
                             <span *ngIf="last">Save</span>
                             <!-- <mat-icon *ngIf="!last">
