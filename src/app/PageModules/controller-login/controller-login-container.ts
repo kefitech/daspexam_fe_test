@@ -6,6 +6,7 @@ import { InvigilatorPageStudentVerificationPopupComponent } from 'src/app/Popup/
 import { ControllerStartExamComponent } from 'src/app/Components/ControllerContainer/controller-start-exam/controller-start-exam.component';
 import { InvigilatorSMPPopupComponent } from 'src/app/Popup/invigilator-smp-popup/invigilator-smp-popup.component';
 import { ConfirmationPopupComponent } from 'src/app/Popup/confirmation-popup/confirmation-popup.component';
+import { InvigilatorExamSummaryComponent } from 'src/app/Popup/invigilator-exam-summary/invigilator-exam-summary.component';
 
 
 export const ControllerLoginComponentContainer = [
@@ -16,5 +17,6 @@ export const ControllerLoginComponentContainer = [
     InvigilatorPageStudentVerificationPopupComponent,
     ControllerStartExamComponent,
     InvigilatorSMPPopupComponent,
-    ConfirmationPopupComponent
+    ConfirmationPopupComponent,
+    InvigilatorExamSummaryComponent
 ];

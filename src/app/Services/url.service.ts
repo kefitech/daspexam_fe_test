@@ -54,6 +54,8 @@ export class URLService {
 
   public lateComerTimeConfigURL = "api/conduct_exam/late_comers_student_list";
 
+  public examSummaryURL = "api/conduct_exam/exam_summary";
+
 
 
   //Student 

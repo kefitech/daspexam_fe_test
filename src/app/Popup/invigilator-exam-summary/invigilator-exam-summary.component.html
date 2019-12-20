@@ -1,0 +1,46 @@
+<div class="col-sm-12">
+    <div class="row">
+        <div *ngFor="let summary of summary" [ngClass]="{'d-flex justify-content-center': summary?.length == 1}"
+            class="col-sm-6">
+            <mat-card>
+                <mat-card-title>{{summary?.examName}}</mat-card-title>
+                <mat-card-content>
+                    <div *ngFor="let student of summary?.studentList">
+                        <div class="row">
+                            <div class="col-sm-10">
+                                Total number of students
+                            </div>
+                            <div class="col-sm-2">
+                                <input class="w-100" disabled type="text" [value]="student?.totalStudentsCount">
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-sm-10">
+                                Attended students
+                            </div>
+                            <div class="col-sm-2">
+                                <input class="w-100" disabled type="text" [value]="student?.attendedCount">
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-sm-10">
+                                Students not attended
+                            </div>
+                            <div class="col-sm-2">
+                                <input class="w-100" disabled type="text" [value]="student?.notAttendedCount">
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-sm-10">
+                                SMP students
+                            </div>
+                            <div class="col-sm-2">
+                                <input class="w-100" disabled type="text" [value]="student?.smpStudentsCount">
+                            </div>
+                        </div>
+                    </div>
+                </mat-card-content>
+            </mat-card>
+        </div>
+    </div>
+</div>

@@ -7,6 +7,7 @@ import { InvigilatorSMPPopupComponent } from 'src/app/Popup/invigilator-smp-popu
 import { ConfirmationPopupComponent } from 'src/app/Popup/confirmation-popup/confirmation-popup.component';
 import { ControllerAPIService } from 'src/app/Services/controller-api.service';
 import { InvigilatorPageStudentVerificationPopupComponent } from 'src/app/Popup/invigilator-page-student-verification-popup/invigilator-page-student-verification-popup.component';
+import { InvigilatorExamSummaryComponent } from 'src/app/Popup/invigilator-exam-summary/invigilator-exam-summary.component';
 
 @Component({
   selector: 'app-controller-start-exam',
@@ -270,7 +271,7 @@ export class ControllerStartExamComponent implements OnInit, AfterViewInit, OnDe
       if (this.studentTimer['_results'][length + rowIndex])
         this.studentTimer['_results'][length + rowIndex].stop();
       if (this.examList[index]['studentList']['data'])
-        this.examList[index]['studentList']['data'][rowIndex]['studentStatus'] = 2;
+        this.examList[index]['studentList']['data'][rowIndex]['studentStatus'] = 5;
     }
   }
 
@@ -370,6 +371,7 @@ export class ControllerStartExamComponent implements OnInit, AfterViewInit, OnDe
       })
       if (allExamsDone) {
         this.masterSubmitValid = false;
+        this.ExamSummary();
       }
     }
     else if (type == 'exam') {
@@ -402,8 +404,10 @@ export class ControllerStartExamComponent implements OnInit, AfterViewInit, OnDe
           .filter(f => f.isVerified == 1)
           .every(e => e.status == 6);
       })
-      if (allExamsDone)
+      if (allExamsDone){
         this.masterSubmitValid = false;
+        this.ExamSummary();
+      }
     }
     else if (type == 'all') {
       this.examList.forEach((element, examIndex) => {
@@ -414,6 +418,7 @@ export class ControllerStartExamComponent implements OnInit, AfterViewInit, OnDe
       });
 
       this.masterSubmitValid = false;
+      this.ExamSummary();
     }
   }
 
@@ -489,6 +494,15 @@ export class ControllerStartExamComponent implements OnInit, AfterViewInit, OnDe
       this.toastrService.error(e);
       // this.ngxLoader.stop();
     }
+  }
+
+  ExamSummary(): void{
+    console.log('summary');
+    const dialogRef = this.dialog.open(InvigilatorExamSummaryComponent, {
+      width: '80%',
+      height: '80%',
+      // data: { }
+    })
   }
 
   ngOnDestroy() {

@@ -99,4 +99,8 @@ export class ControllerAPIService {
     return this.http.post(this.URLService.baseURL + this.URLService.lateComerTimeConfigURL, this.dataService.controllerData.value);
   }
 
+  ExamSummary(): any {
+    return this.http.post(this.URLService.baseURL + this.URLService.examSummaryURL, this.dataService.controllerData.value);
+  }
+
 }
