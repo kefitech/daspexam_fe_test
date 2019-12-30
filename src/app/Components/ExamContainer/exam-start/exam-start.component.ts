@@ -53,9 +53,7 @@ export class ExamStartComponent implements OnInit, OnDestroy {
 
     this.questionSubscription = this.dataService.questionsData.subscribe(response => {
       if (response.length > 0) {
-        console.log(response);
         this.examinationData = this.encryptionService.DecryptEncryption(response, ['question'], ['option']);
-        console.log(this.examinationData);
         this.examinationData = this.examinationData.map(({ options, ...rest }) => ({ options: this.dataService.shuffle(options), ...rest }));
 
 
@@ -246,7 +244,6 @@ export class ExamStartComponent implements OnInit, OnDestroy {
     }
     this.StudentResponseSubmit();
 
-    console.log(this.answers);
 
 
   }
