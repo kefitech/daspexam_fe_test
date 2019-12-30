@@ -29,7 +29,6 @@ export class ExamAPIService {
 
   StudentResponseSubmit(body: any): any {
     var data = Object.assign({}, {responseList: body}, this.dataService.studentCredentials.value);
-    console.log(data);
     
     // body['timeRemains'] = Math.round(parseInt(localStorage.getItem('freq'))/6000);
     return this.http.post(this.URLService.baseURL + this.URLService.StudentResponseSubmitURL, data);

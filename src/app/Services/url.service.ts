@@ -56,6 +56,8 @@ export class URLService {
 
   public examSummaryURL = "api/conduct_exam/exam_summary";
 
+  public checkIfAllStudentsExamCompletedURL = "api/conduct_exam/verified_stud_exam_check";
+
 
 
   //Student 

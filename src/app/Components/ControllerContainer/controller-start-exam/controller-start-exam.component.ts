@@ -26,6 +26,7 @@ export class ControllerStartExamComponent implements OnInit, AfterViewInit, OnDe
 
   private lateComerObservable: any = null;
   private lateComerObservableOnPageLoad: any = null;
+  private allStudentsExamCompletedInterval: any = null;
 
   studentTimerPauseResumeCaption: string = "Do you want to Pause/Resume this student?"
 
@@ -78,9 +79,32 @@ export class ControllerStartExamComponent implements OnInit, AfterViewInit, OnDe
         }, 500);
       }
       else {
-        this.masterSubmitValid = true;
-        this.toastrService.success("Examination completed");
+        this.toastrService.success("Examination time completed");
+        this.allStudentsExamCompletedInterval = setInterval(() => {
+        this.CheckAllStudentsExamCompleted();
+      }, 1000);
       }
+    }
+  }
+
+  CheckAllStudentsExamCompleted(): void {
+    try {
+      this.service.CheckAllStudentExamCompleted().subscribe(response => {
+        if (response.success) {
+          if(response.data.isExamCompleted){
+            this.masterSubmitValid = true;
+            clearInterval(this.allStudentsExamCompletedInterval);
+          }
+        }
+        else {
+          this.toastrService.error(response.message);
+        }
+      }, error => {
+        this.toastrService.error(error.message);
+      })
+    }
+    catch (e) {
+      this.toastrService.error(e);
     }
   }
 
@@ -497,10 +521,10 @@ export class ControllerStartExamComponent implements OnInit, AfterViewInit, OnDe
   }
 
   ExamSummary(): void{
-    console.log('summary');
     const dialogRef = this.dialog.open(InvigilatorExamSummaryComponent, {
       width: '80%',
       height: '80%',
+      disableClose: true
       // data: { }
     })
   }
@@ -508,6 +532,7 @@ export class ControllerStartExamComponent implements OnInit, AfterViewInit, OnDe
   ngOnDestroy() {
     clearInterval(this.lateComerObservable);
     clearInterval(this.lateComerObservableOnPageLoad);
+    clearInterval(this.allStudentsExamCompletedInterval);
   }
 
 }

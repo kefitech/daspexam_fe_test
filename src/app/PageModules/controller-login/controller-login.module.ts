@@ -12,6 +12,7 @@ import { CountdownModule } from 'ngx-countdown';
 import { InvigilatorSMPPopupComponent } from 'src/app/Popup/invigilator-smp-popup/invigilator-smp-popup.component';
 import { ConfirmationPopupComponent } from 'src/app/Popup/confirmation-popup/confirmation-popup.component';
 import { InvigilatorExamSummaryComponent } from 'src/app/Popup/invigilator-exam-summary/invigilator-exam-summary.component';
+import {NgxPrintModule} from 'ngx-print';
 
 @NgModule({
   declarations: [
@@ -25,7 +26,8 @@ import { InvigilatorExamSummaryComponent } from 'src/app/Popup/invigilator-exam-
     CountdownModule,
     ConfirmationPopoverModule.forRoot({
       confirmButtonType: 'danger' // set defaults here
-    })
+    }),
+    NgxPrintModule
   ],
   entryComponents: [InvigilatorOTPPopupComponent,
     InvigilatorPageStudentVerificationPopupComponent,
