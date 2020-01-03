@@ -8,9 +8,9 @@
                 <span *ngIf="(dataService?.isNotLoginScreen | async) && !(dataService?.warning | async)" class="d-flex justify-content-end py-5">
                     <img class="userImg rounded p-3" [src]="(dataService?.studentData | async)?.photo" alt="">
                     <span class="userName p-2 mt-2">{{(dataService?.studentData | async)?.fullName}}
-                        <button matTooltip="Logout" color="warn" (click)="Logout()" mat-icon-button>
+                        <!-- <button matTooltip="Logout" color="warn" (click)="Logout()" mat-icon-button>
                             <mat-icon>power_settings_new</mat-icon>
-                        </button>
+                        </button> -->
                     </span>
                     <button matTooltip="Full Screen" *ngIf="(dataService?.warning | async)" 
                     (click)="dataService.toggleFullScreen()" class="mt-2"

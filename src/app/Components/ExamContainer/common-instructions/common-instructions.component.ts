@@ -63,9 +63,9 @@ export class CommonInstructionsComponent implements OnInit, AfterViewInit, OnDes
           this.dataService.examStartAndTimer.next(response.data);
           clearInterval(this.pageInitInterval);
         }
-        else {
-          this.toastrService.error(response.message);
-        }
+        // else {
+        //   this.toastrService.error(response.message);
+        // }
       }, error => {
         this.toastrService.error(error.message);
       })

@@ -23,17 +23,6 @@ export class InvigilatorExamSummaryComponent implements OnInit, AfterViewInit {
   summary: any;
 
   ngOnInit() {
-    sessionStorage.removeItem("userId");
-    sessionStorage.removeItem("sessionId");
-    sessionStorage.removeItem("email");
-    sessionStorage.removeItem("AcceptInstruction");
-    sessionStorage.removeItem("questionShuffled");
-    sessionStorage.removeItem('controllerExamStart');
-    sessionStorage.removeItem("loginUser");
-    sessionStorage.removeItem("Token");
-    this.dataService.controllerLogin.next(false);
-    this.dataService.controllerData.next(null);
-    this.auth.controllerLogoutAuth();
   }
 
   ngAfterViewInit() {
@@ -45,6 +34,18 @@ export class InvigilatorExamSummaryComponent implements OnInit, AfterViewInit {
       this.ngxLoader.start();
       this.service.ExamSummary().subscribe(response => {
         if (response.success) {
+
+          sessionStorage.removeItem("userId");
+          sessionStorage.removeItem("sessionId");
+          sessionStorage.removeItem("email");
+          sessionStorage.removeItem("AcceptInstruction");
+          sessionStorage.removeItem("questionShuffled");
+          sessionStorage.removeItem('controllerExamStart');
+          sessionStorage.removeItem("loginUser");
+          sessionStorage.removeItem("Token");
+          this.dataService.controllerLogin.next(false);
+          this.dataService.controllerData.next(null);
+          this.auth.controllerLogoutAuth();
           this.summary = response.data;
           this.ngxLoader.stop();
         }

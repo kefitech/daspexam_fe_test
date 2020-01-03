@@ -190,7 +190,7 @@ export class ControllerDashboardComponent implements OnInit, AfterViewInit, OnDe
 
     const dialogRef = this.dialog.open(InvigilatorPageStudentVerificationPopupComponent, {
       width: '45%',
-      height: '80%',
+      height: '90%',
       data: { student: rowData, exam: this.examDetails[index], duration: this.examDetails[index].duration }
     })
     dialogRef.afterClosed().subscribe(response => {
