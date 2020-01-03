@@ -1,5 +1,6 @@
 <mat-sidenav-container class="sidenav-container">
-    <mat-sidenav #sidenav position="end" class="SideNav" mode="side" [(opened)]="sideNav" *ngIf="examinationData?.length > 0">
+    <mat-sidenav #sidenav position="end" class="SideNav" mode="side" [(opened)]="sideNav"
+        *ngIf="examinationData?.length > 0">
         <!-- Timer -->
         <div class="col-sm-12 mt-3 Time d-flex justify-content-center">
             <countdown #cd1 [config]="timerConfig" (event)="handleEvent($event)"></countdown>
@@ -100,10 +101,10 @@
                                     </mat-radio-button>
                                 </div>
                                 <div class="col-sm-10 text-justify">
-                                    <span style="word-wrap: break-word;" *ngIf="options?.isImage == 0"
+                                    <p id="option" style="word-wrap: break-word;" *ngIf="options?.isImage == 0"
                                         [innerHtml]="options?.option">
                                         <!-- Options available here -->
-                                    </span>
+                                    </p>
                                     <img *ngIf="options?.isImage == 1" class="rounded AnswerImage"
                                         [src]="options?.option" alt="">
                                 </div>
