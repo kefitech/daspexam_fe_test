@@ -31,12 +31,17 @@
 
 .Table {
   .TitleCaption {
-    font-size: 1.3em;
+    font-size: 1.2em;
     font-weight: bold;
   }
   .TitleTotal {
     font-size: 1em;
     font-weight: bold;
+  }
+  .Desc{
+    font-size: 0.8em;
+    font-weight: bold;
+    color: color(darkSuccess);
   }
   .mat-column-sno {
     word-wrap: break-word !important;
@@ -110,5 +115,12 @@
   }
   ::ng-deep .mat-slide-toggle-thumb {
     background-color: red;
+  }
+}
+
+.ExpansionHeader{
+  height: auto;
+  .Checkbox{
+    width: 3% !important;
   }
 }

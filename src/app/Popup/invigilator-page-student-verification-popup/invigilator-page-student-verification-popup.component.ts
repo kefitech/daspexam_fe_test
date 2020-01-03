@@ -154,6 +154,7 @@ export class InvigilatorPageStudentVerificationPopupComponent implements OnInit 
   ResetSnapOnComparison(): void {
     this.webcamImage = null;
     this.imgComparison = false;
+    this.imgVerified = false;
   }
 
   ImageVerified(): void {

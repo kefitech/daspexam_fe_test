@@ -57,7 +57,7 @@ export class LandingComponent implements OnInit, AfterViewInit, OnDestroy {
     else if (loggedInUser == 'student') {
       setTimeout(() => {
         this.CheckValidStudent();
-      }, 10);
+      }, 100);
     }
     // var questionFetch = sessionStorage.getItem("questionFetch");
     var studentData = sessionStorage.getItem('studentData');
@@ -67,12 +67,12 @@ export class LandingComponent implements OnInit, AfterViewInit, OnDestroy {
           this.dataService.examStartAndTimer.next('');
           this.fetchQuestions();
         }, 3600)
-      }, 10);
+      }, 100);
     }
     if (studentData && loggedInUser == 'student') {
       setTimeout(() => {
         this.FetchStudentDetails()
-      }, 10);
+      }, 100);
     }
   }
 
@@ -362,9 +362,9 @@ export class LandingComponent implements OnInit, AfterViewInit, OnDestroy {
           this.dataService.examStartAndTimer.next(response.data);
           clearInterval(this.pageInitInterval);
         }
-        else {
-          this.toastrService.error(response.message);
-        }
+        // else {
+        //   this.toastrService.error(response.message);
+        // }
       }, error => {
         this.toastrService.error(error.message);
       })

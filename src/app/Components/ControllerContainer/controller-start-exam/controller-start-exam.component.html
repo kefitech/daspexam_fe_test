@@ -99,7 +99,7 @@
                                 </mat-icon>
                             </button>
                             <button [disabled]="element?.status == 2 || element?.status == 3 
-                            || element?.status == 5 
+                            || element?.status == 5 || element?.status == 1
                             || element?.status == 6 || !isExamStarted || element?.isVerified == 0" color="primary"
                                 [matMenuTriggerFor]="systems" matTooltip="Reallocate" mat-icon-button>
                                 <mat-icon>shuffle</mat-icon>
@@ -115,23 +115,26 @@
                                     </button>
                                 </span>
                             </mat-menu>
-                            <button (click)="StudentSMP(element, index, i)" [disabled]="element?.status == 2 || element?.status == 3 || element?.status == 5 
+                            <button (click)="StudentSMP(element, index, i)" [disabled]="element?.status == 2 
+                            || element?.status == 3 || element?.status == 5 || element?.status == 1
                                 || element?.status == 6 || !isExamStarted || element?.isVerified == 0" color="warn"
                                 matTooltip="SMP" mat-icon-button>
                                 <mat-icon>bug_report</mat-icon>
                             </button>
                             <button (click)="Submit('student', index, i, exam?.examId, element)"
-                                [class.DefaultButton]="element?.status == 2 || element?.status == 3 || element?.status == 6 || !isExamStarted || element?.isVerified == 0"
-                                [disabled]="element?.status == 2 || element?.status == 3 || element?.status == 6 || !isExamStarted || element?.isVerified == 0"
+                                [class.DefaultButton]="element?.status == 2 || element?.status == 3 || element?.status == 6 
+                                || !isExamStarted || element?.isVerified == 0 || element?.status == 1" 
+                                [disabled]="element?.status == 2 || element?.status == 3 || element?.status == 6 || 
+                                !isExamStarted || element?.isVerified == 0 || element?.status == 1"
                                 class="SuccessIcon" matTooltip="Save" mat-icon-button>
                                 <mat-icon>save</mat-icon>
                             </button>
-                            <button *ngIf="element?.isVerified == 1" [disabled]="element?.isVerified == 1"
+                            <button *ngIf="element?.isVerified == 1" [disabled]="element?.isVerified == 1 || element?.status == 1"
                                 style="color: green" mat-icon-button>
                                 <mat-icon>done_all</mat-icon>
                             </button>
                             <button matTooltip="Verify Now" (click)="SingleStudentVerification(element, index, i)"
-                                *ngIf="element?.isVerified == 0" color="primary" mat-icon-button>
+                                *ngIf="element?.isVerified == 0" color="primary" [disabled]="element?.status == 1" mat-icon-button>
                                 <mat-icon>vpn_key</mat-icon>
                             </button>
                         </mat-cell>

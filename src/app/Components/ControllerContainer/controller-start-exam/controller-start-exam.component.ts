@@ -242,7 +242,7 @@ export class ControllerStartExamComponent implements OnInit, AfterViewInit, OnDe
     var pauseIndex = [];
     this.examList.forEach((examList, examIndex) => {
       examList['studentList']['data'].forEach((row, rowIndex) => {
-        if (row['status'] == 4 || row['status'] == 5 || row['status'] == 6)
+        if (row['status'] == 4 || row['status'] == 5 || row['status'] == 1 || row['status'] == 6)
           pauseIndex.push({ row: rowIndex, parent: examIndex });
       });
     });
@@ -294,8 +294,8 @@ export class ControllerStartExamComponent implements OnInit, AfterViewInit, OnDe
       }
       if (this.studentTimer['_results'][length + rowIndex])
         this.studentTimer['_results'][length + rowIndex].stop();
-      if (this.examList[index]['studentList']['data'])
-        this.examList[index]['studentList']['data'][rowIndex]['studentStatus'] = 5;
+      // if (this.examList[index]['studentList']['data'])
+      //   this.examList[index]['studentList']['data'][rowIndex]['status'] = 5;
     }
   }
 

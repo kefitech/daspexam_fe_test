@@ -33,6 +33,8 @@ export class CommonPanelComponent implements OnInit {
 
   @HostListener('window:resize', ['$event'])
   onResize(event) {
+    event.returnValue = false;
+    event.preventDefault();
     if (this.winHeight < window.innerHeight)
       this.winHeight = window.innerHeight;
     var alreadyMarked = localStorage.getItem('SMP');
@@ -48,8 +50,8 @@ export class CommonPanelComponent implements OnInit {
 
   @HostListener('document:keypress', ['$event'])
   handleKeyboardEvent(event: KeyboardEvent) {
+    event.returnValue = false;
     event.preventDefault();
-
   }
 
   // *mouse click event
@@ -60,6 +62,7 @@ export class CommonPanelComponent implements OnInit {
   // }
 
   @HostListener('document:keydown', ['$event']) onKeydownHandler(event: KeyboardEvent) {
+    event.returnValue = false;
     event.preventDefault();
   }
 

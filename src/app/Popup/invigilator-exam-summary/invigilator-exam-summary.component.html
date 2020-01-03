@@ -11,8 +11,8 @@
             <button mat-raised-button (click)="Close()" color="warn">Close</button>
         </div>
     </div>
-    <div class="row mt-2">
-        <div *ngFor="let summary of summary" [ngClass]="{'d-flex justify-content-center': summary?.length == 1}"
+    <div class="row mt-2" [ngClass]="{'d-flex justify-content-center': summary?.length == 1}">
+        <div *ngFor="let summary of summary" 
             class="col-sm-6">
             <mat-card class="CardHeight">
                 <mat-card-title class="font-weight-bold Title">
