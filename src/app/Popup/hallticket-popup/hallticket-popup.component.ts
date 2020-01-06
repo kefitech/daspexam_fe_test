@@ -36,7 +36,20 @@ export class HallticketPopupComponent implements OnInit, AfterViewInit {
 
   studentData: any;
 
+  inputType: string = "abc";
+
+  numKeyboard: any = ['1', '2', '3', '4', '5', '6', '7', '8', '9', '0'];
+
+  lowerCaseCharactersKeyboard: any = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z'];
+
+  upperCaseCharactersKeyboard: any = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z'];
+
+  keyboardValue: any;
+
+  upperCase: boolean = false;
+
   ngOnInit() {
+    this.keyboardValue = this.numKeyboard;
     this.formSetup();
   }
 
@@ -96,6 +109,51 @@ export class HallticketPopupComponent implements OnInit, AfterViewInit {
 
   _keyPress(event: any) {
     this.dataService.NumberOnly(event);
+  }
+
+  KeyboardTypeChange(): void {
+    if (this.inputType == "abc") {
+      this.upperCase = false;
+      this.inputType = "123";
+      this.keyboardValue = this.lowerCaseCharactersKeyboard;
+    }
+    else if (this.inputType == "123") {
+      this.inputType = "abc";
+      this.keyboardValue = this.numKeyboard;
+    }
+  }
+
+  InputChange(value: string, event: any): void {
+    this.hallticketForm.controls['hallTicketNumber'].setValue(this.hallticketForm.value.hallTicketNumber + value);
+  }
+
+  LowerUperCaseChange(value: string): void {
+    this.upperCase = !this.upperCase;
+    if (!this.upperCase) {
+      this.keyboardValue = this.lowerCaseCharactersKeyboard;
+    }
+    else if (this.upperCase) {
+      this.keyboardValue = this.upperCaseCharactersKeyboard;
+    }
+  }
+
+  Space(): void {
+    this.hallticketForm.controls['hallTicketNumber'].setValue(this.hallticketForm.value.hallTicketNumber + ' ');
+  }
+
+  Backspace(): void {
+    if (this.hallticketForm.value.hallTicketNumber)
+      this.hallticketForm.controls['hallTicketNumber'].setValue(this.hallticketForm.value.hallTicketNumber.slice(0, -1));
+  }
+
+  Clear(): void{
+    this.hallticketForm.controls['hallTicketNumber'].setValue('');
+  }
+
+  ResetMenu(): void{
+    this.keyboardValue = this.numKeyboard;
+    this.upperCase = false;
+    this.inputType = "abc";
   }
 
 }

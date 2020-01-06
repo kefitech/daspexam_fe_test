@@ -129,6 +129,7 @@ export class ControllerLoginComponent implements OnInit, AfterViewInit {
     window['grecaptcha'].render(this.recaptchaElement.nativeElement, {
       'sitekey': this.dataService.captchaSecretKey,
       'callback': (response) => {
+        // response.setHeader("Set-Cookie", "HttpOnly;Secure;SameSite=Strict");
         var body = {
           response: response
         }
