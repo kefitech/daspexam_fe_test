@@ -26,7 +26,7 @@ export class ControllerLoginComponent implements OnInit, AfterViewInit {
   showPass: boolean = false;
   passIcon: string = "visibility_off";
 
-  captchaValid: boolean = false;
+  // captchaValid: boolean = false;
 
   loginForm: FormGroup;
   loginFormCaption: object = {
@@ -43,7 +43,7 @@ export class ControllerLoginComponent implements OnInit, AfterViewInit {
   };
 
   ngOnInit() {
-    this.addRecaptchaScript();
+    // this.addRecaptchaScript();
     this.loginForm = this.formbuilder.group(this.loginFormData);
   }
 
@@ -61,7 +61,7 @@ export class ControllerLoginComponent implements OnInit, AfterViewInit {
   Submit(): void {
     try {
       this.ngxLoader.start();
-      if (this.loginForm.valid && this.captchaValid) {
+      if (this.loginForm.valid) {
         var body = Object.assign({devType:"w" }, this.loginForm.value);
         body['password'] = sha512.sha512(this.loginForm.value.password);
         this.service.ControllerLogin(body).subscribe(response => {
@@ -87,10 +87,10 @@ export class ControllerLoginComponent implements OnInit, AfterViewInit {
         this.toastrService.error("Mandatory data missing!");
         this.ngxLoader.stop();
       }
-      else if (!this.captchaValid) {
-        this.toastrService.error("Captcha not valid!");
-        this.ngxLoader.stop();
-      }
+      // else if (!this.captchaValid) {
+      //   this.toastrService.error("Captcha not valid!");
+      //   this.ngxLoader.stop();
+      // }
     }
     catch (e) {
       this.toastrService.error(e);
@@ -110,57 +110,57 @@ export class ControllerLoginComponent implements OnInit, AfterViewInit {
     })
   }
 
-  addRecaptchaScript() {
-    window['grecaptchaCallback'] = () => {
-      this.renderReCaptcha();
-    }
+  // addRecaptchaScript() {
+  //   window['grecaptchaCallback'] = () => {
+  //     this.renderReCaptcha();
+  //   }
 
-    (function (d, s, id, obj) {
-      var js, fjs = d.getElementsByTagName(s)[0];
-      // if (d.getElementById(id)) { return; }
-      js = d.createElement(s); js.id = id;
-      js.src = "https://www.google.com/recaptcha/api.js?onload=grecaptchaCallback&amp;render=explicit";
-      fjs.parentNode.insertBefore(js, fjs);
-    }(document, 'script', 'recaptcha-jssdk', this));
+  //   (function (d, s, id, obj) {
+  //     var js, fjs = d.getElementsByTagName(s)[0];
+  //     // if (d.getElementById(id)) { return; }
+  //     js = d.createElement(s); js.id = id;
+  //     js.src = "https://www.google.com/recaptcha/api.js?onload=grecaptchaCallback&amp;render=explicit";
+  //     fjs.parentNode.insertBefore(js, fjs);
+  //   }(document, 'script', 'recaptcha-jssdk', this));
 
-  }
+  // }
 
-  renderReCaptcha() {
-    window['grecaptcha'].render(this.recaptchaElement.nativeElement, {
-      'sitekey': this.dataService.captchaSecretKey,
-      'callback': (response) => {
-        // response.setHeader("Set-Cookie", "HttpOnly;Secure;SameSite=Strict");
-        var body = {
-          response: response
-        }
-        try {
-          this.ngxLoader.start();
-          this.service.RecaptchaVerification(body).subscribe(response => {
-            if (response){
-              this.captchaValid = true;
-              this.ngxLoader.stop();
-            }
-            else {
-              this.toastrService.error(response.message);
-              this.ngxLoader.stop();
-            }
-          }, error => {
-            this.toastrService.error(error.message);
-            this.ngxLoader.stop();
-          })
-        }
-        catch (e) {
-          this.toastrService.error(e);
-          this.ngxLoader.stop();
-        }
-      },
-      'expired-callback': (response) => {
-        this.dialog.closeAll();
-        this.captchaValid = false;
-        this.ngxLoader.stop();
-      }
-    });
-  }
+  // renderReCaptcha() {
+  //   window['grecaptcha'].render(this.recaptchaElement.nativeElement, {
+  //     'sitekey': this.dataService.captchaSecretKey,
+  //     'callback': (response) => {
+  //       // response.setHeader("Set-Cookie", "HttpOnly;Secure;SameSite=Strict");
+  //       var body = {
+  //         response: response
+  //       }
+  //       try {
+  //         this.ngxLoader.start();
+  //         this.service.RecaptchaVerification(body).subscribe(response => {
+  //           if (response){
+  //             this.captchaValid = true;
+  //             this.ngxLoader.stop();
+  //           }
+  //           else {
+  //             this.toastrService.error(response.message);
+  //             this.ngxLoader.stop();
+  //           }
+  //         }, error => {
+  //           this.toastrService.error(error.message);
+  //           this.ngxLoader.stop();
+  //         })
+  //       }
+  //       catch (e) {
+  //         this.toastrService.error(e);
+  //         this.ngxLoader.stop();
+  //       }
+  //     },
+  //     'expired-callback': (response) => {
+  //       this.dialog.closeAll();
+  //       this.captchaValid = false;
+  //       this.ngxLoader.stop();
+  //     }
+  //   });
+  // }
 
   CheckOTP(otp: number, email: string, userId: string, sessionId: string): void {
     try {
