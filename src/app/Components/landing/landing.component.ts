@@ -49,16 +49,7 @@ export class LandingComponent implements OnInit, AfterViewInit, OnDestroy {
   ngAfterViewInit() {
 
     var loggedInUser = sessionStorage.getItem("loginUser");
-    if (loggedInUser == 'invigilator') {
-      setTimeout(() => {
-        this.checkValidUser();
-      }, 100);
-    }
-    else if (loggedInUser == 'student') {
-      setTimeout(() => {
-        this.CheckValidStudent();
-      }, 100);
-    }
+    
     // var questionFetch = sessionStorage.getItem("questionFetch");
     var studentData = sessionStorage.getItem('studentData');
     if (loggedInUser == 'student') {
@@ -69,6 +60,19 @@ export class LandingComponent implements OnInit, AfterViewInit, OnDestroy {
         }, 3600)
       }, 100);
     }
+
+    if (loggedInUser == 'invigilator') {
+      setTimeout(() => {
+        this.checkValidUser();
+      }, 100);
+    }
+    else if (loggedInUser == 'student') {
+      setTimeout(() => {
+        this.CheckValidStudent();
+      }, 100);
+    }
+
+
     if (studentData && loggedInUser == 'student') {
       setTimeout(() => {
         this.FetchStudentDetails()
@@ -362,9 +366,10 @@ export class LandingComponent implements OnInit, AfterViewInit, OnDestroy {
           this.dataService.examStartAndTimer.next(response.data);
           clearInterval(this.pageInitInterval);
         }
-        // else {
-        //   this.toastrService.error(response.message);
-        // }
+        else {
+          // sessionStorage.removeItem('studentExamStart');
+          // this.toastrService.error(response.message);
+        }
       }, error => {
         this.toastrService.error(error.message);
       })

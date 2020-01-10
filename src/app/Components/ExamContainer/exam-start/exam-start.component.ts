@@ -9,6 +9,7 @@ import { CountdownComponent } from 'ngx-countdown';
 import { Subscription } from 'rxjs';
 import { EncryptionService } from 'src/app/Services/encryption.service';
 import { ExamAPIService } from 'src/app/Services/exam-api.service';
+
 // 0 not visited
 //   // 1 Visited but not answered
 //   // 2 Answered
@@ -28,6 +29,7 @@ export class ExamStartComponent implements OnInit, OnDestroy {
   // time: number;
   sideNav: boolean = false;
   examinationData: any = [];
+  // examinationDataCopy: any = [];
   activeIndex: number = 0;
   answers: any = [];
 
@@ -37,6 +39,8 @@ export class ExamStartComponent implements OnInit, OnDestroy {
   questionSubscription: Subscription;
   timerSubscription: Subscription;
   sideNavSubscription: Subscription;
+
+  status: any = {};
 
   @ViewChild('cd1', { static: false }) private countdown: CountdownComponent;
 
@@ -55,7 +59,6 @@ export class ExamStartComponent implements OnInit, OnDestroy {
       if (response.length > 0) {
         this.examinationData = this.encryptionService.DecryptEncryption(response, ['question'], ['option']);
         this.examinationData = this.examinationData.map(({ options, ...rest }) => ({ options: this.dataService.shuffle(options), ...rest }));
-
 
         var checkFirstQuestion = this.examinationData.every(m => m.status == 0);
 
@@ -83,6 +86,12 @@ export class ExamStartComponent implements OnInit, OnDestroy {
           //     status: checkFirstQuestion[i].question.status, option: option.length != 0 ? option[0].option : ""
           //   });
           // }
+        }
+        this.status = {
+          notVisited: this.examinationData.filter(d => d.status == 0).length,
+          visited: this.examinationData.filter(d => d.status == 1).length,
+          answered: this.examinationData.filter(d => d.status == 2).length,
+          reviewed: this.examinationData.filter(d => d.status == 3).length
         }
       }
     })
@@ -151,6 +160,7 @@ export class ExamStartComponent implements OnInit, OnDestroy {
       else if (event.action == "done") {
         this.submitDisable = false;
         this.toastrService.success("Examination completed");
+        this.Submit();
         // this.examSubmit();
       }
     }
@@ -249,6 +259,7 @@ export class ExamStartComponent implements OnInit, OnDestroy {
   }
 
   Submit(): void {
+    
     // var notVisited = this.examinationData.filter(nv => nv.question.status == 0);
     // var visitedNotAnswered = this.examinationData.filter(nv => nv.question.status == 1);
     // var answered = this.examinationData.filter(nv => nv.question.status == 2);
@@ -262,13 +273,9 @@ export class ExamStartComponent implements OnInit, OnDestroy {
       this.ngxLoader.start();
       this.examService.StudentExamSubmit().subscribe(response => {
         if (response.success) {
-          this.router.navigate(['/initial']);
+          sessionStorage.removeItem('studentExamStart');
+
           this.ngxLoader.stop();
-          this.dialog.open(ExamSummaryComponent,
-            {
-              minWidth: '35%',
-              disableClose: true
-            });
         }
         else {
           this.toastrService.error(response.message);
@@ -283,6 +290,15 @@ export class ExamStartComponent implements OnInit, OnDestroy {
       this.toastrService.error(e.message);
       this.ngxLoader.stop();
     }
+  }
+
+  GoToSummary(): void {
+    this.router.navigate(['/initial']);
+    this.dialog.open(ExamSummaryComponent,
+      {
+        minWidth: '35%',
+        disableClose: true
+      });
   }
 
 
@@ -310,6 +326,12 @@ export class ExamStartComponent implements OnInit, OnDestroy {
       this.examService.StudentResponseSubmit(this.answers).subscribe(response => {
         if (response.success) {
           //each and every response submit success
+          this.status = {
+            notVisited: this.examinationData.filter(d => d.status == 0).length,
+            visited: this.examinationData.filter(d => d.status == 1).length,
+            answered: this.examinationData.filter(d => d.status == 2).length,
+            reviewed: this.examinationData.filter(d => d.status == 3).length
+          }
         }
         else {
           this.toastrService.error(response.message);
@@ -321,6 +343,11 @@ export class ExamStartComponent implements OnInit, OnDestroy {
     catch (e) {
       this.toastrService.error(e.message);
     }
+  }
+
+  FilterQuestions(value: number): void {
+    // if (value)
+    // this.examinationData = this.examinationData.filter(d => d.status == value);
   }
 
   ngOnDestroy() {
