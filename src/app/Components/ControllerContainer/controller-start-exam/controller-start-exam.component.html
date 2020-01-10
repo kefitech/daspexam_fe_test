@@ -81,27 +81,30 @@
                         <mat-header-cell class="tableHeader d-flex justify-content-center" *matHeaderCellDef>
                             {{headerCaption?.caption6}} </mat-header-cell>
                         <mat-cell *matCellDef="let element; let i=index">
-                            <button [disabled]="element?.status == 1 || 
-                            element?.status == 5 || element?.status == 6 || !isExamStarted || element?.isVerified == 0"
+                            <button
+                                [disabled]="element?.status == 1 || 
+                            element?.status == 5 || element?.status == 6 || !isExamStarted || element?.isVerified == 0 || element?.timerCompleted"
                                 [ngClass]="{
                                 'Pause': element?.status == 4, 
                                 'Resume': element?.status == 2 || element?.status == 3, 
-                                'Stop': element?.status == 5 || element?.status == 6 || element?.status == 1}"
+                                'Stop': element?.status == 5 || element?.status == 6 || element?.status == 1 || element?.timerCompleted}"
                                 [matTooltip]="(element?.status == 3 || element?.status == 2)?'Pause Time!':'Resume Time!'"
                                 (click)="StudentTimerPauseResume(index, i, element?.status)" mat-icon-button>
-                                <mat-icon
-                                    *ngIf="element?.status == 5 || element?.status == 1 || element?.status == 6 
-                                    || element?.isVerified == 0 || !isExamStarted">
+                                <mat-icon *ngIf="element?.status == 5 || element?.status == 1 || element?.status == 6 
+                                    || element?.isVerified == 0 || !isExamStarted || element?.timerCompleted">
                                     stop</mat-icon>
-                                <mat-icon *ngIf="(element?.status == 2 || element?.status == 3) && isExamStarted">pause
+                                <mat-icon
+                                    *ngIf="((element?.status == 2 || element?.status == 3) && isExamStarted) && !element?.timerCompleted">
+                                    pause
                                 </mat-icon>
                                 <mat-icon *ngIf="element?.status == 4">play_arrow
                                 </mat-icon>
                             </button>
-                            <button [disabled]="element?.status == 2 || element?.status == 3 
+                            <button
+                                [disabled]="element?.status == 2 || element?.status == 3 
                             || element?.status == 5 || element?.status == 1
-                            || element?.status == 6 || !isExamStarted || element?.isVerified == 0" color="primary"
-                                [matMenuTriggerFor]="systems" matTooltip="Reallocate" mat-icon-button>
+                            || element?.status == 6 || !isExamStarted || element?.isVerified == 0 || element?.timerCompleted"
+                                color="primary" [matMenuTriggerFor]="systems" matTooltip="Reallocate" mat-icon-button>
                                 <mat-icon>shuffle</mat-icon>
                             </button>
                             <mat-menu #systems="matMenu">
@@ -115,26 +118,29 @@
                                     </button>
                                 </span>
                             </mat-menu>
-                            <button (click)="StudentSMP(element, index, i)" [disabled]="element?.status == 2 
+                            <button (click)="StudentSMP(element, index, i)"
+                                [disabled]="element?.status == 2 
                             || element?.status == 3 || element?.status == 5 || element?.status == 1
-                                || element?.status == 6 || !isExamStarted || element?.isVerified == 0" color="warn"
-                                matTooltip="SMP" mat-icon-button>
+                                || element?.status == 6 || !isExamStarted || element?.isVerified == 0 || element?.timerCompleted" color="warn" matTooltip="SMP"
+                                mat-icon-button>
                                 <mat-icon>bug_report</mat-icon>
                             </button>
-                            <button (click)="Submit('student', index, i, exam?.examId, element)"
-                                [class.DefaultButton]="element?.status == 2 || element?.status == 3 || element?.status == 6 
-                                || !isExamStarted || element?.isVerified == 0 || element?.status == 1" 
-                                [disabled]="element?.status == 2 || element?.status == 3 || element?.status == 6 || 
-                                !isExamStarted || element?.isVerified == 0 || element?.status == 1"
-                                class="SuccessIcon" matTooltip="Save" mat-icon-button>
+                            <button (click)="Submit('student', index, i, exam?.examId, element)" [class.DefaultButton]="element?.status == 2 || element?.status == 6 
+                            || !isExamStarted || element?.isVerified == 0 || element?.status == 1 || 
+                            (element?.status == 3 && !element?.timerCompleted)" [disabled]="element?.status == 2 || element?.status == 6 || 
+                            !isExamStarted || element?.isVerified == 0 || element?.status == 1 || 
+                            (element?.status == 3 && !element?.timerCompleted)" class="SuccessIcon" matTooltip="Save"
+                                mat-icon-button>
                                 <mat-icon>save</mat-icon>
                             </button>
-                            <button *ngIf="element?.isVerified == 1" [disabled]="element?.isVerified == 1 || element?.status == 1"
-                                style="color: green" mat-icon-button>
+                            <button *ngIf="element?.isVerified == 1"
+                                [disabled]="element?.isVerified == 1 || element?.status == 1" style="color: green"
+                                mat-icon-button>
                                 <mat-icon>done_all</mat-icon>
                             </button>
                             <button matTooltip="Verify Now" (click)="SingleStudentVerification(element, index, i)"
-                                *ngIf="element?.isVerified == 0" color="primary" [disabled]="element?.status == 1" mat-icon-button>
+                                *ngIf="element?.isVerified == 0" color="primary" [disabled]="examTimerCompleted"
+                                mat-icon-button>
                                 <mat-icon>vpn_key</mat-icon>
                             </button>
                         </mat-cell>

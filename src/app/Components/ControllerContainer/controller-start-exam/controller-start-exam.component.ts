@@ -51,6 +51,8 @@ export class ControllerStartExamComponent implements OnInit, AfterViewInit, OnDe
 
   @ViewChildren('systems') systems: QueryList<ElementRef>;
 
+  examTimerCompleted: boolean = false;
+
   ngOnInit() {
   }
 
@@ -80,6 +82,7 @@ export class ControllerStartExamComponent implements OnInit, AfterViewInit, OnDe
       }
       else {
         this.toastrService.success("Examination time completed");
+        this.examTimerCompleted = true;
         this.allStudentsExamCompletedInterval = setInterval(() => {
         this.CheckAllStudentsExamCompleted();
       }, 1000);
@@ -294,8 +297,8 @@ export class ControllerStartExamComponent implements OnInit, AfterViewInit, OnDe
       }
       if (this.studentTimer['_results'][length + rowIndex])
         this.studentTimer['_results'][length + rowIndex].stop();
-      // if (this.examList[index]['studentList']['data'])
-      //   this.examList[index]['studentList']['data'][rowIndex]['status'] = 5;
+      if (this.examList[index]['studentList']['data'])
+        this.examList[index]['studentList']['data'][rowIndex]['timerCompleted'] = true;
     }
   }
 
