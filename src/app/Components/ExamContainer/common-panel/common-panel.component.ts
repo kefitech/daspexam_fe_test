@@ -23,10 +23,10 @@ export class CommonPanelComponent implements OnInit {
   winHeight: number;
 
   ngOnInit() {
-    var SMP = localStorage.getItem('SMP');
-    if (SMP == 'true') {
-      this.sendWarning();
-    }
+    // var SMP = localStorage.getItem('SMP');
+    // if (SMP == 'true') {
+    this.sendWarning();
+    // }
     this.fullScr = true;
     this.winHeight = window.innerHeight;
   }
@@ -37,8 +37,10 @@ export class CommonPanelComponent implements OnInit {
     event.preventDefault();
     if (this.winHeight < window.innerHeight)
       this.winHeight = window.innerHeight;
-    var alreadyMarked = localStorage.getItem('SMP');
-    if (window.innerHeight != this.winHeight && alreadyMarked != 'true') {
+    // var alreadyMarked = localStorage.getItem('SMP');
+    // if (window.innerHeight != this.winHeight && alreadyMarked != 'true') {
+      if (window.innerHeight != this.winHeight) {
+
       this.MarkSMP();
     }
   }
@@ -67,20 +69,38 @@ export class CommonPanelComponent implements OnInit {
   }
 
   sendWarning(): void {
-    localStorage.setItem('SMP', 'true');
-    this.dataService.warning.next(true);
-    this.router.navigate(['/initial']);
-    this.dialog.open(WarningComponent,
-      {
-        minWidth: '35%',
-        disableClose: true
-      });
+    try {
+      this.apiService.CheckStudentSMP().subscribe(response => {
+        if (response.success) {
+          if (response.data.isSMP) {
+            // localStorage.setItem('SMP', 'true');
+            this.dataService.warning.next(true);
+            this.router.navigate(['/initial']);
+            this.dialog.open(WarningComponent,
+              {
+                minWidth: '35%',
+                disableClose: true
+              });
+          }
+        }
+        else {
+          this.toastrService.error(response.message);
+        }
+      }, error => {
+        this.toastrService.error(error.message);
+        this.ngxLoader.stop();
+      })
+    }
+    catch (e) {
+      this.toastrService.error(e);
+      this.ngxLoader.stop();
+    }
   }
 
   MarkSMP(): void {
     try {
       this.ngxLoader.start();
-      localStorage.setItem('SMP', 'true');
+      // localStorage.setItem('SMP', 'true');
       this.dataService.warning.next(true);
       this.router.navigate(['/initial']);
       this.apiService.MarkStudentSMP().subscribe(response => {

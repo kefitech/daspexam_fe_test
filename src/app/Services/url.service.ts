@@ -79,6 +79,8 @@ export class URLService {
 
   public studentExamSummaryURL = "api/conduct_exam/student_response_fetch";
 
+  public checkSMPURL = "api/conduct_exam/student_smp_check";
+
 
   public headers = new HttpHeaders({ 'Content-Type': 'application/json; charset=utf-8' });
 

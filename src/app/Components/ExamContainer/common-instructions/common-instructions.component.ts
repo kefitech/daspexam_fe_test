@@ -42,7 +42,7 @@ export class CommonInstructionsComponent implements OnInit, AfterViewInit, OnDes
           this.dataService.questionsData.next(response.data.questionList);
           this.dataService.questionFetch.next(true);
           this.CheckExamStarts();
-          this.CheckExamStarts();
+          // this.CheckExamStarts();
         }
         else {
           this.toastrService.error(response.message);
