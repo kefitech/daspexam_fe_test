@@ -42,4 +42,8 @@ export class ExamAPIService {
     return this.http.post(this.URLService.baseURL + this.URLService.studentExamSummaryURL, this.dataService.studentCredentials.value);
   }
 
+  CheckStudentSMP(): any{
+    return this.http.post(this.URLService.baseURL + this.URLService.checkSMPURL, this.dataService.studentCredentials.value);
+  }
+
 }
