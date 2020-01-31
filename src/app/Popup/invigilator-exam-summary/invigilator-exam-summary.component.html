@@ -3,13 +3,13 @@
         <div class="col-sm-10">
             <h3 class="Heading font-weight-bold">Examination Summary</h3>
         </div>
-        <div class="col-sm-1">
+        <div class="col-sm-2">
             <button [useExistingCss]="true" mat-raised-button printSectionId="print-section" ngxPrint
                 color="accent">Print</button>
         </div>
-        <div class="col-sm-1">
+        <!-- <div class="col-sm-1">
             <button mat-raised-button (click)="Close()" color="warn">Close</button>
-        </div>
+        </div> -->
     </div>
     <div class="row mt-2" [ngClass]="{'d-flex justify-content-center': summary?.length == 1}">
         <div *ngFor="let summary of summary" 
@@ -214,5 +214,10 @@
             </div>
             <hr>
         </div>
+    </div>
+    <div class="row d-flex justify-content-center">
+        <span class="text-danger">**</span>
+        <h5>THANK YOU</h5>
+        <span class="text-danger">**</span>
     </div>
 </div>

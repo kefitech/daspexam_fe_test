@@ -8,6 +8,7 @@ import { ConfirmationPopupComponent } from 'src/app/Popup/confirmation-popup/con
 import { ControllerAPIService } from 'src/app/Services/controller-api.service';
 import { InvigilatorPageStudentVerificationPopupComponent } from 'src/app/Popup/invigilator-page-student-verification-popup/invigilator-page-student-verification-popup.component';
 import { InvigilatorExamSummaryComponent } from 'src/app/Popup/invigilator-exam-summary/invigilator-exam-summary.component';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-controller-start-exam',
@@ -17,7 +18,7 @@ import { InvigilatorExamSummaryComponent } from 'src/app/Popup/invigilator-exam-
 export class ControllerStartExamComponent implements OnInit, AfterViewInit, OnDestroy {
 
   constructor(private toastrService: ToastrService, private ngxLoader: NgxUiLoaderService,
-    private dialog: MatDialog, private service: ControllerAPIService) { }
+    private dialog: MatDialog, private service: ControllerAPIService, private router: Router) { }
 
   masterTimerConfig: any;
   masterSubmitValid: boolean = false;
@@ -36,7 +37,7 @@ export class ControllerStartExamComponent implements OnInit, AfterViewInit, OnDe
   backupSystems: Array<object>;
   displayedColumns: any = ['sno', 'name', 'hallTicketNumber', 'systemNo', 'timer', 'action'];
   headerCaption: object = JSON.parse(JSON.stringify({// stepper 1
-    caption1: "S/no",
+    caption1: "S/No",
     caption2: "Name",
     caption3: "Hall TicketNo",
     caption4: "System No",
@@ -524,12 +525,17 @@ export class ControllerStartExamComponent implements OnInit, AfterViewInit, OnDe
   }
 
   ExamSummary(): void{
+    this.router.navigate(['/initial']);
     const dialogRef = this.dialog.open(InvigilatorExamSummaryComponent, {
       width: '80%',
       height: '80%',
       disableClose: true
       // data: { }
     })
+  }
+
+  Reload(): void{
+    window.location.reload();
   }
 
   ngOnDestroy() {

@@ -348,7 +348,7 @@ export class LandingComponent implements OnInit, AfterViewInit, OnDestroy {
             this.CheckExamStarts();
         }
         else {
-          this.toastrService.error(response.message);
+          // this.toastrService.error(response.message);
         }
       }, error => {
         this.toastrService.error(error.message);

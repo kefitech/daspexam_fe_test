@@ -32,7 +32,7 @@ export class ControllerDashboardComponent implements OnInit, AfterViewInit, OnDe
   examDetails: Array<any>;// stepper 1
   displayedColumns: any = ['sno', 'name', 'hallTicketNumber', 'systemNo', 'action'];// stepper 1
   headerCaption: object = JSON.parse(JSON.stringify({// stepper 1
-    caption1: "S/no",
+    caption1: "S/No",
     caption2: "Name",
     caption3: "Hall TicketNo",
     caption4: "System No",
@@ -46,7 +46,7 @@ export class ControllerDashboardComponent implements OnInit, AfterViewInit, OnDe
   studentAssignmentExamDetails: Array<object>;// stepper 2
   studentAssignmentColumns: any = ['sno', 'name', 'hallTicketNumber', 'systemNo', 'qpCode', 'status', 'verified'];// stepper 2
   studentAssignmentCaption: object = JSON.parse(JSON.stringify({// stepper 1
-    caption1: "S/no",
+    caption1: "S/No",
     caption2: "Name",
     caption3: "Hall TicketNo",
     caption4: "System No",

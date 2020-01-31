@@ -24,12 +24,23 @@
                   </span> -->
             </div>
     </div>
-    <div class="row m-4 d-flex justify-content-end">
+    <div class="row">
+        <mat-form-field class="w-100" appearance="outline">
+            <mat-label>Reason</mat-label>
+            <textarea maxlength="250" [formControl]="reason" matInput required></textarea>
+            <mat-error *ngIf="reason?.hasError('required')">
+                Please fill out this! 
+              </mat-error>
+        </mat-form-field>
+    </div>
+    <div class="row d-flex justify-content-end">
         <div class="col-sm-3">
-            <button (click)="Block()" mat-raised-button class="Submit" [disabled]="studentDetails?.smpCount < 3">Block</button>
+            <button [disabled]="reason?.invalid" mwlConfirmationPopover
+            popoverTitle="Do you want to block this student?"
+            placement="top" (confirm)="Block()" mat-raised-button class="Submit">Block</button>
         </div>
         <div class="col-sm-3">
-            <button mat-raised-button color="warn" (click)="Close()">Close</button>
+            <button type="button" mat-raised-button color="warn" (click)="Close()">Close</button>
         </div>
     </div>
 </div>

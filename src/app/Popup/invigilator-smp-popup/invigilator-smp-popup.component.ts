@@ -4,6 +4,7 @@ import { DataService } from 'src/app/Services/data.service';
 import { NgxUiLoaderService } from 'ngx-ui-loader';
 import { ToastrService } from 'ngx-toastr';
 import { ControllerAPIService } from 'src/app/Services/controller-api.service';
+import { FormControl, Validators } from '@angular/forms';
 
 @Component({
   selector: 'app-invigilator-smp-popup',
@@ -20,6 +21,8 @@ export class InvigilatorSMPPopupComponent implements OnInit, AfterViewInit {
   studentDetails: object = {};
 
   isBlock: boolean = false;
+
+  reason: any = new FormControl('', Validators.required);
 
   ngOnInit() {
   }
@@ -62,10 +65,11 @@ export class InvigilatorSMPPopupComponent implements OnInit, AfterViewInit {
     try {
       this.ngxLoader.start();
       var body = {
-        examStudentId: this.data.student.examStudentId
+        examStudentId: this.data.student.examStudentId,
+        smpReason: this.reason.value
       }
       this.service.StudentSMPBlock(body).subscribe(response => {
-        if (response) {
+        if (response.success) {
           this.ngxLoader.stop();
           this.isBlock = true;
           this.dialogScreen.close();
