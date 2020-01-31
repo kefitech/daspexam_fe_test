@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChild, ElementRef, HostListener, OnDestroy } from '@angular/core';
+import { Component, OnInit, ViewChild, ElementRef, HostListener, OnDestroy, AfterViewInit } from '@angular/core';
 import { ToastrService } from 'ngx-toastr';
 import { Router } from '@angular/router';
 import { DataService } from 'src/app/Services/data.service';
@@ -9,6 +9,7 @@ import { CountdownComponent } from 'ngx-countdown';
 import { Subscription } from 'rxjs';
 import { EncryptionService } from 'src/app/Services/encryption.service';
 import { ExamAPIService } from 'src/app/Services/exam-api.service';
+import { QuestionService } from 'src/app/Services/question.service';
 
 // 0 not visited
 //   // 1 Visited but not answered
@@ -20,11 +21,11 @@ import { ExamAPIService } from 'src/app/Services/exam-api.service';
   templateUrl: './exam-start.component.html',
   styleUrls: ['./exam-start.component.scss']
 })
-export class ExamStartComponent implements OnInit, OnDestroy {
+export class ExamStartComponent implements OnInit, AfterViewInit, OnDestroy {
 
   constructor(private toastrService: ToastrService, private router: Router, private dataService: DataService,
     private dialog: MatDialog, private encryptionService: EncryptionService, private examService: ExamAPIService,
-    private ngxLoader: NgxUiLoaderService) { }
+    private ngxLoader: NgxUiLoaderService, private questionService: QuestionService) { }
   timerConfig: any;
   // time: number;
   sideNav: boolean = false;
@@ -43,6 +44,8 @@ export class ExamStartComponent implements OnInit, OnDestroy {
   status: any = {};
 
   @ViewChild('cd1', { static: false }) private countdown: CountdownComponent;
+
+  private statusInitInterval: any = null;
 
   ngOnInit() {
     sessionStorage.setItem('studentExamStart', 'true');
@@ -119,6 +122,12 @@ export class ExamStartComponent implements OnInit, OnDestroy {
     })
 
     // this.questionFetch();
+  }
+
+  ngAfterViewInit(){
+   this.statusInitInterval = setInterval(() => {
+      this.CheckStatus();
+    }, 3600)
   }
 
 
@@ -350,11 +359,31 @@ export class ExamStartComponent implements OnInit, OnDestroy {
     // this.examinationData = this.examinationData.filter(d => d.status == value);
   }
 
+  CheckStatus(): void {
+    try {
+      this.questionService.CheckExamStarts().subscribe(response => {
+        if (response.success) {
+        }
+        else {
+          clearInterval(this.statusInitInterval);
+          this.router.navigate(["/landing/student/exam"]);
+          sessionStorage.removeItem('studentExamStart');
+          this.toastrService.error(response.message);
+        }
+      }, error => {
+        this.toastrService.error(error.message);
+      })
+    }
+    catch (e) {
+      this.toastrService.error(e.message);
+    }
+  }
+
   ngOnDestroy() {
     this.sideNavSubscription.unsubscribe();
     this.timerSubscription.unsubscribe();
     this.questionSubscription.unsubscribe();
-    // this.warningSubscription.unsubscribe();
+    clearInterval(this.statusInitInterval);
   }
 
 

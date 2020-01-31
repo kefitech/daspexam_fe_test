@@ -12,6 +12,9 @@
                 <button (click)="Submit('all')" [disabled]="!masterSubmitValid" mat-raised-button class="Submit">
                     Submit All
                 </button>
+                <button matTooltip="Refresh" color="warn" (click)="Reload()" mat-icon-button>
+                    <mat-icon>refresh</mat-icon>
+                </button>
             </div>
         </div>
 
