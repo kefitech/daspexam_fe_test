@@ -9,7 +9,8 @@
         <!-- explanation about status -->
         <div class="col-sm-12" *ngIf="examinationData?.length > 0">
             <div class="row px-4 py-1">
-                <button (click)="FilterQuestions(0)" class="NotVisited my-fab" mat-mini-fab>{{status?.notVisited}}</button>
+                <button (click)="FilterQuestions(0)" class="NotVisited my-fab"
+                    mat-mini-fab>{{status?.notVisited}}</button>
                 <span class="pl-2 pt-1 Info"> Not Visited</span>
             </div>
 
@@ -55,9 +56,21 @@
     </mat-sidenav>
     <mat-sidenav-content>
         <div class="container pb-3">
-            <div class="row pt-3 pr-3 d-flex justify-content-end" *ngIf="examinationData?.length > 0">
-                <span class="pt-1"> No of answered questions : &nbsp;</span>
-                <input class="text-center font-weight-bold" type="text" style="width: 5%;" [value]="status?.answered + '/' + examinationData?.length" disabled>
+            <div class="row pt-3" *ngIf="examinationData?.length > 0">
+                <div class="col-sm-2">
+                    <button (click)="GoToInstructions()" [disabled]="!submitDisable" mat-button>
+                        <u>
+                            <span class="font-weight-bold">
+                                Instructions
+                            </span>
+                        </u>
+                    </button>
+                </div>
+                <div class="col-sm-10 pr-3 d-flex justify-content-end">
+                    <span class="pt-1"> No of answered questions : &nbsp;</span>
+                    <input class="text-center font-weight-bold" type="text" style="width: 5%;"
+                        [value]="status?.answered + '/' + examinationData?.length" disabled>
+                </div>
             </div>
             <div class="col-sm-12" style="margin-top: 2%;"
                 *ngFor="let exam of examinationData; let i=index; let first = first; let last = last">

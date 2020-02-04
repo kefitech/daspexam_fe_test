@@ -72,7 +72,7 @@
                         rough work, which must be returned at the end of the examination.</li>
                 </ol>
             </div>
-            <div class="row">
+            <div class="row" *ngIf="showConfirmation">
                 <mat-card>
                     <small class="font-weight-bold">
                         <mat-checkbox [(ngModel)]="checked" color="primary">
@@ -86,7 +86,7 @@
                     </small>
                 </mat-card>
             </div>
-            <div class="row p-2 d-flex justify-content-center">
+            <div *ngIf="showConfirmation" class="row p-2 d-flex justify-content-center">
                 <button [disabled]="!checked || !examFetchCompleted" (click)="Accept()" matTooltip="Proceed" mat-raised-button
                     class="Submit">
                     Accept and Start

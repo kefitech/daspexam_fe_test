@@ -161,7 +161,7 @@ export class InvigilatorPageStudentVerificationPopupComponent implements OnInit 
     this.webcamImage = null;
     this.imgComparison = false;
     this.showWebcam = false;
-    this.data.student.verified = true;
+    // this.data.student.verified = true;
   }
 
   CancelWebCam(): void {

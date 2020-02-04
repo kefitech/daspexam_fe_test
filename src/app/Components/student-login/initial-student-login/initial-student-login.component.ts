@@ -63,6 +63,7 @@ export class InitialStudentLoginComponent implements OnInit, AfterViewInit {
 
   Submit(): void {
     try {
+      sessionStorage.setItem('instruction', 'normal');
       this.auth.hallTicketValid();
       this.dataService.isNotLoginScreen.next(true);
       this.router.navigate(['/landing/student/exam']);

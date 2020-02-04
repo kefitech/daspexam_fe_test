@@ -9,6 +9,7 @@ import { ControllerAPIService } from 'src/app/Services/controller-api.service';
 import { InvigilatorPageStudentVerificationPopupComponent } from 'src/app/Popup/invigilator-page-student-verification-popup/invigilator-page-student-verification-popup.component';
 import { InvigilatorExamSummaryComponent } from 'src/app/Popup/invigilator-exam-summary/invigilator-exam-summary.component';
 import { Router } from '@angular/router';
+import { InvigilatorInstructionPopupComponent } from 'src/app/Popup/invigilator-instruction-popup/invigilator-instruction-popup.component';
 
 @Component({
   selector: 'app-controller-start-exam',
@@ -403,29 +404,10 @@ export class ControllerStartExamComponent implements OnInit, AfterViewInit, OnDe
       }
     }
     else if (type == 'exam') {
-      // let length = 0;
-      // if (examIndex > 0) {
-      //   for (var i = 0; i < examIndex; i++) {
-      //     length = length + this.examList[i]['studentList']['data'].length;
-      //   }
-      // }
-      // let startVal = length;
-      // let endVal = length + this.examList[examIndex]['studentList']['data'].length;
-      // var time = [];
-      // for (startVal; startVal < endVal; startVal++) {
-      //   this.studentTimer['_results'][startVal].pause();
-      //   time.push(this.studentTimer['_results'][startVal]['i']['value'] / 1000);
-      // }
       this.examList[examIndex]['studentList']['data'] = this.examList[examIndex]['studentList']['data']
         .map(({ status, isVerified, timeLeft, ...rest }) =>
           ({ status: isVerified == 1 ? 6 : status, isVerified, timeLeft: isVerified == 1 ? { leftTime: 0 } : timeLeft, ...rest }));
-      // this.examList[examIndex]['isSubmit'] = status;
-      // this.examList[examIndex]['studentList']['data'].forEach((element, index) => {
-      //   // if (status)
-      //   // element['status'] = status;
-      //   element['time'] = time[index];
-      // });
-
+     
       var allExamsDone;
       this.examList.forEach(element => {
         allExamsDone = element['studentList']['data']
@@ -536,6 +518,15 @@ export class ControllerStartExamComponent implements OnInit, AfterViewInit, OnDe
 
   Reload(): void{
     window.location.reload();
+  }
+
+  GoToInstructions(): void{
+    sessionStorage.setItem('invigilatorinstruction', 'popup');
+    this.dialog.open(InvigilatorInstructionPopupComponent,
+      {
+        width: '80%',
+        height: '80%'
+      });
   }
 
   ngOnDestroy() {

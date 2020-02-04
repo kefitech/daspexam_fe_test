@@ -9,6 +9,7 @@ import { CountdownModule } from 'ngx-countdown';
 import { WarningComponent } from 'src/app/Popup/warning/warning.component';
 import { ExamSummaryComponent } from 'src/app/Popup/exam-summary/exam-summary.component';
 import { ConfirmationPopoverModule } from 'angular-confirmation-popover';
+import { StudentInstructionPopupComponent } from 'src/app/Popup/student-instruction-popup/student-instruction-popup.component';
 
 @NgModule({
   declarations: [
@@ -24,6 +25,6 @@ import { ConfirmationPopoverModule } from 'angular-confirmation-popover';
       confirmButtonType: 'danger' // set defaults here
     })
   ],
-  entryComponents: [WarningComponent, ExamSummaryComponent]
+  entryComponents: [WarningComponent, ExamSummaryComponent, StudentInstructionPopupComponent]
 })
 export class ExamContainerModule { }

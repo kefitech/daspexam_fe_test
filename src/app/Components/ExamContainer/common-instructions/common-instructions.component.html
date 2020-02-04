@@ -108,7 +108,7 @@
                 </ol>
             </div>
         </div>
-        <button (click)="Next()" matTooltip="Next" mat-mini-fab color="accent" class="bottomButton">
+        <button *ngIf="showNextButton" (click)="Next()" matTooltip="Next" mat-mini-fab color="accent" class="bottomButton">
             <mat-icon>arrow_forward</mat-icon>
         </button>
     </div>

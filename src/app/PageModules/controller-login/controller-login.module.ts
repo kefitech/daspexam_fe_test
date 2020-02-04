@@ -13,6 +13,7 @@ import { InvigilatorSMPPopupComponent } from 'src/app/Popup/invigilator-smp-popu
 import { ConfirmationPopupComponent } from 'src/app/Popup/confirmation-popup/confirmation-popup.component';
 import { InvigilatorExamSummaryComponent } from 'src/app/Popup/invigilator-exam-summary/invigilator-exam-summary.component';
 import {NgxPrintModule} from 'ngx-print';
+import { InvigilatorInstructionPopupComponent } from 'src/app/Popup/invigilator-instruction-popup/invigilator-instruction-popup.component';
 
 @NgModule({
   declarations: [
@@ -33,7 +34,8 @@ import {NgxPrintModule} from 'ngx-print';
     InvigilatorPageStudentVerificationPopupComponent,
     InvigilatorSMPPopupComponent,
     ConfirmationPopupComponent,
-    InvigilatorExamSummaryComponent
+    InvigilatorExamSummaryComponent,
+    InvigilatorInstructionPopupComponent
   ],
 })
 export class ControllerLoginModule { }
