@@ -1,9 +1,17 @@
 <div class="container">
     <div class="col-sm-12 pb-3" *ngIf="examList.length > 0">
-
+        <div class="row pt-2 d-flex justify-content-end">
+            <button (click)="GoToInstructions()" mat-button>
+                <u>
+                    <span class="font-weight-bold">
+                        Instructions
+                    </span>
+                </u>
+            </button>
+        </div>
         <!-- Timer heading protion -->
-        <div class="row mt-3">
-            <div class="col-sm-10 d-flex justify-content-center MasterTimer">
+        <div class="col-sm-12 row mt-3">
+            <div class="col-sm-9 d-flex justify-content-center MasterTimer">
                 <span *ngIf="!isExamStarted">Time remaining to start exam &nbsp;&nbsp;</span>
                 <countdown #masterTimer [config]="masterTimerConfig" (event)="handleMasterTimerEvent($event)">
                 </countdown>
@@ -12,8 +20,10 @@
                 <button (click)="Submit('all')" [disabled]="!masterSubmitValid" mat-raised-button class="Submit">
                     Submit All
                 </button>
-                <button matTooltip="Refresh" color="warn" (click)="Reload()" mat-icon-button>
-                    <mat-icon>refresh</mat-icon>
+            </div>
+            <div class="col-sm-1 pt-2">
+                <button matTooltip="Refresh" color="primary" (click)="Reload()" mat-raised-button>
+                    Refresh
                 </button>
             </div>
         </div>

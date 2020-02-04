@@ -10,6 +10,7 @@ import { Subscription } from 'rxjs';
 import { EncryptionService } from 'src/app/Services/encryption.service';
 import { ExamAPIService } from 'src/app/Services/exam-api.service';
 import { QuestionService } from 'src/app/Services/question.service';
+import { StudentInstructionPopupComponent } from 'src/app/Popup/student-instruction-popup/student-instruction-popup.component';
 
 // 0 not visited
 //   // 1 Visited but not answered
@@ -82,13 +83,6 @@ export class ExamStartComponent implements OnInit, AfterViewInit, OnDestroy {
               option_id: element["answeredOption"]
             })
           });
-          // for (var i = 0; i < checkFirstQuestion.length; i++) {
-          //   var option = checkFirstQuestion[i].options.filter(op => op.marked == true);
-          //   this.answers.push({
-          //     questionId: checkFirstQuestion[i].question.questionId,
-          //     status: checkFirstQuestion[i].question.status, option: option.length != 0 ? option[0].option : ""
-          //   });
-          // }
         }
         this.status = {
           notVisited: this.examinationData.filter(d => d.status == 0).length,
@@ -98,30 +92,11 @@ export class ExamStartComponent implements OnInit, AfterViewInit, OnDestroy {
         }
       }
     })
-
-    // this.warningSubscription = this.dataService.warning.subscribe(response => {
-
-    //   if (response != null) {
-    //     if (response) {
-    //       localStorage.setItem("freq", this.countdown["left"]);
-    //     }
-    //     // else if (!response) {
-    //     //   this.dataService.studentData.value["examDuration"] = parseInt(localStorage.getItem("freq")) / 60000 + " Minutes";
-    //     // }
-    //   }
-
-    // })
-
-    // var time = new Date("09-13-2019 18:00:00");
-    // var now = new Date();
-    // var diff = Math.round(now.valueOf() - time.valueOf())/1000;
     window.onpopstate = function (e) { window.history.forward(); }
 
     this.sideNavSubscription = this.dataService.sideNav.subscribe(response => {
       this.sideNav = !this.sideNav;
     })
-
-    // this.questionFetch();
   }
 
   ngAfterViewInit(){
@@ -130,32 +105,6 @@ export class ExamStartComponent implements OnInit, AfterViewInit, OnDestroy {
     }, 3600)
   }
 
-
-
-  // questionFetch(): void {
-
-  //   // 0 not visited
-  //   // 1 Visited but not answered
-  //   // 2 Answered
-  //   // 3 Review
-
-  //   this.dataService.questionsData.subscribe(response => {
-  //     this.examinationData = response;
-  //     var checkFirstQuestion = this.examinationData.filter(m => m.question.status != 0);
-
-  //     if (checkFirstQuestion.length == 0)
-  //       this.examinationData[0]["question"]["status"] = 1;
-  //     else {
-  //       for (var i = 0; i < checkFirstQuestion.length; i++) {
-  //         var option = checkFirstQuestion[i].options.filter(op => op.marked == true);
-  //         this.answers.push({
-  //           questionId: checkFirstQuestion[i].question.questionId,
-  //           status: checkFirstQuestion[i].question.status, option: option.length != 0 ? option[0].option : ""
-  //         });
-  //       }
-  //     }
-  //   })
-  // }
 
   handleEvent(event): void {
     if (this.timerConfig) {
@@ -167,6 +116,7 @@ export class ExamStartComponent implements OnInit, AfterViewInit, OnDestroy {
         this.toastrService.warning("You have " + timeLeft + " minutes left");
       }
       else if (event.action == "done") {
+        clearInterval(this.statusInitInterval);
         this.submitDisable = false;
         this.toastrService.success("Examination completed");
         this.Submit();
@@ -268,16 +218,6 @@ export class ExamStartComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   Submit(): void {
-    
-    // var notVisited = this.examinationData.filter(nv => nv.question.status == 0);
-    // var visitedNotAnswered = this.examinationData.filter(nv => nv.question.status == 1);
-    // var answered = this.examinationData.filter(nv => nv.question.status == 2);
-    // var reviewed = this.examinationData.filter(nv => nv.question.status == 3);
-
-    // this.dataService.examStatus["notVisited"] = notVisited.length;
-    // this.dataService.examStatus["visitedNotAnswered"] = visitedNotAnswered.length;
-    // this.dataService.examStatus["answered"] = answered.length;
-    // this.dataService.examStatus["reviewed"] = reviewed.length;
     try {
       this.ngxLoader.start();
       this.examService.StudentExamSubmit().subscribe(response => {
@@ -365,6 +305,7 @@ export class ExamStartComponent implements OnInit, AfterViewInit, OnDestroy {
         if (response.success) {
         }
         else {
+          sessionStorage.setItem('instruction', 'normal');
           clearInterval(this.statusInitInterval);
           this.router.navigate(["/landing/student/exam"]);
           sessionStorage.removeItem('studentExamStart');
@@ -377,6 +318,15 @@ export class ExamStartComponent implements OnInit, AfterViewInit, OnDestroy {
     catch (e) {
       this.toastrService.error(e.message);
     }
+  }
+
+  GoToInstructions(): void{
+    sessionStorage.setItem('instruction', 'popup');
+    this.dialog.open(StudentInstructionPopupComponent,
+      {
+        width: '80%',
+        height: '80%'
+      });
   }
 
   ngOnDestroy() {

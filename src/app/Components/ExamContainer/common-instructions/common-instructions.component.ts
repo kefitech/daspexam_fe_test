@@ -20,8 +20,11 @@ export class CommonInstructionsComponent implements OnInit, AfterViewInit, OnDes
 
   private pageInitInterval: any = null;
 
-  ngOnInit() {
+  showNextButton: boolean = true;
 
+  ngOnInit() {
+    var instructionType = sessionStorage.getItem('instruction');
+    instructionType == 'popup'?this.showNextButton = false: this.showNextButton = true;
   }
 
   ngAfterViewInit() {

@@ -61,6 +61,7 @@ export class WarningComponent implements OnInit {
               sessionStorage.removeItem('studentExamStart');
               this.dialogScreen.close();
               this.toastrService.success(response.message);
+              sessionStorage.setItem('instruction', 'normal');
               this.router.navigate(['/landing/student']);
             }
             else {

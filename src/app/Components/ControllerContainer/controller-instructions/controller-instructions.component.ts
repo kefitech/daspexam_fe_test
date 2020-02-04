@@ -16,11 +16,16 @@ export class ControllerInstructionsComponent implements OnInit, AfterViewInit {
 
     examFetchCompleted: boolean = false;
 
+    showConfirmation: boolean = true;
+
   ngOnInit() {
     window.onpopstate = function (e) { window.history.forward(); }
   }
 
   ngAfterViewInit() {
+    var instructionType = sessionStorage.getItem('invigilatorinstruction');
+    if(instructionType == 'normal'){
+      this.showConfirmation = true;
     try {
       this.service.ExamFetchFromMainServer().subscribe(response => {
         if (response.success) {
@@ -38,6 +43,10 @@ export class ControllerInstructionsComponent implements OnInit, AfterViewInit {
     catch (e) {
       this.toastrService.error(e);
     }
+  }
+  else{
+    this.showConfirmation = false;
+  }
   }
 
   Accept(): void {
