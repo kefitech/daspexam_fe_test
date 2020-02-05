@@ -99,8 +99,8 @@ export class ExamStartComponent implements OnInit, AfterViewInit, OnDestroy {
     })
   }
 
-  ngAfterViewInit(){
-   this.statusInitInterval = setInterval(() => {
+  ngAfterViewInit() {
+    this.statusInitInterval = setInterval(() => {
       this.CheckStatus();
     }, 3600)
   }
@@ -149,7 +149,8 @@ export class ExamStartComponent implements OnInit, AfterViewInit, OnDestroy {
     this.examinationData[Qindex]["answeredOption"] = 0;
     // }
     this.examinationData[Qindex]["answeredOption"] = event.value;
-    this.examinationData[Qindex]["status"] = 2;
+    if (this.examinationData[Qindex]["status"] != 3)
+      this.examinationData[Qindex]["status"] = 2;
 
     var exists = this.answers.filter(q => q.std_res_id == studentResponseId)
     if (exists.length == 0) {
@@ -164,8 +165,12 @@ export class ExamStartComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   MarkASReview(index: number, status: number): void {
-    if (status == 3)
-      this.examinationData[index]["status"] = 2;
+    if (status == 3) {
+      if (this.examinationData[index]['answeredOption'] != 0)
+        this.examinationData[index]["status"] = 2;
+      else
+        this.examinationData[index]["status"] = 1;
+    }
     else
       this.examinationData[index]["status"] = 3;
 
@@ -320,7 +325,7 @@ export class ExamStartComponent implements OnInit, AfterViewInit, OnDestroy {
     }
   }
 
-  GoToInstructions(): void{
+  GoToInstructions(): void {
     sessionStorage.setItem('instruction', 'popup');
     this.dialog.open(StudentInstructionPopupComponent,
       {

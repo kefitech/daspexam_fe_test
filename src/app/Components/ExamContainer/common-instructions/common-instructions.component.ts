@@ -48,7 +48,7 @@ export class CommonInstructionsComponent implements OnInit, AfterViewInit, OnDes
           // this.CheckExamStarts();
         }
         else {
-          this.toastrService.error(response.message);
+          // this.toastrService.error(response.message);
         }
       }, error => {
         this.toastrService.error(error.message);
