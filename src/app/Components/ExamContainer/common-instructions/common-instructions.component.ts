@@ -6,6 +6,7 @@ import { ExamAPIService } from 'src/app/Services/exam-api.service';
 import { ToastrService } from 'ngx-toastr';
 import { NgxUiLoaderService } from 'ngx-ui-loader';
 import { QuestionService } from 'src/app/Services/question.service';
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-common-instructions',
@@ -22,9 +23,20 @@ export class CommonInstructionsComponent implements OnInit, AfterViewInit, OnDes
 
   showNextButton: boolean = true;
 
+  user: object;
+
+  subscription: Subscription;
+
   ngOnInit() {
     var instructionType = sessionStorage.getItem('instruction');
     instructionType == 'popup'?this.showNextButton = false: this.showNextButton = true;
+    this.subscription = this.dataService.studentData.subscribe(response => {
+      if (response) {
+        console.log(response);
+        
+        this.user = response;
+      }
+    })
   }
 
   ngAfterViewInit() {
@@ -84,5 +96,6 @@ export class CommonInstructionsComponent implements OnInit, AfterViewInit, OnDes
 
   ngOnDestroy() {
     // clearInterval(this.pageInitInterval);
+    this.subscription.unsubscribe();
   }
 }

@@ -25,6 +25,8 @@ export class SubjectSpecificInstructionComponent implements OnInit, AfterViewIni
     sessionStorage.setItem('studentSubjectSpecificInstruction', 'true');
     this.subscription = this.dataService.studentData.subscribe(response => {
       if (response) {
+        console.log(response);
+        
         this.user = response;
       }
     })
