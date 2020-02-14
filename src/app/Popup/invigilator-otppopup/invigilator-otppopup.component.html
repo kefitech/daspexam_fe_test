@@ -6,7 +6,7 @@
         <div class="row">
             <mat-form-field appearance="outline" class="w-100">
                 <mat-label>Enter OTP</mat-label>
-                <input maxlength="10" (keypress)="dataService?.NumberOnly($event)" formControlName="otp" matInput [(ngModel)]="otp" placeholder="Enter OTP" required>
+                <input maxlength="10" (keyup.enter)="Submit()" (keypress)="dataService?.NumberOnly($event)" formControlName="otp" matInput [(ngModel)]="otp" placeholder="Enter OTP" required>
                 <mat-error *ngIf="otpForm?.get('otp').hasError('required')">
                     {{ERROR?.required}}
                 </mat-error>
