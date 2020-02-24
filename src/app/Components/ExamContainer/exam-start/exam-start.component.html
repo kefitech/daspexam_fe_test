@@ -70,6 +70,13 @@
                     <span class="pt-1"> No of answered questions : &nbsp;</span>
                     <input class="text-center font-weight-bold" type="text" style="width: 6%;"
                         [value]="status?.answered + '/' + examinationData?.length" disabled>
+                    <button [matMenuTriggerFor]="menu" matTooltip="Calculator" mat-icon-button>
+                        <!-- <mat-icon>subtitles</mat-icon> -->
+                        <i class="text-primary fa fa-calculator fa-2x" aria-hidden="true"></i>
+                    </button>
+                    <mat-menu #menu="matMenu">
+                        <app-calculator (click)="$event.stopPropagation();"></app-calculator>
+                      </mat-menu>
                 </div>
             </div>
             <div class="col-sm-12" style="margin-top: 2%;"
