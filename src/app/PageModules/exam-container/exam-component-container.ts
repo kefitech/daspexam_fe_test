@@ -7,6 +7,7 @@ import { WarningComponent } from 'src/app/Popup/warning/warning.component';
 import { MarkListComponent } from 'src/app/Components/ExamContainer/mark-list/mark-list.component';
 import { ExamSummaryComponent } from 'src/app/Popup/exam-summary/exam-summary.component';
 import { StudentInstructionPopupComponent } from 'src/app/Popup/student-instruction-popup/student-instruction-popup.component';
+import { CalculatorComponent } from 'src/app/Components/Calculator/calculator/calculator.component';
 
 export const ExamComponentContainer = [
     CommonInstructionsComponent, 
@@ -16,5 +17,6 @@ export const ExamComponentContainer = [
     WarningComponent,
     MarkListComponent,
     ExamSummaryComponent,
-    StudentInstructionPopupComponent
+    StudentInstructionPopupComponent,
+    CalculatorComponent
 ];
