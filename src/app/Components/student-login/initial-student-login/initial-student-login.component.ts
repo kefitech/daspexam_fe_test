@@ -91,7 +91,7 @@ export class InitialStudentLoginComponent implements OnInit, AfterViewInit {
         var stringifyStudentData = JSON.stringify(this.studentData);
         var encryptedStudentData = this.encryptionService.encryptUsingAES256(stringifyStudentData);
         sessionStorage.setItem('studentData', encryptedStudentData);
-        this.studentData["duration"] = this.studentData["duration"] + " Minutes";
+        this.studentData["duration"] = this.studentData["duration"];
         this.dataService.studentData.next(this.studentData);
         sessionStorage.setItem("loginUser", 'student');
       }
