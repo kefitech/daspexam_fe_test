@@ -6,30 +6,36 @@
     <div class="container-fluid">
       <div class="col-sm-12 Table" *ngFor="let exam of examDetails; let index=index">
         <mat-accordion>
-          <mat-expansion-panel>
+          <mat-expansion-panel class="mb-3">
             <mat-expansion-panel-header class="ExpansionHeader py-5">
               <mat-panel-title>
                 <div class="col-sm-12">
                   <div class="row">
-                    <div class="Checkbox pt-1">
+                    <div class="Checkbox pt-1 col-sm-1">
                       <mat-checkbox [disabled]="exam?.examVerified == 1" (change)="Stepper1Verification()" 
                       [(ngModel)]="exam.verified" class="pt-1 px-3">
                       </mat-checkbox>
                     </div>
-                    <div class="col-sm-11">
+                    <div class="col-sm-9">
                       <span class="TitleCaption w-100">{{exam?.examName}}</span>
+                    </div>
+                    <div class="col-sm-2 pt-2">
+                      <span class="Desc">
+                        Registered Students:
+                        {{exam?.studentList?.data?.length}}
+                      </span>
                     </div>
                   </div>
                 </div>
               </mat-panel-title>
-              <mat-panel-description>
+              <!-- <mat-panel-description>
                 <div class="row pt-3">
                   <span class="Desc">
                     Registered Students:
                     {{exam?.studentList?.data?.length}}
                   </span>
                 </div>
-              </mat-panel-description>
+              </mat-panel-description> -->
             </mat-expansion-panel-header>
             <div class="row">
               <div class="col-sm-10">
