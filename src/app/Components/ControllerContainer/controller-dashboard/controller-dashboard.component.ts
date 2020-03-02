@@ -97,10 +97,11 @@ export class ControllerDashboardComponent implements OnInit, AfterViewInit, OnDe
           this.Stepper1FetchStudentTableRefresh();
           this.Stepper1Verification();// stepper 1
           this.QuestionCountValidCheck();// stepper 1
-          if (this.questionShuffled == 'true') {// Stepper 2
-            this.pageInitInterval = setInterval(() => {
+          // if (this.questionShuffled == 'true') {// Stepper 2
+          if(this.examDetails[0]['examVerified'] == 1){
+            // this.pageInitInterval = setInterval(() => {
               this.FetchStudentAssignment();
-            }, 3600)
+            // }, 3600)
           }
           this.ngxLoader.stop();
 
@@ -146,9 +147,9 @@ export class ControllerDashboardComponent implements OnInit, AfterViewInit, OnDe
   }
 
   NextToStepper2(): void {
-    this.stepperInterval = setInterval(() => {
+    // this.stepperInterval = setInterval(() => {
       this.FetchStudentAssignment();
-    }, 3600)
+    // }, 3600)
   }
 
   SubmitStepper1(): void {// stepper 1
@@ -163,9 +164,9 @@ export class ControllerDashboardComponent implements OnInit, AfterViewInit, OnDe
       this.service.SubmitAllExams(body).subscribe(response => {
         if (response.success) {
           this.FetchStudents();
-          this.submitInterval = setInterval(() => {
+          // this.submitInterval = setInterval(() => {
             this.FetchStudentAssignment();
-          }, 3600)
+          // }, 3600)
           this.ngxLoader.stop();
           this.questionShuffled = "true";
           sessionStorage.setItem('questionShuffled', 'true');
@@ -263,22 +264,26 @@ export class ControllerDashboardComponent implements OnInit, AfterViewInit, OnDe
           var valid = statusHold.every(s => s == true);
           if (valid) {
             this.stepper2Valid = true;
-            clearInterval(this.pageInitInterval);
-            clearInterval(this.stepperInterval);
-            clearInterval(this.submitInterval);
+            // clearInterval(this.pageInitInterval);
+            // clearInterval(this.stepperInterval);
+            // clearInterval(this.submitInterval);
           }
           else {
             this.stepper2Valid = false;
+            this.FetchStudentAssignment()
           }
         }
         else {
+          this.FetchStudentAssignment()
           this.toastrService.error(response.message);
         }
       }, error => {
+        this.FetchStudentAssignment()
         this.toastrService.error(error.message);
       })
     }
     catch (e) {
+      this.FetchStudentAssignment()
       this.toastrService.error(e);
     }
   }
@@ -361,8 +366,8 @@ export class ControllerDashboardComponent implements OnInit, AfterViewInit, OnDe
   }
 
   ngOnDestroy() {
-    clearInterval(this.pageInitInterval);
-    clearInterval(this.stepperInterval);
-    clearInterval(this.submitInterval);
+    // clearInterval(this.pageInitInterval);
+    // clearInterval(this.stepperInterval);
+    // clearInterval(this.submitInterval);
   }
 }
