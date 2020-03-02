@@ -60,9 +60,9 @@ export class ControllerStartExamComponent implements OnInit, AfterViewInit, OnDe
 
   ngAfterViewInit() {
     this.FetchExamList();
-    this.lateComerObservableOnPageLoad = setInterval(() => {
+    // this.lateComerObservableOnPageLoad = setInterval(() => {
       this.LateComersTimeConfiguration();
-    }, 1000);
+    // }, 1000);
   }
 
   handleMasterTimerEvent(event): void {
@@ -85,9 +85,9 @@ export class ControllerStartExamComponent implements OnInit, AfterViewInit, OnDe
       else {
         this.toastrService.success("Examination time completed");
         this.examTimerCompleted = true;
-        this.allStudentsExamCompletedInterval = setInterval(() => {
+        // this.allStudentsExamCompletedInterval = setInterval(() => {
         this.CheckAllStudentsExamCompleted();
-      }, 1000);
+      // }, 1000);
       }
     }
   }
@@ -98,17 +98,20 @@ export class ControllerStartExamComponent implements OnInit, AfterViewInit, OnDe
         if (response.success) {
           if(response.data.isExamCompleted){
             this.masterSubmitValid = true;
-            clearInterval(this.allStudentsExamCompletedInterval);
+            // clearInterval(this.allStudentsExamCompletedInterval);
           }
         }
         else {
+          this.CheckAllStudentsExamCompleted();
           this.toastrService.error(response.message);
         }
       }, error => {
+        this.CheckAllStudentsExamCompleted();
         this.toastrService.error(error.message);
       })
     }
     catch (e) {
+      this.CheckAllStudentsExamCompleted();
       this.toastrService.error(e);
     }
   }
@@ -444,9 +447,9 @@ export class ControllerStartExamComponent implements OnInit, AfterViewInit, OnDe
       var submit = dialogRef.componentInstance.isSubmit;
       if (submit) {
         this.CheckSingleStudentVerification(dialogRef.componentInstance.data.student['verified'], index, rowIndex);
-        this.lateComerObservable = setInterval(() => {
+        // this.lateComerObservable = setInterval(() => {
           this.LateComersTimeConfiguration();
-        }, 1000);
+        // }, 1000);
       }
     })
   }
@@ -489,18 +492,19 @@ export class ControllerStartExamComponent implements OnInit, AfterViewInit, OnDe
             }
           });
           var isAllStarted = mergeAll.every(d => d.isExamStarted == 1);
-          if (mergeAll.length == 0 || isAllStarted){
-            clearInterval(this.lateComerObservable);
-            clearInterval(this.lateComerObservableOnPageLoad);
+          if (mergeAll.length != 0 || !isAllStarted){
+            this.LateComersTimeConfiguration();
           }
         }
       }, error => {
+        this.LateComersTimeConfiguration();
         this.toastrService.error(error.message);
         // this.ngxLoader.stop();
       })
       // this.ngxLoader.stop();
     }
     catch (e) {
+      this.LateComersTimeConfiguration();
       this.toastrService.error(e);
       // this.ngxLoader.stop();
     }
@@ -530,9 +534,9 @@ export class ControllerStartExamComponent implements OnInit, AfterViewInit, OnDe
   }
 
   ngOnDestroy() {
-    clearInterval(this.lateComerObservable);
-    clearInterval(this.lateComerObservableOnPageLoad);
-    clearInterval(this.allStudentsExamCompletedInterval);
+    // clearInterval(this.lateComerObservable);
+    // clearInterval(this.lateComerObservableOnPageLoad);
+    // clearInterval(this.allStudentsExamCompletedInterval);
   }
 
 }
