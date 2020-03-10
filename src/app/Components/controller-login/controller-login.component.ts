@@ -65,7 +65,10 @@ export class ControllerLoginComponent implements OnInit, AfterViewInit {
         var body = Object.assign({devType:"w" }, this.loginForm.value);
         body['password'] = sha512.sha512(this.loginForm.value.password);
         this.service.ControllerLogin(body).subscribe(response => {
-          if (response.success) {
+          if(response.errorCode && (response.errorCode == this.dataService.unAuthorizedCode)){
+            this.dataService.LogOut();
+          }
+          else if (response.success) {
             this.dataService.controllerData.next({
               email: response.data.email,
               userId: response.data.userId,
@@ -169,7 +172,10 @@ export class ControllerLoginComponent implements OnInit, AfterViewInit {
         verificationCode: otp
       }
       this.service.CheckOTP(body).subscribe(response => {
-        if (response.success) {
+        if(response.errorCode && (response.errorCode == this.dataService.unAuthorizedCode)){
+          this.dataService.LogOut();
+        }
+        else if (response.success) {
           this.dataService.controllerLogin.next(true);
           this.auth.controllerLoginAuth();
           this.ngxLoader.stop();

@@ -93,7 +93,10 @@ export class InvigilatorPageStudentVerificationPopupComponent implements OnInit 
         examStudentId: this.data.student['examStudentId']
       }
       this.service.SingleStudentVerification(body).subscribe(response => {
-        if (response.success) {
+        if(response.errorCode && (response.errorCode == this.dataService.unAuthorizedCode)){
+          this.dataService.LogOut();
+        }
+        else if (response.success) {
           this.isSubmit = true;
           this.ngxLoader.stop();
           this.dialogScreen.close();
@@ -126,7 +129,10 @@ export class InvigilatorPageStudentVerificationPopupComponent implements OnInit 
         webCamImage: this.webcamImage['_imageAsDataUrl'].substring(23) // remove unwanted data from base64
       }
       this.service.studentFaceRecognition(body).subscribe(response => {
-        if (response.success) {
+        if(response.errorCode && (response.errorCode == this.dataService.unAuthorizedCode)){
+          this.dataService.LogOut();
+        }
+        else if (response.success) {
           if (response.data.isRecognised) {
             this.ngxLoader.stop();
             this.imgVerified = true;

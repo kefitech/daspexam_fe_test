@@ -26,7 +26,10 @@ export class ExamSummaryComponent implements OnInit, AfterViewInit {
     try {
       this.ngxLoader.start();
       this.examService.StudentExamSummary().subscribe(response => {
-        if (response.success) {
+        if(response.errorCode && (response.errorCode == this.dataService.unAuthorizedCode)){
+          this.dataService.LogOut();
+        }
+        else if (response.success) {
           this.result = response.data;
           sessionStorage.removeItem("loginUser");
           sessionStorage.removeItem("Token");

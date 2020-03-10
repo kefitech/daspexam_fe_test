@@ -11,6 +11,7 @@ import { EncryptionService } from 'src/app/Services/encryption.service';
 import { ExamAPIService } from 'src/app/Services/exam-api.service';
 import { QuestionService } from 'src/app/Services/question.service';
 import { StudentInstructionPopupComponent } from 'src/app/Popup/student-instruction-popup/student-instruction-popup.component';
+import { WarningComponent } from 'src/app/Popup/warning/warning.component';
 
 // 0 not visited
 //   // 1 Visited but not answered
@@ -48,9 +49,17 @@ export class ExamStartComponent implements OnInit, AfterViewInit, OnDestroy {
 
   private statusInitInterval: any = null;
 
+  fullScr: boolean = false;
+  winHeight: number;
+
   ngOnInit() {
     sessionStorage.setItem('studentExamStart', 'true');
     this.dataService.sideNavButton.next(true);
+
+    this.sendWarning();
+    // }
+    this.fullScr = true;
+    this.winHeight = window.innerHeight;
 
     this.timerSubscription = this.dataService.examStartAndTimer.subscribe(response => {
       if (response) {
@@ -100,9 +109,34 @@ export class ExamStartComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   ngAfterViewInit() {
-    this.statusInitInterval = setInterval(() => {
+    // this.statusInitInterval = setInterval(() => {
       this.CheckStatus();
-    }, 3600)
+    // }, 3600)
+  }
+
+  @HostListener('window:resize', ['$event'])
+  onResize(event) {
+    event.returnValue = false;
+    event.preventDefault();
+    if (this.winHeight < window.innerHeight)
+      this.winHeight = window.innerHeight;
+    // var alreadyMarked = localStorage.getItem('SMP');
+    // if (window.innerHeight != this.winHeight && alreadyMarked != 'true') {
+      if (window.innerHeight != this.winHeight) {
+
+      this.MarkSMP();
+    }
+  }
+
+  @HostListener('contextmenu', ['$event'])
+  onRightClick(event) {
+    event.preventDefault();
+  }
+
+  @HostListener('document:keypress', ['$event'])
+  handleKeyboardEvent(event: KeyboardEvent) {
+    event.returnValue = false;
+    event.preventDefault();
   }
 
 
@@ -226,7 +260,10 @@ export class ExamStartComponent implements OnInit, AfterViewInit, OnDestroy {
     try {
       this.ngxLoader.start();
       this.examService.StudentExamSubmit().subscribe(response => {
-        if (response.success) {
+        if(response.errorCode && (response.errorCode == this.dataService.unAuthorizedCode)){
+          this.dataService.LogOut();
+        }
+        else if (response.success) {
           sessionStorage.removeItem('studentExamStart');
 
           this.ngxLoader.stop();
@@ -278,7 +315,10 @@ export class ExamStartComponent implements OnInit, AfterViewInit, OnDestroy {
   StudentResponseSubmit(): void {
     try {
       this.examService.StudentResponseSubmit(this.answers).subscribe(response => {
-        if (response.success) {
+        if(response.errorCode && (response.errorCode == this.dataService.unAuthorizedCode)){
+          this.dataService.LogOut();
+        }
+        else if (response.success) {
           //each and every response submit success
           this.status = {
             notVisited: this.examinationData.filter(d => d.status == 0).length,
@@ -307,20 +347,25 @@ export class ExamStartComponent implements OnInit, AfterViewInit, OnDestroy {
   CheckStatus(): void {
     try {
       this.questionService.CheckExamStarts().subscribe(response => {
-        if (response.success) {
+        if(response.errorCode && (response.errorCode == this.dataService.unAuthorizedCode)){
+          this.dataService.LogOut();
+        }
+        else if (response.success) {
         }
         else {
           sessionStorage.setItem('instruction', 'normal');
-          clearInterval(this.statusInitInterval);
+          // clearInterval(this.statusInitInterval);
           this.router.navigate(["/landing/student/exam"]);
           sessionStorage.removeItem('studentExamStart');
           this.toastrService.error(response.message);
         }
       }, error => {
+        this.CheckStatus();
         this.toastrService.error(error.message);
       })
     }
     catch (e) {
+      this.CheckStatus();
       this.toastrService.error(e.message);
     }
   }
@@ -334,11 +379,76 @@ export class ExamStartComponent implements OnInit, AfterViewInit, OnDestroy {
       });
   }
 
+  sendWarning(): void {
+    try {
+      this.examService.CheckStudentSMP().subscribe(response => {
+        if(response.errorCode && (response.errorCode == this.dataService.unAuthorizedCode)){
+          this.dataService.LogOut();
+        }
+        else if (response.success) {
+          if (response.data.isSMP) {
+            // localStorage.setItem('SMP', 'true');
+            this.dataService.warning.next(true);
+            this.router.navigate(['/landing/student/initial']);
+            this.dialog.open(WarningComponent,
+              {
+                minWidth: '35%',
+                disableClose: true
+              });
+          }
+        }
+        else {
+          this.toastrService.error(response.message);
+        }
+      }, error => {
+        this.toastrService.error(error.message);
+        this.ngxLoader.stop();
+      })
+    }
+    catch (e) {
+      this.toastrService.error(e);
+      this.ngxLoader.stop();
+    }
+  }
+
+  MarkSMP(): void {
+    try {
+      this.ngxLoader.start();
+      // localStorage.setItem('SMP', 'true');
+      this.dataService.warning.next(true);
+      this.router.navigate(['/landing/student/initial']);
+      this.examService.MarkStudentSMP().subscribe(response => {
+        if(response.errorCode && (response.errorCode == this.dataService.unAuthorizedCode)){
+          this.dataService.LogOut();
+        }
+        else if (response.success) {
+          this.ngxLoader.stop();
+          this.toastrService.success(response.message);
+          this.dialog.open(WarningComponent,
+            {
+              minWidth: '35%',
+              disableClose: true
+            });
+        }
+        else {
+          this.toastrService.error(response.message);
+        }
+      }, error => {
+        this.toastrService.error(error.message);
+        this.ngxLoader.stop();
+      })
+    }
+    catch (e) {
+      this.toastrService.error(e);
+      this.ngxLoader.stop();
+    }
+  }
+
   ngOnDestroy() {
     this.sideNavSubscription.unsubscribe();
     this.timerSubscription.unsubscribe();
     this.questionSubscription.unsubscribe();
-    clearInterval(this.statusInitInterval);
+    // clearInterval(this.statusInitInterval);
   }
 
 

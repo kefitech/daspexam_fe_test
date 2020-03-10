@@ -3,6 +3,7 @@ import { Router } from '@angular/router';
 import { ControllerAuthService } from 'src/app/Services/controller-auth.service';
 import { ToastrService } from 'ngx-toastr';
 import { ControllerAPIService } from 'src/app/Services/controller-api.service';
+import { DataService } from 'src/app/Services/data.service';
 
 @Component({
   selector: 'app-controller-instructions',
@@ -12,7 +13,8 @@ import { ControllerAPIService } from 'src/app/Services/controller-api.service';
 export class ControllerInstructionsComponent implements OnInit, AfterViewInit {
 
   constructor(private router: Router, private auth: ControllerAuthService,
-    private toastrService: ToastrService, private service: ControllerAPIService) { }
+    private toastrService: ToastrService, private service: ControllerAPIService,
+    private dataService: DataService) { }
 
     examFetchCompleted: boolean = false;
 
@@ -28,9 +30,17 @@ export class ControllerInstructionsComponent implements OnInit, AfterViewInit {
       this.showConfirmation = true;
     try {
       this.service.ExamFetchFromMainServer().subscribe(response => {
-        if (response.success) {
+        if(response.errorCode && (response.errorCode == this.dataService.unAuthorizedCode)){
+          this.dataService.LogOut();
+        }
+        else if (response.success) {
           sessionStorage.setItem('Token', response.data.token);
           this.examFetchCompleted = true;
+          if(response.data.isExamStarted){
+            sessionStorage.setItem('AcceptInstruction', 'true');
+            sessionStorage.setItem('controllerExamStart', 'true');
+          this.router.navigate(['landing/invigilator/examstart']);
+          }
         }
         else{
           this.toastrService.error(response.message);

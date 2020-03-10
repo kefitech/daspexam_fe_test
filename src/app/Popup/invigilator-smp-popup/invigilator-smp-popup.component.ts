@@ -38,7 +38,10 @@ export class InvigilatorSMPPopupComponent implements OnInit, AfterViewInit {
         examStudentId: this.data.student.examStudentId
       }
       this.service.IndividualStudentSMPList(body).subscribe(response => {
-        if (response) {
+        if(response.errorCode && (response.errorCode == this.dataService.unAuthorizedCode)){
+          this.dataService.LogOut();
+        }
+        else if (response) {
           this.ngxLoader.stop();
           this.studentDetails = response.data.studentDetails[0];
         }
@@ -69,7 +72,10 @@ export class InvigilatorSMPPopupComponent implements OnInit, AfterViewInit {
         smpReason: this.reason.value
       }
       this.service.StudentSMPBlock(body).subscribe(response => {
-        if (response.success) {
+        if(response.errorCode && (response.errorCode == this.dataService.unAuthorizedCode)){
+          this.dataService.LogOut();
+        }
+        else if (response.success) {
           this.ngxLoader.stop();
           this.isBlock = true;
           this.dialogScreen.close();

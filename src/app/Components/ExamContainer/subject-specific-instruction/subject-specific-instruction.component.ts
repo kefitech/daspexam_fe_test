@@ -25,8 +25,6 @@ export class SubjectSpecificInstructionComponent implements OnInit, AfterViewIni
     sessionStorage.setItem('studentSubjectSpecificInstruction', 'true');
     this.subscription = this.dataService.studentData.subscribe(response => {
       if (response) {
-        console.log(response);
-        
         this.user = response;
       }
     })
@@ -44,7 +42,10 @@ export class SubjectSpecificInstructionComponent implements OnInit, AfterViewIni
     try {
       this.ngxLoader.start();
       this.apiService.StudentStartExam().subscribe(response => {
-        if (response.success) {
+        if(response.errorCode && (response.errorCode == this.dataService.unAuthorizedCode)){
+          this.dataService.LogOut();
+        }
+        else if (response.success) {
           this.dataService.toggleFullScreen();
           this.router.navigate(["/landing/student/exam/progress"]);
           this.ngxLoader.stop();
