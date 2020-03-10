@@ -11,10 +11,12 @@
               <mat-panel-title>
                 <div class="col-sm-12">
                   <div class="row">
-                    <div class="Checkbox pt-1 col-sm-1">
-                      <mat-checkbox [disabled]="exam?.examVerified == 1" (change)="Stepper1Verification()" 
-                      [(ngModel)]="exam.verified" class="pt-1 px-3">
+                    <div class="pt-3 col-sm-1">
+                      <span class="check-box">
+                      <mat-checkbox [matTooltip]="exam.verified?'Exam Verified': 'Verify Exam'" [disabled]="exam?.examVerified == 1" (change)="Stepper1Verification()" 
+                      [(ngModel)]="exam.verified" class="matCheckboxClass">
                       </mat-checkbox>
+                    </span>
                     </div>
                     <div class="col-sm-9">
                       <span class="TitleCaption w-100">{{exam?.examName}}</span>
@@ -47,7 +49,7 @@
               <div class="col-sm-2">
                 <mat-form-field class="w-100" appearance="outline">
                   <mat-label>Shuffle Count</mat-label>
-                  <input [disabled]="exam?.examVerified == 1" maxlength="1" (input)="QuestionCountValidCheck()" (keypress)="dataService?.NumberOnly($event)" 
+                  <input [disabled]="exam?.examVerified == 1" maxlength="2" (input)="QuestionCountValidCheck()" (keypress)="dataService?.NumberOnly($event)" 
                   [(ngModel)]="exam.shuffleCount" matInput placeholder="Shuffle Count">
                 </mat-form-field>
               </div>

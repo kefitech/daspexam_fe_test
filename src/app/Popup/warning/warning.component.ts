@@ -52,7 +52,10 @@ export class WarningComponent implements OnInit {
       if (this.lockForm.valid) {
         try {
           this.apiService.UnlockStudentSMP(this.lockForm.value).subscribe(response => {
-            if (response.success) {
+            if(response.errorCode && (response.errorCode == this.dataService.unAuthorizedCode)){
+              this.dataService.LogOut();
+            }
+            else if (response.success) {
               this.dataService.isNotLoginScreen.next(false);
               this.dataService.sideNavButton.next(false);
               this.dataService.warning.next(false);
@@ -62,7 +65,7 @@ export class WarningComponent implements OnInit {
               this.dialogScreen.close();
               this.toastrService.success(response.message);
               sessionStorage.setItem('instruction', 'normal');
-              this.router.navigate(['/landing/student']);
+              // this.router.navigate(['/landing/student']);
             }
             else {
               this.toastrService.error(response.message);

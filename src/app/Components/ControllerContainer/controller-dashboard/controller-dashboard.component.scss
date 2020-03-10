@@ -38,7 +38,7 @@
     font-size: 1em;
     font-weight: bold;
   }
-  .Desc{
+  .Desc {
     font-size: 0.8em;
     font-weight: bold;
     color: color(darkSuccess);
@@ -118,9 +118,30 @@
   }
 }
 
-.ExpansionHeader{
+.ExpansionHeader {
   height: auto;
-  .Checkbox{
-    width: 3% !important;
+  // .Checkbox{
+  //   width: 3% !important;
+
+  // }
+
+  .check-box:hover {
+    background-color: rgba(245, 200, 1, 0.698);
   }
+
+  // ::ng-deep.matCheckboxClass .mat-ripple-element {
+  //   background-color: red !important;
+  // }
 }
+
+// .remove-pointer {
+//   pointer-events: none;
+// }
+
+// .pointer-fill {
+//   pointer-events: visiblefill !important;
+// }
+
+// .mat-expansion-indicator{
+//   pointer-events: visiblefill !important;
+// }

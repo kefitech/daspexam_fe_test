@@ -74,7 +74,10 @@ export class HallticketPopupComponent implements OnInit, AfterViewInit {
       body['birthDate'] = this.datePipe.transform(this.hallticketForm.value.birthDate, "yyyy-MM-dd");
       if (this.hallticketForm.valid) {
         this.service.hallTicketVerification(this.hallticketForm.value).subscribe(response => {
-          if (response.success) {
+          if(response.errorCode && (response.errorCode == this.dataService.unAuthorizedCode)){
+            this.dataService.LogOut();
+          }
+          else if (response.success) {
             this.studentData = response;
             this.dataService.studentCredentials.next({
               examStudentId: response.data.examStudentId

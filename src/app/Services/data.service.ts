@@ -1,13 +1,15 @@
 import { Injectable } from '@angular/core';
 import { BehaviorSubject } from 'rxjs';
 import { HttpClient } from '@angular/common/http';
+import { ControllerAuthService } from './controller-auth.service';
+import { Router } from '@angular/router';
 
 @Injectable({
   providedIn: 'root'
 })
 export class DataService {
 
-  constructor() {
+  constructor(private auth: ControllerAuthService, private router: Router) {
   }
 
   public PATTERN = {
@@ -50,6 +52,8 @@ export class DataService {
 
   public examStartAndTimer = new BehaviorSubject<any>(null);
 
+  public unAuthorizedCode: number = 1001;
+
 
   toggleFullScreen() {
     let elem = docElmWithBrowsersFullScreenFunctions;
@@ -89,6 +93,39 @@ export class DataService {
       array[j] = temp;
     }
     return array;
+  }
+
+  LogOut(): void{
+    var loginType = sessionStorage.getItem('loginUser');
+    sessionStorage.removeItem("userId");
+    sessionStorage.removeItem("sessionId");
+    sessionStorage.removeItem("email");
+    sessionStorage.removeItem("AcceptInstruction");
+    sessionStorage.removeItem("questionShuffled");
+    sessionStorage.removeItem('controllerExamStart');
+    sessionStorage.removeItem("loginUser");
+    sessionStorage.removeItem("Token");
+    sessionStorage.removeItem("studentData");
+    sessionStorage.removeItem("questionFetch");
+    sessionStorage.removeItem("studentSubjectSpecificInstruction");
+    sessionStorage.removeItem("examStudentId");
+    sessionStorage.removeItem("studentCommonInstruction");
+    sessionStorage.removeItem('studentExamStart');
+    this.controllerLogin.next(false);
+    this.controllerData.next(null);
+    this.auth.controllerLogoutAuth();
+    if (loginType == 'invigilator') {
+      this.router.navigate(["/landing/invigilator/login"]);
+      // window.location.reload();
+    }
+    else {
+      this.studentCredentials.next({});
+      this.studentData.next({});
+      this.router.navigate(["/landing/student/initial"]);
+      // setTimeout(() => {
+      //   window.location.reload();
+      // }, 10);
+    }
   }
 
 }

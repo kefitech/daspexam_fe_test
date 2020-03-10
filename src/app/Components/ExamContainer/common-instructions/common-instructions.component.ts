@@ -42,31 +42,38 @@ export class CommonInstructionsComponent implements OnInit, AfterViewInit, OnDes
   ngAfterViewInit() {
     sessionStorage.setItem('studentCommonInstruction', 'true');
     setTimeout(() => {
-      this.pageInitInterval = setInterval(() => {
+      // this.pageInitInterval = setInterval(() => {
         this.dataService.examStartAndTimer.next('');
         this.fetchQuestions();
-      }, 3600)
+        this.CheckExamStarts();
+      // }, 3600)
     }, 10);
   }
 
   fetchQuestions(): void {
     try {
       this.apiService.questionFetch().subscribe(response => {
-        if (response.success) {
+        if(response.errorCode && (response.errorCode == this.dataService.unAuthorizedCode)){
+          this.dataService.LogOut();
+        }
+        else if (response.success) {
           sessionStorage.setItem('questionFetch', 'true');
           this.dataService.questionsData.next(response.data.questionList);
           this.dataService.questionFetch.next(true);
-          this.CheckExamStarts();
+          // this.CheckExamStarts();
           // this.CheckExamStarts();
         }
         else {
+          this.fetchQuestions();
           // this.toastrService.error(response.message);
         }
       }, error => {
+        this.fetchQuestions();
         this.toastrService.error(error.message);
       })
     }
     catch (e) {
+      this.fetchQuestions();
       this.toastrService.error(e.message);
     }
   }
@@ -74,18 +81,24 @@ export class CommonInstructionsComponent implements OnInit, AfterViewInit, OnDes
   CheckExamStarts(): void {
     try {
       this.apiService.CheckExamStarts().subscribe(response => {
-        if (response.success) {
-          this.dataService.examStartAndTimer.next(response.data);
-          clearInterval(this.pageInitInterval);
+        if(response.errorCode && (response.errorCode == this.dataService.unAuthorizedCode)){
+          this.dataService.LogOut();
         }
-        // else {
-        //   this.toastrService.error(response.message);
-        // }
+        else if (response.success) {
+          this.dataService.examStartAndTimer.next(response.data);
+          // clearInterval(this.pageInitInterval);
+        }
+        else {
+          // this.toastrService.error(response.message);
+          this.CheckExamStarts();
+        }
       }, error => {
+        this.CheckExamStarts();
         this.toastrService.error(error.message);
       })
     }
     catch (e) {
+      this.CheckExamStarts();
       this.toastrService.error(e.message);
     }
   }
@@ -96,6 +109,6 @@ export class CommonInstructionsComponent implements OnInit, AfterViewInit, OnDes
 
   ngOnDestroy() {
     // clearInterval(this.pageInitInterval);
-    this.subscription.unsubscribe();
+    // this.subscription.unsubscribe();
   }
 }

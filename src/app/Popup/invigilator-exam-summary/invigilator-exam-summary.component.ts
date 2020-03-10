@@ -33,7 +33,10 @@ export class InvigilatorExamSummaryComponent implements OnInit, AfterViewInit {
     try {
       this.ngxLoader.start();
       this.service.ExamSummary().subscribe(response => {
-        if (response.success) {
+        if(response.errorCode && (response.errorCode == this.dataService.unAuthorizedCode)){
+          this.dataService.LogOut();
+        }
+        else if (response.success) {
 
           sessionStorage.removeItem("userId");
           sessionStorage.removeItem("sessionId");

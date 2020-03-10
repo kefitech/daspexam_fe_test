@@ -54,10 +54,11 @@ export class LandingComponent implements OnInit, AfterViewInit, OnDestroy {
     var studentData = sessionStorage.getItem('studentData');
     if (loggedInUser == 'student') {
       setTimeout(() => {
-        this.pageInitInterval = setInterval(() => {
+        // this.pageInitInterval = setInterval(() => {
           this.dataService.examStartAndTimer.next('');
           this.fetchQuestions();
-        }, 3600)
+          this.CheckExamStarts();
+        // }, 3600)
       }, 100);
     }
 
@@ -80,10 +81,10 @@ export class LandingComponent implements OnInit, AfterViewInit, OnDestroy {
     }
   }
 
-  @HostListener('contextmenu', ['$event'])
-  onRightClick(event) {
-    event.preventDefault();
-  }
+  // @HostListener('contextmenu', ['$event'])
+  // onRightClick(event) {
+  //   event.preventDefault();
+  // }
 
   sideNavToggle(): void {
     this.dataService.sideNav.next(true);
@@ -98,7 +99,10 @@ export class LandingComponent implements OnInit, AfterViewInit, OnDestroy {
         try {
           this.ngxLoader.start();
           this.service.CheckValidController().subscribe(response => {
-            if (response.success) {
+            if(response.errorCode && (response.errorCode == this.dataService.unAuthorizedCode)){
+              this.dataService.LogOut();
+            }
+            else if (response.success) {
               var controller = {
                 userId: sessionStorage.getItem("userId"),
                 sessionId: sessionStorage.getItem("sessionId"),
@@ -132,7 +136,10 @@ export class LandingComponent implements OnInit, AfterViewInit, OnDestroy {
         try {
           this.ngxLoader.start();
           this.service.CheckValidController().subscribe(response => {
-            if (response.success) {
+            if(response.errorCode && (response.errorCode == this.dataService.unAuthorizedCode)){
+              this.dataService.LogOut();
+            }
+            else if (response.success) {
               var controller = {
                 userId: sessionStorage.getItem("userId"),
                 sessionId: sessionStorage.getItem("sessionId"),
@@ -166,7 +173,10 @@ export class LandingComponent implements OnInit, AfterViewInit, OnDestroy {
         try {
           this.ngxLoader.start();
           this.service.CheckValidController().subscribe(response => {
-            if (response.success) {
+            if(response.errorCode && (response.errorCode == this.dataService.unAuthorizedCode)){
+              this.dataService.LogOut();
+            }
+            else if (response.success) {
               var controller = {
                 userId: sessionStorage.getItem("userId"),
                 sessionId: sessionStorage.getItem("sessionId"),
@@ -219,7 +229,10 @@ export class LandingComponent implements OnInit, AfterViewInit, OnDestroy {
         try {
           this.ngxLoader.start();
           this.studentService.CheckValidStudent().subscribe(response => {
-            if (response.success) {
+            if(response.errorCode && (response.errorCode == this.dataService.unAuthorizedCode)){
+              this.dataService.LogOut();
+            }
+            else if (response.success) {
               this.ngxLoader.stop();
               this.router.navigate(["/landing/student/initial"]);
             }
@@ -245,7 +258,10 @@ export class LandingComponent implements OnInit, AfterViewInit, OnDestroy {
         try {
           this.ngxLoader.start();
           this.studentService.CheckValidStudent().subscribe(response => {
-            if (response.success) {
+            if(response.errorCode && (response.errorCode == this.dataService.unAuthorizedCode)){
+              this.dataService.LogOut();
+            }
+            else if (response.success) {
               this.ngxLoader.stop();
               this.authHallTicket.hallTicketValid();
               // this.dataService.toggleFullScreen();
@@ -274,7 +290,10 @@ export class LandingComponent implements OnInit, AfterViewInit, OnDestroy {
         try {
           this.ngxLoader.start();
           this.studentService.CheckValidStudent().subscribe(response => {
-            if (response.success) {
+            if(response.errorCode && (response.errorCode == this.dataService.unAuthorizedCode)){
+              this.dataService.LogOut();
+            }
+            else if (response.success) {
               this.ngxLoader.stop();
               this.authHallTicket.hallTicketValid();
               // this.dataService.toggleFullScreen();
@@ -303,7 +322,10 @@ export class LandingComponent implements OnInit, AfterViewInit, OnDestroy {
         try {
           this.ngxLoader.start();
           this.studentService.CheckValidStudent().subscribe(response => {
-            if (response.success) {
+            if(response.errorCode && (response.errorCode == this.dataService.unAuthorizedCode)){
+              this.dataService.LogOut();
+            }
+            else if (response.success) {
               this.ngxLoader.stop();
               this.authHallTicket.hallTicketValid();
               // this.dataService.toggleFullScreen();
@@ -341,20 +363,26 @@ export class LandingComponent implements OnInit, AfterViewInit, OnDestroy {
   fetchQuestions(): void {
     try {
       this.questionService.questionFetch().subscribe(response => {
-        if (response.success) {
+        if(response.errorCode && (response.errorCode == this.dataService.unAuthorizedCode)){
+          this.dataService.LogOut();
+        }
+        else if (response.success) {
           sessionStorage.setItem('questionFetch', 'true');
           this.dataService.questionsData.next(response.data.questionList);
 
-            this.CheckExamStarts();
+            // this.CheckExamStarts();
         }
         else {
+          this.fetchQuestions();
           // this.toastrService.error(response.message);
         }
       }, error => {
+        this.fetchQuestions();
         this.toastrService.error(error.message);
       })
     }
     catch (e) {
+      this.fetchQuestions();
       this.toastrService.error(e.message);
     }
   }
@@ -362,19 +390,25 @@ export class LandingComponent implements OnInit, AfterViewInit, OnDestroy {
   CheckExamStarts(): void {
     try {
       this.questionService.CheckExamStarts().subscribe(response => {
-        if (response.success) {
+        if(response.errorCode && (response.errorCode == this.dataService.unAuthorizedCode)){
+          this.dataService.LogOut();
+        }
+        else if (response.success) {
           this.dataService.examStartAndTimer.next(response.data);
-          clearInterval(this.pageInitInterval);
+          // clearInterval(this.pageInitInterval);
         }
         else {
+          this.CheckExamStarts();
           // sessionStorage.removeItem('studentExamStart');
           // this.toastrService.error(response.message);
         }
       }, error => {
+        this.CheckExamStarts();
         this.toastrService.error(error.message);
       })
     }
     catch (e) {
+      this.CheckExamStarts();
       this.toastrService.error(e.message);
     }
   }
@@ -391,36 +425,7 @@ export class LandingComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   Logout(): void {
-    var loginType = sessionStorage.getItem('loginUser');
-    sessionStorage.removeItem("userId");
-    sessionStorage.removeItem("sessionId");
-    sessionStorage.removeItem("email");
-    sessionStorage.removeItem("AcceptInstruction");
-    sessionStorage.removeItem("questionShuffled");
-    sessionStorage.removeItem('controllerExamStart');
-    sessionStorage.removeItem("loginUser");
-    sessionStorage.removeItem("Token");
-    sessionStorage.removeItem("studentData");
-    sessionStorage.removeItem("questionFetch");
-    sessionStorage.removeItem("studentSubjectSpecificInstruction");
-    sessionStorage.removeItem("examStudentId");
-    sessionStorage.removeItem("studentCommonInstruction");
-    sessionStorage.removeItem('studentExamStart');
-    this.dataService.controllerLogin.next(false);
-    this.dataService.controllerData.next(null);
-    this.auth.controllerLogoutAuth();
-    if (loginType == 'invigilator') {
-      this.router.navigate(["/landing/invigilator/login"]);
-      window.location.reload();
-    }
-    else {
-      this.dataService.studentCredentials.next({});
-      this.dataService.studentData.next({});
-      this.router.navigate(["/landing/student/initial"]);
-      setTimeout(() => {
-        window.location.reload();
-      }, 10);
-    }
+   this.dataService.LogOut();
   }
 
   ngOnDestroy() {

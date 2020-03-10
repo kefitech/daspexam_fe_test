@@ -19,31 +19,31 @@ export class CommonPanelComponent implements OnInit {
     private toastrService: ToastrService, private apiService: ExamAPIService, private dialog: MatDialog,
     private router: Router, private ngxLoader: NgxUiLoaderService) { }
 
-  fullScr: boolean = false;
-  winHeight: number;
+  // fullScr: boolean = false;
+  // winHeight: number;
 
   ngOnInit() {
     // var SMP = localStorage.getItem('SMP');
     // if (SMP == 'true') {
     this.sendWarning();
     // }
-    this.fullScr = true;
-    this.winHeight = window.innerHeight;
+    // this.fullScr = true;
+    // this.winHeight = window.innerHeight;
   }
 
-  @HostListener('window:resize', ['$event'])
-  onResize(event) {
-    event.returnValue = false;
-    event.preventDefault();
-    if (this.winHeight < window.innerHeight)
-      this.winHeight = window.innerHeight;
-    // var alreadyMarked = localStorage.getItem('SMP');
-    // if (window.innerHeight != this.winHeight && alreadyMarked != 'true') {
-      if (window.innerHeight != this.winHeight) {
+  // @HostListener('window:resize', ['$event'])
+  // onResize(event) {
+  //   event.returnValue = false;
+  //   event.preventDefault();
+  //   if (this.winHeight < window.innerHeight)
+  //     this.winHeight = window.innerHeight;
+  //   // var alreadyMarked = localStorage.getItem('SMP');
+  //   // if (window.innerHeight != this.winHeight && alreadyMarked != 'true') {
+  //     if (window.innerHeight != this.winHeight) {
 
-      this.MarkSMP();
-    }
-  }
+  //     this.MarkSMP();
+  //   }
+  // }
 
   // @HostListener('contextmenu', ['$event'])
   // onRightClick(event) {
@@ -71,11 +71,14 @@ export class CommonPanelComponent implements OnInit {
   sendWarning(): void {
     try {
       this.apiService.CheckStudentSMP().subscribe(response => {
-        if (response.success) {
+        if(response.errorCode && (response.errorCode == this.dataService.unAuthorizedCode)){
+          this.dataService.LogOut();
+        }
+        else if (response.success) {
           if (response.data.isSMP) {
             // localStorage.setItem('SMP', 'true');
             this.dataService.warning.next(true);
-            this.router.navigate(['/initial']);
+            this.router.navigate(['/landing/student/initial']);
             this.dialog.open(WarningComponent,
               {
                 minWidth: '35%',
@@ -97,34 +100,34 @@ export class CommonPanelComponent implements OnInit {
     }
   }
 
-  MarkSMP(): void {
-    try {
-      this.ngxLoader.start();
-      // localStorage.setItem('SMP', 'true');
-      this.dataService.warning.next(true);
-      this.router.navigate(['/initial']);
-      this.apiService.MarkStudentSMP().subscribe(response => {
-        if (response.success) {
-          this.ngxLoader.stop();
-          this.toastrService.success(response.message);
-          this.dialog.open(WarningComponent,
-            {
-              minWidth: '35%',
-              disableClose: true
-            });
-        }
-        else {
-          this.toastrService.error(response.message);
-        }
-      }, error => {
-        this.toastrService.error(error.message);
-        this.ngxLoader.stop();
-      })
-    }
-    catch (e) {
-      this.toastrService.error(e);
-      this.ngxLoader.stop();
-    }
-  }
+  // MarkSMP(): void {
+  //   try {
+  //     this.ngxLoader.start();
+  //     // localStorage.setItem('SMP', 'true');
+  //     this.dataService.warning.next(true);
+  //     this.router.navigate(['/initial']);
+  //     this.apiService.MarkStudentSMP().subscribe(response => {
+  //       if (response.success) {
+  //         this.ngxLoader.stop();
+  //         this.toastrService.success(response.message);
+  //         this.dialog.open(WarningComponent,
+  //           {
+  //             minWidth: '35%',
+  //             disableClose: true
+  //           });
+  //       }
+  //       else {
+  //         this.toastrService.error(response.message);
+  //       }
+  //     }, error => {
+  //       this.toastrService.error(error.message);
+  //       this.ngxLoader.stop();
+  //     })
+  //   }
+  //   catch (e) {
+  //     this.toastrService.error(e);
+  //     this.ngxLoader.stop();
+  //   }
+  // }
 
 }

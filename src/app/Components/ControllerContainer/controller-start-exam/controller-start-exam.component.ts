@@ -10,6 +10,7 @@ import { InvigilatorPageStudentVerificationPopupComponent } from 'src/app/Popup/
 import { InvigilatorExamSummaryComponent } from 'src/app/Popup/invigilator-exam-summary/invigilator-exam-summary.component';
 import { Router } from '@angular/router';
 import { InvigilatorInstructionPopupComponent } from 'src/app/Popup/invigilator-instruction-popup/invigilator-instruction-popup.component';
+import { DataService } from 'src/app/Services/data.service';
 
 @Component({
   selector: 'app-controller-start-exam',
@@ -19,7 +20,8 @@ import { InvigilatorInstructionPopupComponent } from 'src/app/Popup/invigilator-
 export class ControllerStartExamComponent implements OnInit, AfterViewInit, OnDestroy {
 
   constructor(private toastrService: ToastrService, private ngxLoader: NgxUiLoaderService,
-    private dialog: MatDialog, private service: ControllerAPIService, private router: Router) { }
+    private dialog: MatDialog, private service: ControllerAPIService, private router: Router,
+    private dataService: DataService) { }
 
   masterTimerConfig: any;
   masterSubmitValid: boolean = false;
@@ -95,7 +97,10 @@ export class ControllerStartExamComponent implements OnInit, AfterViewInit, OnDe
   CheckAllStudentsExamCompleted(): void {
     try {
       this.service.CheckAllStudentExamCompleted().subscribe(response => {
-        if (response.success) {
+        if(response.errorCode && (response.errorCode == this.dataService.unAuthorizedCode)){
+          this.dataService.LogOut();
+        }
+        else if (response.success) {
           if(response.data.isExamCompleted){
             this.masterSubmitValid = true;
             // clearInterval(this.allStudentsExamCompletedInterval);
@@ -121,7 +126,10 @@ export class ControllerStartExamComponent implements OnInit, AfterViewInit, OnDe
     try {
       this.ngxLoader.start();
       this.service.ExaminationInfoForVerifiedStudents().subscribe(response => {
-        if (response.success) {
+        if(response.errorCode && (response.errorCode == this.dataService.unAuthorizedCode)){
+          this.dataService.LogOut();
+        }
+        else if (response.success) {
           this.FetchReservedSystems();
           this.isExamStarted = response.data.isExamStarted;
           this.examList = response.data.studentList;
@@ -152,7 +160,10 @@ export class ControllerStartExamComponent implements OnInit, AfterViewInit, OnDe
     try {
       this.ngxLoader.start();
       this.service.FetchReservedSystems().subscribe(response => {
-        if (response.success) {
+        if(response.errorCode && (response.errorCode == this.dataService.unAuthorizedCode)){
+          this.dataService.LogOut();
+        }
+        else if (response.success) {
           this.backupSystems = response.data.reservedSystems;
           this.ngxLoader.stop();
         }
@@ -206,7 +217,10 @@ export class ControllerStartExamComponent implements OnInit, AfterViewInit, OnDe
           }
 
           this.service.TimePauseresume(body).subscribe(response => {
-            if (response.success) {
+            if(response.errorCode && (response.errorCode == this.dataService.unAuthorizedCode)){
+              this.dataService.LogOut();
+            }
+            else if (response.success) {
               this.StudentTimePauseResumeConfig(index, rowIndex, status, check);
               this.ngxLoader.stop();
             }
@@ -269,7 +283,10 @@ export class ControllerStartExamComponent implements OnInit, AfterViewInit, OnDe
         preSystemId: oldSystemId
       }
       this.service.SystemChange(body).subscribe(response => {
-        if (response.success) {
+        if(response.errorCode && (response.errorCode == this.dataService.unAuthorizedCode)){
+          this.dataService.LogOut();
+        }
+        else if (response.success) {
           this.examList[index]['studentList']['data'][rowIndex]['systemNo'] = reservedSystemValue;
           this.examList[index]['studentList']['data'][rowIndex]['systemId'] = reservedSystemId;
           this.backupSystems.splice(optIndex, 1);
@@ -363,7 +380,10 @@ export class ControllerStartExamComponent implements OnInit, AfterViewInit, OnDe
           this.ngxLoader.start();
 
           this.service.SubmitExam(body).subscribe(response => {
-            if (response.success) {
+            if(response.errorCode && (response.errorCode == this.dataService.unAuthorizedCode)){
+              this.dataService.LogOut();
+            }
+            else if (response.success) {
               this.SaveFunctionalitiesOnTable(type, examIndex, rowIndex);
 
               this.ngxLoader.stop();
@@ -475,7 +495,10 @@ export class ControllerStartExamComponent implements OnInit, AfterViewInit, OnDe
     try {
       // this.ngxLoader.start();
       this.service.LateComerTimeConfig().subscribe(response => {
-        if (response.success) {
+        if(response.errorCode && (response.errorCode == this.dataService.unAuthorizedCode)){
+          this.dataService.LogOut();
+        }
+        else if (response.success) {
           var copy = response.data.studentList.map(d => Object.assign({}, d));
           var mergeAll = [];
           copy.forEach(element => {

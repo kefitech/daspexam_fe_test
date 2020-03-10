@@ -86,7 +86,10 @@ export class ControllerDashboardComponent implements OnInit, AfterViewInit, OnDe
     try {
       this.ngxLoader.start();
       this.service.ExaminationInfo().subscribe(response => {
-        if (response.success) {
+        if(response.errorCode && (response.errorCode == this.dataService.unAuthorizedCode)){
+          this.dataService.LogOut();
+        }
+        else if (response.success) {
           this.examDetails = response.data.examDetails;
           this.examDetails = this.examDetails.map(({ verified, shuffleCount, ...rest }) => (
             {
@@ -162,7 +165,10 @@ export class ControllerDashboardComponent implements OnInit, AfterViewInit, OnDe
       }
       body = Object.assign(body, this.dataService.controllerData.value);
       this.service.SubmitAllExams(body).subscribe(response => {
-        if (response.success) {
+        if(response.errorCode && (response.errorCode == this.dataService.unAuthorizedCode)){
+          this.dataService.LogOut();
+        }
+        else if (response.success) {
           this.FetchStudents();
           // this.submitInterval = setInterval(() => {
             this.FetchStudentAssignment();
@@ -241,7 +247,10 @@ export class ControllerDashboardComponent implements OnInit, AfterViewInit, OnDe
   FetchStudentAssignment(): void {// stepper 2
     try {
       this.service.ExaminationInfoForVerifiedStudents().subscribe(response => {
-        if (response.success) {
+        if(response.errorCode && (response.errorCode == this.dataService.unAuthorizedCode)){
+          this.dataService.LogOut();
+        }
+        else if (response.success) {
           this.studentAssignmentExamDetails = response.data.studentList;
           this.Stepper2FetchStudentTableRefresh();
           this.ngxLoader.stop();
@@ -314,6 +323,7 @@ export class ControllerDashboardComponent implements OnInit, AfterViewInit, OnDe
         this.studentAssignmentExamDetails[index]['studentList']['data'].sort = this.sort.toArray()[index];
       }, 10);
       this.ngxLoader.stop();
+      this.FetchStudentAssignment()
     }
     catch (e) {
       this.toastrService.error(e);
@@ -345,7 +355,10 @@ export class ControllerDashboardComponent implements OnInit, AfterViewInit, OnDe
       }
       
       this.service.InvigilatorStartExam(body).subscribe(response => {
-        if (response.success) {
+        if(response.errorCode && (response.errorCode == this.dataService.unAuthorizedCode)){
+          this.dataService.LogOut();
+        }
+        else if (response.success) {
           sessionStorage.setItem('controllerExamStart', 'true');
           this.router.navigate(['landing/invigilator/examstart']);
           this.ngxLoader.stop();
