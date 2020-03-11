@@ -71,8 +71,9 @@ export class ExamStartComponent implements OnInit, AfterViewInit, OnDestroy {
     this.questionSubscription = this.dataService.questionsData.subscribe(response => {
       if (response.length > 0) {
         this.examinationData = this.encryptionService.DecryptEncryption(response, ['question'], ['option']);
-        this.examinationData = this.examinationData.map(({ options, ...rest }) => ({ options: this.dataService.shuffle(options), ...rest }));
-
+        this.examinationData = this.examinationData.map(({ shuffleStatus, options, ...rest }) =>
+          ({ shuffleStatus: shuffleStatus, options: shuffleStatus ? this.dataService.shuffle(options) : options, ...rest }));
+        
         var checkFirstQuestion = this.examinationData.every(m => m.status == 0);
 
         if (checkFirstQuestion) {
@@ -110,7 +111,7 @@ export class ExamStartComponent implements OnInit, AfterViewInit, OnDestroy {
 
   ngAfterViewInit() {
     // this.statusInitInterval = setInterval(() => {
-      this.CheckStatus();
+    this.CheckStatus();
     // }, 3600)
   }
 
@@ -122,7 +123,7 @@ export class ExamStartComponent implements OnInit, AfterViewInit, OnDestroy {
       this.winHeight = window.innerHeight;
     // var alreadyMarked = localStorage.getItem('SMP');
     // if (window.innerHeight != this.winHeight && alreadyMarked != 'true') {
-      if (window.innerHeight != this.winHeight) {
+    if (window.innerHeight != this.winHeight) {
 
       this.MarkSMP();
     }
@@ -260,7 +261,7 @@ export class ExamStartComponent implements OnInit, AfterViewInit, OnDestroy {
     try {
       this.ngxLoader.start();
       this.examService.StudentExamSubmit().subscribe(response => {
-        if(response.errorCode && (response.errorCode == this.dataService.unAuthorizedCode)){
+        if (response.errorCode && (response.errorCode == this.dataService.unAuthorizedCode)) {
           this.dataService.LogOut();
         }
         else if (response.success) {
@@ -315,7 +316,7 @@ export class ExamStartComponent implements OnInit, AfterViewInit, OnDestroy {
   StudentResponseSubmit(): void {
     try {
       this.examService.StudentResponseSubmit(this.answers).subscribe(response => {
-        if(response.errorCode && (response.errorCode == this.dataService.unAuthorizedCode)){
+        if (response.errorCode && (response.errorCode == this.dataService.unAuthorizedCode)) {
           this.dataService.LogOut();
         }
         else if (response.success) {
@@ -347,7 +348,7 @@ export class ExamStartComponent implements OnInit, AfterViewInit, OnDestroy {
   CheckStatus(): void {
     try {
       this.questionService.CheckExamStarts().subscribe(response => {
-        if(response.errorCode && (response.errorCode == this.dataService.unAuthorizedCode)){
+        if (response.errorCode && (response.errorCode == this.dataService.unAuthorizedCode)) {
           this.dataService.LogOut();
         }
         else if (response.success) {
@@ -382,7 +383,7 @@ export class ExamStartComponent implements OnInit, AfterViewInit, OnDestroy {
   sendWarning(): void {
     try {
       this.examService.CheckStudentSMP().subscribe(response => {
-        if(response.errorCode && (response.errorCode == this.dataService.unAuthorizedCode)){
+        if (response.errorCode && (response.errorCode == this.dataService.unAuthorizedCode)) {
           this.dataService.LogOut();
         }
         else if (response.success) {
@@ -418,7 +419,7 @@ export class ExamStartComponent implements OnInit, AfterViewInit, OnDestroy {
       this.dataService.warning.next(true);
       this.router.navigate(['/landing/student/initial']);
       this.examService.MarkStudentSMP().subscribe(response => {
-        if(response.errorCode && (response.errorCode == this.dataService.unAuthorizedCode)){
+        if (response.errorCode && (response.errorCode == this.dataService.unAuthorizedCode)) {
           this.dataService.LogOut();
         }
         else if (response.success) {
