@@ -107,4 +107,12 @@ export class ControllerAPIService {
     return this.http.post(this.URLService.baseURL + this.URLService.checkIfAllStudentsExamCompletedURL, this.dataService.controllerData.value);
   }
 
+  StudentExamSummary(body: any): any{
+    return this.http.post(this.URLService.baseURL + this.URLService.invigilatorStudentExamSummaryURL, body);
+  }
+
+  InvigilatorStudentEarlyExamSubmit(body: any): any{
+    return this.http.post(this.URLService.baseURL + this.URLService.invigilatorStudentEarlyExamSubmitURL, body);
+  }
+
 }

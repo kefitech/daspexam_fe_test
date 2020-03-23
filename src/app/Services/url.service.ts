@@ -58,7 +58,9 @@ export class URLService {
 
   public checkIfAllStudentsExamCompletedURL = "api/conduct_exam/verified_stud_exam_check";
 
+  public invigilatorStudentExamSummaryURL = "api/conduct_exam/student_exam_summary";
 
+public invigilatorStudentEarlyExamSubmitURL = "api/conduct_exam/early_submission_verification"
 
   //Student 
   public checkValidStudentURL = "api/conduct_exam/session_verification";
@@ -80,6 +82,10 @@ export class URLService {
   public studentExamSummaryURL = "api/conduct_exam/student_response_fetch";
 
   public checkSMPURL = "api/conduct_exam/student_smp_check";
+
+  public studentEarlySubmitRequestURL = "api/conduct_exam/early_submission_request";
+
+  public checkStudentEarlyExamSubmitStatusURL = "api/conduct_exam/early_submission_status_check";
 
 
   public headers = new HttpHeaders({ 'Content-Type': 'application/json; charset=utf-8' });

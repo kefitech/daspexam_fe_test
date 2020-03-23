@@ -8,6 +8,7 @@ import { MarkListComponent } from 'src/app/Components/ExamContainer/mark-list/ma
 import { ExamSummaryComponent } from 'src/app/Popup/exam-summary/exam-summary.component';
 import { StudentInstructionPopupComponent } from 'src/app/Popup/student-instruction-popup/student-instruction-popup.component';
 import { CalculatorComponent } from 'src/app/Components/Calculator/calculator/calculator.component';
+import { StudentEarlyExamSubmitPopupComponent } from 'src/app/Popup/student-early-exam-submit-popup/student-early-exam-submit-popup.component';
 
 export const ExamComponentContainer = [
     CommonInstructionsComponent, 
@@ -18,5 +19,6 @@ export const ExamComponentContainer = [
     MarkListComponent,
     ExamSummaryComponent,
     StudentInstructionPopupComponent,
-    CalculatorComponent
+    CalculatorComponent,
+    StudentEarlyExamSubmitPopupComponent
 ];

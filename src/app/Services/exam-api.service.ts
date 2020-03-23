@@ -46,4 +46,12 @@ export class ExamAPIService {
     return this.http.post(this.URLService.baseURL + this.URLService.checkSMPURL, this.dataService.studentCredentials.value);
   }
 
+  StudentEarlyExamSubmit(): any{
+    return this.http.post(this.URLService.baseURL + this.URLService.studentEarlySubmitRequestURL, this.dataService.studentCredentials.value);
+  }
+
+  CheckStudentEarlyExamSubmitStatus(): any{
+    return this.http.post(this.URLService.baseURL + this.URLService.checkStudentEarlyExamSubmitStatusURL, this.dataService.studentCredentials.value);
+  }
+
 }

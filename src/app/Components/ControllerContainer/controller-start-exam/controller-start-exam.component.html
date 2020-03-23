@@ -146,6 +146,11 @@
                                 mat-icon-button>
                                 <mat-icon>save</mat-icon>
                             </button>
+                            <button [class.DefaultButton]="element?.earlyTerminationRequest  != 2" matTooltip="Early Request"
+                            [disabled]="element?.earlyTerminationRequest  != 2" style="color: orange"
+                            (click)="EarlySubmitResponse(element)" mat-icon-button>
+                                <mat-icon>settings_applications</mat-icon>
+                            </button>
                             <button *ngIf="element?.isVerified == 1"
                                 [disabled]="element?.isVerified == 1 || element?.status == 1" style="color: green"
                                 mat-icon-button>

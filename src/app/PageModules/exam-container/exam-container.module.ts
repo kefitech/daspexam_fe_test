@@ -10,6 +10,7 @@ import { WarningComponent } from 'src/app/Popup/warning/warning.component';
 import { ExamSummaryComponent } from 'src/app/Popup/exam-summary/exam-summary.component';
 import { ConfirmationPopoverModule } from 'angular-confirmation-popover';
 import { StudentInstructionPopupComponent } from 'src/app/Popup/student-instruction-popup/student-instruction-popup.component';
+import { StudentEarlyExamSubmitPopupComponent } from 'src/app/Popup/student-early-exam-submit-popup/student-early-exam-submit-popup.component';
 
 @NgModule({
   declarations: [
@@ -25,6 +26,7 @@ import { StudentInstructionPopupComponent } from 'src/app/Popup/student-instruct
       confirmButtonType: 'danger' // set defaults here
     })
   ],
-  entryComponents: [WarningComponent, ExamSummaryComponent, StudentInstructionPopupComponent]
+  entryComponents: [WarningComponent, ExamSummaryComponent, StudentInstructionPopupComponent,
+  StudentEarlyExamSubmitPopupComponent]
 })
 export class ExamContainerModule { }

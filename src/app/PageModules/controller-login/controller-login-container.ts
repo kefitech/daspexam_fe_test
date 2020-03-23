@@ -8,6 +8,7 @@ import { InvigilatorSMPPopupComponent } from 'src/app/Popup/invigilator-smp-popu
 import { ConfirmationPopupComponent } from 'src/app/Popup/confirmation-popup/confirmation-popup.component';
 import { InvigilatorExamSummaryComponent } from 'src/app/Popup/invigilator-exam-summary/invigilator-exam-summary.component';
 import { InvigilatorInstructionPopupComponent } from 'src/app/Popup/invigilator-instruction-popup/invigilator-instruction-popup.component';
+import { InvigilatorEarlyExamResponsePopupComponent } from 'src/app/Popup/invigilator-early-exam-response-popup/invigilator-early-exam-response-popup.component';
 
 
 export const ControllerLoginComponentContainer = [
@@ -20,5 +21,6 @@ export const ControllerLoginComponentContainer = [
     InvigilatorSMPPopupComponent,
     ConfirmationPopupComponent,
     InvigilatorExamSummaryComponent,
-    InvigilatorInstructionPopupComponent
+    InvigilatorInstructionPopupComponent,
+    InvigilatorEarlyExamResponsePopupComponent
 ];
