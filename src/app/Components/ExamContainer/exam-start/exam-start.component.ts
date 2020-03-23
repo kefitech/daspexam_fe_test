@@ -12,6 +12,7 @@ import { ExamAPIService } from 'src/app/Services/exam-api.service';
 import { QuestionService } from 'src/app/Services/question.service';
 import { StudentInstructionPopupComponent } from 'src/app/Popup/student-instruction-popup/student-instruction-popup.component';
 import { WarningComponent } from 'src/app/Popup/warning/warning.component';
+import { StudentEarlyExamSubmitPopupComponent } from 'src/app/Popup/student-early-exam-submit-popup/student-early-exam-submit-popup.component';
 
 // 0 not visited
 //   // 1 Visited but not answered
@@ -73,7 +74,7 @@ export class ExamStartComponent implements OnInit, AfterViewInit, OnDestroy {
         this.examinationData = this.encryptionService.DecryptEncryption(response, ['question'], ['option']);
         this.examinationData = this.examinationData.map(({ shuffleStatus, options, ...rest }) =>
           ({ shuffleStatus: shuffleStatus, options: shuffleStatus ? this.dataService.shuffle(options) : options, ...rest }));
-        
+
         var checkFirstQuestion = this.examinationData.every(m => m.status == 0);
 
         if (checkFirstQuestion) {
@@ -111,7 +112,7 @@ export class ExamStartComponent implements OnInit, AfterViewInit, OnDestroy {
 
   ngAfterViewInit() {
     // this.statusInitInterval = setInterval(() => {
-    this.CheckStatus();
+    this.EarlyExamStatusCheck();
     // }, 3600)
   }
 
@@ -441,6 +442,82 @@ export class ExamStartComponent implements OnInit, AfterViewInit, OnDestroy {
     }
     catch (e) {
       this.toastrService.error(e);
+      this.ngxLoader.stop();
+    }
+  }
+
+  RequestSummary(): void {
+    try {
+      this.ngxLoader.start();
+      this.examService.StudentEarlyExamSubmit().subscribe(response => {
+        if (response.errorCode && (response.errorCode == this.dataService.unAuthorizedCode)) {
+          this.dataService.LogOut();
+        }
+        else if (response.success) {
+          const dialogref = this.dialog.open(StudentEarlyExamSubmitPopupComponent,
+            {
+              minWidth: '35%',
+              disableClose: true
+            });
+          dialogref.afterClosed().subscribe(response => {
+            if (response) {
+              if (response == 3) {
+                this.Submit();
+                this.submitDisable = false;
+              }
+              // else if(response == 1)
+              // this.submitDisable = false;
+            }
+            // else{
+            //   this.submitDisable = true;
+            // }
+          })
+        }
+        else {
+          this.toastrService.error(response.message);
+        }
+      }, error => {
+        this.toastrService.error(error.message);
+        this.ngxLoader.stop();
+      })
+    }
+    catch (e) {
+      this.toastrService.error(e);
+      this.ngxLoader.stop();
+    }
+  }
+
+  EarlyExamStatusCheck(): void {
+    try {
+      this.ngxLoader.start();
+      this.examService.CheckStudentEarlyExamSubmitStatus().subscribe(response => {
+        if (response.errorCode && (response.errorCode == this.dataService.unAuthorizedCode)) {
+          this.dataService.LogOut();
+        }
+        else if (response.success) {
+          if (response.data.earlySubmissionStatus == 2) {
+            this.RequestSummary();
+          }
+          // else if (response.data.earlySubmissionStatus == 3) {
+          //   this.Submit();
+          //   this.submitDisable = false;
+          // }
+          else {
+            this.CheckStatus();
+          }
+          this.ngxLoader.stop();
+        }
+        else {
+          this.toastrService.error(response.message);
+          this.ngxLoader.stop();
+        }
+      }, error => {
+        this.toastrService.error(error.message);
+        this.ngxLoader.stop();
+      })
+    }
+    catch (e) {
+      this.toastrService.error(e.message);
       this.ngxLoader.stop();
     }
   }

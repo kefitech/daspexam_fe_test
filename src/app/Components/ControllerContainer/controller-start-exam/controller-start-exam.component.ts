@@ -11,6 +11,7 @@ import { InvigilatorExamSummaryComponent } from 'src/app/Popup/invigilator-exam-
 import { Router } from '@angular/router';
 import { InvigilatorInstructionPopupComponent } from 'src/app/Popup/invigilator-instruction-popup/invigilator-instruction-popup.component';
 import { DataService } from 'src/app/Services/data.service';
+import { InvigilatorEarlyExamResponsePopupComponent } from 'src/app/Popup/invigilator-early-exam-response-popup/invigilator-early-exam-response-popup.component';
 
 @Component({
   selector: 'app-controller-start-exam',
@@ -553,6 +554,14 @@ export class ControllerStartExamComponent implements OnInit, AfterViewInit, OnDe
       {
         width: '80%',
         height: '80%'
+      });
+  }
+
+  EarlySubmitResponse(data: any): void{
+    const dialogRef = this.dialog.open(InvigilatorEarlyExamResponsePopupComponent,
+      {
+        width: '35%',
+        data: data
       });
   }
 

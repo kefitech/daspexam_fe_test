@@ -48,8 +48,16 @@
 
         <!-- submit button -->
         <div class="col-sm-12">
-            <button [disabled]="submitDisable" (click)="GoToSummary()" mat-raised-button
-                class=" col-sm-12 Submit">Submit</button>
+            <div class="row">
+                <div class="col-sm-6">
+                    <button (click)="RequestSummary()" mat-raised-button color="accent"
+                       [disabled]="!submitDisable" class=" col-sm-12">Early Request</button>
+                </div>
+                <div class="col-sm-6">
+                    <button [disabled]="submitDisable" (click)="GoToSummary()" mat-raised-button
+                        class=" col-sm-12 Submit">Submit</button>
+                </div>
+            </div>
         </div>
 
 
