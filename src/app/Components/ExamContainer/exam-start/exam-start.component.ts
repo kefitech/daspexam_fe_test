@@ -454,6 +454,7 @@ export class ExamStartComponent implements OnInit, AfterViewInit, OnDestroy {
           this.dataService.LogOut();
         }
         else if (response.success) {
+          this.countdown.pause();
           const dialogref = this.dialog.open(StudentEarlyExamSubmitPopupComponent,
             {
               minWidth: '35%',
@@ -465,6 +466,9 @@ export class ExamStartComponent implements OnInit, AfterViewInit, OnDestroy {
                 this.Submit();
                 this.submitDisable = false;
               }
+              else{
+                this.countdown.resume();
+              }
               // else if(response == 1)
               // this.submitDisable = false;
             }
@@ -475,6 +479,7 @@ export class ExamStartComponent implements OnInit, AfterViewInit, OnDestroy {
         }
         else {
           this.toastrService.error(response.message);
+          this.ngxLoader.stop();
         }
       }, error => {
         this.toastrService.error(error.message);

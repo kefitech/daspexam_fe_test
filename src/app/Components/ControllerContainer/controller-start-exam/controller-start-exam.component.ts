@@ -516,7 +516,7 @@ export class ControllerStartExamComponent implements OnInit, AfterViewInit, OnDe
             }
           });
           var isAllStarted = mergeAll.every(d => d.isExamStarted == 1);
-          if (mergeAll.length != 0 || !isAllStarted){
+          if (mergeAll.length == 0 || !isAllStarted){
             this.LateComersTimeConfiguration();
           }
         }
