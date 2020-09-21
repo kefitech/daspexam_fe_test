@@ -22,7 +22,11 @@ export class InvigilatorPageStudentVerificationPopupComponent implements OnInit 
   isSubmit: boolean = false;
   imgComparison: boolean = false;
   imgVerified: boolean = false;
+  isProctored:any;
+  studData:any;
 
+  studDetails:any;
+  examDetails:any;
   public showWebcam = false;
   public allowCameraSwitch = true;
   public multipleWebcamsAvailable = false;
@@ -42,6 +46,39 @@ export class InvigilatorPageStudentVerificationPopupComponent implements OnInit 
   private nextWebcam: Subject<boolean | string> = new Subject<boolean | string>();
 
   ngOnInit() {
+    this.ngxLoader.start()
+    this.isProctored=JSON.parse(sessionStorage.getItem("isProctored"))
+    if(this.isProctored){
+      try {
+        this.service.ExaminationInfoForVerifiedStudents().subscribe(response => {
+          if(response.errorCode && (response.errorCode == this.dataService.unAuthorizedCode)){
+            this.dataService.LogOut();
+          }
+          else if (response.success) {
+            this.ngxLoader.stop()
+          this.studData=response.data.studentList[0].studentList
+          var studentData = this.studData.filter(s =>
+            (s['examStudentId'] == this.data.student.examStudentId ) 
+          );
+          console.log(studentData)
+          this.data.student.verifiedImage=studentData[0].verifiedImage
+          console.log(this.data.student)
+          }
+          else {
+            this.ngxLoader.stop()
+            this.toastrService.error(response.message);
+          }
+        }, error => {
+          this.ngxLoader.stop()
+          this.toastrService.error(error.message);
+        })
+      }
+      catch (e) {
+        this.ngxLoader.stop()
+        this.toastrService.error(e);
+      }
+    }
+   
 
     WebcamUtil.getAvailableVideoInputs()
       .then((mediaDevices: MediaDeviceInfo[]) => {
@@ -69,7 +106,6 @@ export class InvigilatorPageStudentVerificationPopupComponent implements OnInit 
   }
 
   public handleImage(webcamImage: WebcamImage): void {
-    console.info('received webcam image', webcamImage);
     this.webcamImage = webcamImage;
   }
 

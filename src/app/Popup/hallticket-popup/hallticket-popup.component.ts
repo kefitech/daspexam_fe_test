@@ -24,12 +24,12 @@ export class HallticketPopupComponent implements OnInit, AfterViewInit {
 
   maxDate: Date = new Date();
 
-  formCaption: object = {
+  formCaption = {
     caption1: "Enter your hallticket number",
     caption2: "Choose your Date of Birth"
   };
   hallticketForm: FormGroup;
-  error: object = {
+  error = {
     required: "Please fill out this!"
   };
   submit: boolean = false;
@@ -70,6 +70,7 @@ export class HallticketPopupComponent implements OnInit, AfterViewInit {
   Submit(): void {
     try {
       this.ngxLoader.start();
+      // this.ngxLoader.startBackgroundLoader('loader-02')
       var body = this.hallticketForm.value;
       body['birthDate'] = this.datePipe.transform(this.hallticketForm.value.birthDate, "yyyy-MM-dd");
       if (this.hallticketForm.valid) {
@@ -85,12 +86,14 @@ export class HallticketPopupComponent implements OnInit, AfterViewInit {
             this.dataService.studentData.next(response.data)
             sessionStorage.setItem('Token', response.data.token);
             sessionStorage.setItem('examStudentId', response.data.examStudentId);
+            sessionStorage.setItem('isProctored', response.data.isProctored);
             this.submit = true;
             this.ngxLoader.stop();
             this.dialogScreen.close();
           }
           else {
             this.toastrService.error(response.message);
+            // this.ngxLoader.stopBackgroundLoader('loader-02')
             this.ngxLoader.stop();
           }
         }, error => {
@@ -126,11 +129,11 @@ export class HallticketPopupComponent implements OnInit, AfterViewInit {
     }
   }
 
-  InputChange(value: string, event: any): void {
+  InputChange(value: string) {
     this.hallticketForm.controls['hallTicketNumber'].setValue(this.hallticketForm.value.hallTicketNumber + value);
   }
 
-  LowerUperCaseChange(value: string): void {
+  LowerUperCaseChange(): void {
     this.upperCase = !this.upperCase;
     if (!this.upperCase) {
       this.keyboardValue = this.lowerCaseCharactersKeyboard;
@@ -158,5 +161,6 @@ export class HallticketPopupComponent implements OnInit, AfterViewInit {
     this.upperCase = false;
     this.inputType = "abc";
   }
+
 
 }

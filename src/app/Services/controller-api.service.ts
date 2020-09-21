@@ -81,7 +81,6 @@ export class ControllerAPIService {
   }
 
   IndividualStudentSMPList(body: any): any {
-    body = Object.assign(body, this.dataService.controllerData.value);
     return this.http.post(this.URLService.baseURL + this.URLService.individualStudentSMPListURL, body);
   }
 
@@ -89,7 +88,11 @@ export class ControllerAPIService {
     body = Object.assign(body, this.dataService.controllerData.value);
     return this.http.post(this.URLService.baseURL + this.URLService.individualStudentSMPBlockURL, body);
   }
-
+  StudentSMPAllow(body: any): any {
+    body = Object.assign(body, this.dataService.controllerData.value);
+    return this.http.post(this.URLService.baseURL + this.URLService.individualStudentSMPAllowURL, body);
+  }
+  
   SubmitExam(body: any): any {
     body = Object.assign(body, this.dataService.controllerData.value);
     return this.http.post(this.URLService.baseURL + this.URLService.invigilatorExamSubmitURL, body);
@@ -109,6 +112,10 @@ export class ControllerAPIService {
 
   StudentExamSummary(body: any): any{
     return this.http.post(this.URLService.baseURL + this.URLService.invigilatorStudentExamSummaryURL, body);
+  }
+
+  StudentRandonImage(body: any): any{
+    return this.http.post(this.URLService.baseURL + this.URLService.studentRandomImageUrl, body);
   }
 
   InvigilatorStudentEarlyExamSubmit(body: any): any{

@@ -11,7 +11,12 @@
 
     <div class="row px-1 pt-2" *ngIf="!showWebcam && !imgComparison">
 
-        <div class="col-sm-7 pt-4">
+        <div class="col-sm-7 ">
+           
+            <div *ngIf="isProctored && data?.student?.verifiedImage!=''" class="row d-flex Caption p-2">
+                <span class="font-weight-bold"> captured image</span>
+                <img [src]="data?.student?.verifiedImage" class="rounded  picsize">
+            </div>
             <div class="row d-flex Caption p-2">
                 {{data?.exam?.programme}}
             </div>
@@ -38,7 +43,7 @@
             <!-- <div class="row d-flex Caption p-2">
                         {{data?.student?.systemNo}}
                     </div> -->
-            <div class="row SubTitle pt-3">
+            <div *ngIf="!isProctored" class="row SubTitle pt-3">
                 <mat-slide-toggle color="primary" [(ngModel)]="data.student.verified"
                     [matTooltip]="data?.student?.verified ? 'Verified' : 'Not Verified'"></mat-slide-toggle>
             </div>
@@ -57,12 +62,12 @@
     </div>
     <div class="row" *ngIf="!showWebcam && !imgComparison">
         <div class="col-sm-6 mt-2">
-            <button [disabled]="imgVerified" (click)="toggleWebcam();" class="w-100" color="accent"
+            <button *ngIf="!isProctored" [disabled]="imgVerified" (click)="toggleWebcam();" class="w-100" color="accent"
                 mat-raised-button>Face recognition</button>
         </div>
         <div class="col-sm-6 p-2">
-            <button [disabled]="!data?.student?.verified" (click)="Submit()" class="Submit w-100"
-                mat-raised-button>Submit</button>
+            <button [disabled]="(!data?.student?.verified && !isProctored)" (click)="Submit()" class="Submit w-100"
+                mat-raised-button>Approve</button>
         </div>
     </div>
 

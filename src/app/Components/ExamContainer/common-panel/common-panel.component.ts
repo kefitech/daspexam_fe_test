@@ -82,7 +82,8 @@ export class CommonPanelComponent implements OnInit {
             this.dialog.open(WarningComponent,
               {
                 minWidth: '35%',
-                disableClose: true
+                disableClose: true,
+                data:response.data.remainingCount
               });
           }
         }

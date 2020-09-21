@@ -13,7 +13,11 @@ import { QuestionService } from 'src/app/Services/question.service';
 import { StudentInstructionPopupComponent } from 'src/app/Popup/student-instruction-popup/student-instruction-popup.component';
 import { WarningComponent } from 'src/app/Popup/warning/warning.component';
 import { StudentEarlyExamSubmitPopupComponent } from 'src/app/Popup/student-early-exam-submit-popup/student-early-exam-submit-popup.component';
+import { WebcamInitError, WebcamImage, WebcamUtil } from 'ngx-webcam';
+import { Subject, Observable } from 'rxjs';
+import { ConfirmPopupComponent } from 'src/app/Popup/confirm-popup/confirm-popup.component';
 
+import { CancelPopupComponent } from 'src/app/Popup/cancel-popup/cancel-popup.component';
 // 0 not visited
 //   // 1 Visited but not answered
 //   // 2 Answered
@@ -29,6 +33,31 @@ export class ExamStartComponent implements OnInit, AfterViewInit, OnDestroy {
   constructor(private toastrService: ToastrService, private router: Router, private dataService: DataService,
     private dialog: MatDialog, private encryptionService: EncryptionService, private examService: ExamAPIService,
     private ngxLoader: NgxUiLoaderService, private questionService: QuestionService) { }
+
+
+    imgComparison: boolean = false;
+    imgVerified: boolean = false;
+  
+    public showWebcam = false;
+    public allowCameraSwitch = true;
+    public multipleWebcamsAvailable = false;
+    public deviceId: string;
+    public isEarly:boolean;
+    public videoOptions: MediaTrackConstraints = {
+      // width: {ideal: 1024},
+      // height: {ideal: 576}
+    };
+    public errors: WebcamInitError[] = [];
+  
+    // latest snapshot
+    public webcamImage: WebcamImage = null;
+  
+    // webcam snapshot trigger
+    private trigger: Subject<void> = new Subject<void>();
+    // switch to next / previous / specific webcam; true/false: forward/backwards, string: deviceId
+    private nextWebcam: Subject<boolean | string> = new Subject<boolean | string>();
+
+    isProctored:any;
   timerConfig: any;
   // time: number;
   sideNav: boolean = false;
@@ -43,9 +72,10 @@ export class ExamStartComponent implements OnInit, AfterViewInit, OnDestroy {
   questionSubscription: Subscription;
   timerSubscription: Subscription;
   sideNavSubscription: Subscription;
-
+  studentData:any;
   status: any = {};
-
+  duration:any;
+    intervalTime:number=0;
   @ViewChild('cd1', { static: false }) private countdown: CountdownComponent;
 
   private statusInitInterval: any = null;
@@ -54,6 +84,21 @@ export class ExamStartComponent implements OnInit, AfterViewInit, OnDestroy {
   winHeight: number;
 
   ngOnInit() {
+    this.isProctored=JSON.parse(sessionStorage.getItem("isProctored"))
+    var studentData = sessionStorage.getItem('studentData');
+    if (studentData) {
+      var dec = this.encryptionService.decryptUsingAES256(studentData);
+      this.studentData = JSON.parse(JSON.parse(dec));
+      this.duration=this.studentData.duration
+      
+      this.intervalTime=(this.duration/5)*60000;
+    }
+    if(this.isProctored){
+    WebcamUtil.getAvailableVideoInputs()
+      .then((mediaDevices: MediaDeviceInfo[]) => {
+        this.multipleWebcamsAvailable = mediaDevices && mediaDevices.length > 1;
+      });
+    }
     sessionStorage.setItem('studentExamStart', 'true');
     this.dataService.sideNavButton.next(true);
 
@@ -65,7 +110,10 @@ export class ExamStartComponent implements OnInit, AfterViewInit, OnDestroy {
     this.timerSubscription = this.dataService.examStartAndTimer.subscribe(response => {
       if (response) {
         response['time']['leftTime'] = response['time']['leftTime'] * 60;
+        response['time']['notify'] = 30*60
         this.timerConfig = response["time"]; //, notify: [2 * 60, 9 * 60] 
+
+
       }
     })
 
@@ -114,8 +162,20 @@ export class ExamStartComponent implements OnInit, AfterViewInit, OnDestroy {
     // this.statusInitInterval = setInterval(() => {
     this.EarlyExamStatusCheck();
     // }, 3600)
-  }
+    if(this.isProctored){
 
+      setTimeout( ()=>{
+        this.triggerSnapshot()
+        },  30000)
+    }
+    
+    
+  }
+interval(){
+  setTimeout( ()=>{
+    this.triggerSnapshot()
+    },  this.intervalTime)
+}
   @HostListener('window:resize', ['$event'])
   onResize(event) {
     event.returnValue = false;
@@ -144,10 +204,14 @@ export class ExamStartComponent implements OnInit, AfterViewInit, OnDestroy {
 
   handleEvent(event): void {
     if (this.timerConfig) {
+
       var timeLeft = event.left / 60000
+      
+      console.log(timeLeft)
       if (event.action == "start") {
         this.toastrService.success("Examination started");
       }
+
       else if (event.action == "notify") {
         this.toastrService.warning("You have " + timeLeft + " minutes left");
       }
@@ -271,16 +335,16 @@ export class ExamStartComponent implements OnInit, AfterViewInit, OnDestroy {
           this.ngxLoader.stop();
         }
         else {
-          this.toastrService.error(response.message);
+          // this.toastrService.error(response.message);
           this.ngxLoader.stop();
         }
       }, error => {
-        this.toastrService.error(error.message);
+        // this.toastrService.error(error.message);
         this.ngxLoader.stop();
       })
     }
     catch (e) {
-      this.toastrService.error(e.message);
+      // this.toastrService.error(e.message);
       this.ngxLoader.stop();
     }
   }
@@ -330,14 +394,14 @@ export class ExamStartComponent implements OnInit, AfterViewInit, OnDestroy {
           }
         }
         else {
-          this.toastrService.error(response.message);
+          // this.toastrService.error(response.message);
         }
       }, error => {
-        this.toastrService.error(error.message);
+        // this.toastrService.error(error.message);
       })
     }
     catch (e) {
-      this.toastrService.error(e.message);
+      // this.toastrService.error(e.message);
     }
   }
 
@@ -359,16 +423,16 @@ export class ExamStartComponent implements OnInit, AfterViewInit, OnDestroy {
           // clearInterval(this.statusInitInterval);
           this.router.navigate(["/landing/student/exam"]);
           sessionStorage.removeItem('studentExamStart');
-          this.toastrService.error(response.message);
+          // this.toastrService.error(response.message);
         }
       }, error => {
         this.CheckStatus();
-        this.toastrService.error(error.message);
+        // this.toastrService.error(error.message);
       })
     }
     catch (e) {
       this.CheckStatus();
-      this.toastrService.error(e.message);
+      // this.toastrService.error(e.message);
     }
   }
 
@@ -400,15 +464,15 @@ export class ExamStartComponent implements OnInit, AfterViewInit, OnDestroy {
           }
         }
         else {
-          this.toastrService.error(response.message);
+          // this.toastrService.error(response.message);
         }
       }, error => {
-        this.toastrService.error(error.message);
+        // this.toastrService.error(error.message);
         this.ngxLoader.stop();
       })
     }
     catch (e) {
-      this.toastrService.error(e);
+      // this.toastrService.error(e);
       this.ngxLoader.stop();
     }
   }
@@ -424,29 +488,40 @@ export class ExamStartComponent implements OnInit, AfterViewInit, OnDestroy {
           this.dataService.LogOut();
         }
         else if (response.success) {
+          console.log(response)
           this.ngxLoader.stop();
           this.toastrService.success(response.message);
           this.dialog.open(WarningComponent,
             {
               minWidth: '35%',
-              disableClose: true
+              disableClose: true,
+              data:response.data.remainingCount
             });
         }
         else {
-          this.toastrService.error(response.message);
+          // this.toastrService.error(response.message);
         }
       }, error => {
-        this.toastrService.error(error.message);
+        // this.toastrService.error(error.message);
         this.ngxLoader.stop();
       })
     }
     catch (e) {
-      this.toastrService.error(e);
+      // this.toastrService.error(e);
       this.ngxLoader.stop();
     }
   }
 
   RequestSummary(): void {
+
+    const dialogRef = this.dialog.open(ConfirmPopupComponent, {
+      width: '40%',
+      data: { title: "The early examination submission request will be sent to the invigilator for approval. Once the request got approved, you will not be able to continue attending the examination.",title2:"  Do you want to proceed with this?" }
+    })
+    dialogRef.afterClosed().subscribe(response => {
+      var isSubmit = dialogRef.componentInstance.isSubmit;
+      if (isSubmit) {
+
     try {
       this.ngxLoader.start();
       this.examService.StudentEarlyExamSubmit().subscribe(response => {
@@ -467,7 +542,20 @@ export class ExamStartComponent implements OnInit, AfterViewInit, OnDestroy {
                 this.submitDisable = false;
               }
               else{
-                this.countdown.resume();
+                const dialogRef = this.dialog.open(CancelPopupComponent, {
+                  width: '40%',
+                  data: { title: "Your early request has been declined" },
+                  disableClose: true
+
+                })
+                dialogRef.afterClosed().subscribe(response => {
+                  var isSubmit = dialogRef.componentInstance.isSubmit;
+                  if (isSubmit) {
+                    this.countdown.resume();
+                  }
+                  })
+                
+
               }
               // else if(response == 1)
               // this.submitDisable = false;
@@ -482,14 +570,16 @@ export class ExamStartComponent implements OnInit, AfterViewInit, OnDestroy {
           this.ngxLoader.stop();
         }
       }, error => {
-        this.toastrService.error(error.message);
+        // this.toastrService.error(error.message);
         this.ngxLoader.stop();
       })
     }
     catch (e) {
-      this.toastrService.error(e);
+      // this.toastrService.error(e);
       this.ngxLoader.stop();
     }
+  }
+    })
   }
 
   EarlyExamStatusCheck(): void {
@@ -503,26 +593,28 @@ export class ExamStartComponent implements OnInit, AfterViewInit, OnDestroy {
           if (response.data.earlySubmissionStatus == 2) {
             this.RequestSummary();
           }
-          // else if (response.data.earlySubmissionStatus == 3) {
-          //   this.Submit();
-          //   this.submitDisable = false;
-          // }
+
+          else if (response.data.earlySubmissionStatus == 3) {
+            // this.Submit();
+            this.countdown.pause();
+            this.submitDisable = false;
+          }
           else {
             this.CheckStatus();
           }
           this.ngxLoader.stop();
         }
         else {
-          this.toastrService.error(response.message);
+          // this.toastrService.error(response.message);
           this.ngxLoader.stop();
         }
       }, error => {
-        this.toastrService.error(error.message);
+        // this.toastrService.error(error.message);
         this.ngxLoader.stop();
       })
     }
     catch (e) {
-      this.toastrService.error(e.message);
+      // this.toastrService.error(e.message);
       this.ngxLoader.stop();
     }
   }
@@ -534,5 +626,78 @@ export class ExamStartComponent implements OnInit, AfterViewInit, OnDestroy {
     // clearInterval(this.statusInitInterval);
   }
 
+
+  public triggerSnapshot(): void {
+    
+    this.trigger.next();
+  }
+
+  public toggleWebcam(): void {
+    this.showWebcam = !this.showWebcam;
+  }
+
+  public handleInitError(error: WebcamInitError): void {
+    this.errors.push(error);
+  }
+
+  public showNextWebcam(directionOrDeviceId: boolean | string): void {
+    // true => move forward through devices
+    // false => move backwards through devices
+    // string => move to device with given deviceId
+    this.nextWebcam.next(directionOrDeviceId);
+  }
+
+  public handleImage(webcamImage: WebcamImage): void {
+    this.dataService.playAudio()
+    this.webcamImage = webcamImage;
+
+    try {
+      // this.ngxLoader.start();
+      var body = {
+        webCamImage: this.webcamImage['_imageAsDataUrl'].substring(23) // remove unwanted data from base64
+      }
+      this.examService.RandomImageCapture(body).subscribe(response => {
+        if(response.errorCode && (response.errorCode == this.dataService.unAuthorizedCode)){
+          this.dataService.LogOut();
+        }
+        else if (response.success) {
+          if (response.data.remaining!=0) {
+            this.interval();
+          }
+          // else {
+          //   this.toastrService.error(response.message);
+          //   this.ngxLoader.stop();
+          // }
+        }
+        else {
+          this.interval();
+          // this.toastrService.error(response.message);
+          // this.ngxLoader.stop();
+        }
+      }, error => {
+        this.interval();
+        // this.toastrService.error(error.message);
+        // this.ngxLoader.stop();
+      })
+    }
+    catch (e) {
+      this.interval();
+      // this.toastrService.error(e);
+      // this.ngxLoader.stop();
+    }
+    
+  }
+
+  public cameraWasSwitched(deviceId: string): void {
+    this.deviceId = deviceId;
+  }
+
+  public get triggerObservable(): Observable<void> {
+    return this.trigger.asObservable();
+  }
+
+  public get nextWebcamObservable(): Observable<boolean | string> {
+    return this.nextWebcam.asObservable();
+  }
 
 }

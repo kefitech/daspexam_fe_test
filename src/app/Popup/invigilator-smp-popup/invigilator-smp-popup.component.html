@@ -33,13 +33,19 @@
               </mat-error>
         </mat-form-field>
     </div>
+   
     <div class="row d-flex justify-content-end">
-        <div class="col-sm-3">
+        <div class="col-sm-4">
+            <button  mwlConfirmationPopover
+            popoverTitle="Do you want to Allow this student?"
+            placement="top" (confirm)="allow()" mat-raised-button class="Submit">Allow Exam</button>
+        </div> 
+        <div class="col-sm-4">
             <button [disabled]="reason?.invalid" mwlConfirmationPopover
             popoverTitle="Do you want to block this student?"
             placement="top" (confirm)="Block()" mat-raised-button class="Submit">Block</button>
         </div>
-        <div class="col-sm-3">
+        <div class="col-sm-4">
             <button type="button" mat-raised-button color="warn" (click)="Close()">Close</button>
         </div>
     </div>

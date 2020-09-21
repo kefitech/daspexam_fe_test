@@ -28,32 +28,18 @@ export class ControllerDashboardComponent implements OnInit, AfterViewInit, OnDe
 
   private popoverTitleSubmitStepper2: string = 'Are you sure to start exam?';
 
-
+  isProctored:any;
   examDetails: Array<any>;// stepper 1
-  displayedColumns: any = ['sno', 'name', 'hallTicketNumber', 'systemNo', 'action'];// stepper 1
-  headerCaption: object = JSON.parse(JSON.stringify({// stepper 1
-    caption1: "S/No",
-    caption2: "Name",
-    caption3: "Hall TicketNo",
-    caption4: "System No",
-    caption5: "Action"
-  }))
+  displayedColumns: any; 
+  headerCaption: any; 
 
   @ViewChildren(MatPaginator) paginator = new QueryList<MatPaginator>();// stepper 1
   @ViewChildren(MatSort) sort = new QueryList<MatSort>();// stepper 1
   @ViewChildren('myPaginator') studentListPaginator: QueryList<ElementRef>;// stepper 1
 
   studentAssignmentExamDetails: Array<object>;// stepper 2
-  studentAssignmentColumns: any = ['sno', 'name', 'hallTicketNumber', 'systemNo', 'qpCode', 'status', 'verified'];// stepper 2
-  studentAssignmentCaption: object = JSON.parse(JSON.stringify({// stepper 1
-    caption1: "S/No",
-    caption2: "Name",
-    caption3: "Hall TicketNo",
-    caption4: "System No",
-    caption5: "Question Pattern",
-    caption6: "Student Status",
-    caption7: "Verified"
-  }))
+  studentAssignmentColumns: any; 
+  studentAssignmentCaption: any; 
 
   @ViewChildren('studentAssignmentPaginatorSize') studentAssignmentListPaginator: QueryList<ElementRef>;// stepper 2
 
@@ -74,6 +60,48 @@ export class ControllerDashboardComponent implements OnInit, AfterViewInit, OnDe
   private submitInterval: any = null;
 
   ngOnInit() {
+    this.isProctored=JSON.parse(sessionStorage.getItem("isProctored"))
+    if(!this.isProctored){
+      this.displayedColumns= ['sno', 'name', 'hallTicketNumber', 'systemNo', 'action'];// stepper 1
+      this.headerCaption= JSON.parse(JSON.stringify({// stepper 1
+        caption1: "S/No",
+        caption2: "Name",
+        caption3: "Hall TicketNo",
+        caption4: "System No",
+        caption5: "Action"
+      }))
+
+      this.studentAssignmentColumns = ['sno', 'name', 'hallTicketNumber', 'systemNo', 'qpCode', 'status', 'verified'];// stepper 2
+      this.studentAssignmentCaption = JSON.parse(JSON.stringify({// stepper 1
+        caption1: "S/No",
+        caption2: "Name",
+        caption3: "Hall TicketNo",
+        caption4: "System No",
+        caption5: "Question Pattern",
+        caption6: "Student Status",
+        caption7: "Verified"
+      }))
+    }
+    else{
+      this.displayedColumns= ['sno', 'name', 'hallTicketNumber', 'phoneNumber'];// stepper 1
+      this.headerCaption= JSON.parse(JSON.stringify({// stepper 1
+        caption1: "S/No",
+        caption2: "Name",
+        caption3: "Hall TicketNo",
+        caption4: "Phone Number"
+      }))
+
+      this.studentAssignmentColumns = ['sno', 'name', 'hallTicketNumber', 'phoneNumber', 'status', 'verified'];// stepper 2
+      this.studentAssignmentCaption = JSON.parse(JSON.stringify({// stepper 1
+        caption1: "S/No",
+        caption2: "Name",
+        caption3: "Hall TicketNo",
+        caption4: "Phone Number",
+        caption5: "Student Status",
+        caption6: "Verified"
+      }))
+
+    }
     window.onpopstate = function (e) { window.history.forward(); }
   }
 
@@ -101,11 +129,19 @@ export class ControllerDashboardComponent implements OnInit, AfterViewInit, OnDe
           this.Stepper1Verification();// stepper 1
           this.QuestionCountValidCheck();// stepper 1
           // if (this.questionShuffled == 'true') {// Stepper 2
-          if(this.examDetails[0]['examVerified'] == 1){
-            // this.pageInitInterval = setInterval(() => {
-              this.FetchStudentAssignment();
-            // }, 3600)
+          if(this.isProctored){
+            // this.FetchStudentAssignment();
+            this.callVerifyStudentAfter20s()
           }
+          else{
+            if(this.examDetails[0]['examVerified'] == 1){
+              // this.pageInitInterval = setInterval(() => {
+                // this.FetchStudentAssignment();
+                this.callVerifyStudentAfter20s()
+              // }, 3600)
+            }
+          }
+         
           this.ngxLoader.stop();
 
         }
@@ -151,7 +187,8 @@ export class ControllerDashboardComponent implements OnInit, AfterViewInit, OnDe
 
   NextToStepper2(): void {
     // this.stepperInterval = setInterval(() => {
-      this.FetchStudentAssignment();
+      // this.FetchStudentAssignment();
+      this.callVerifyStudentAfter20s()
     // }, 3600)
   }
 
@@ -171,7 +208,8 @@ export class ControllerDashboardComponent implements OnInit, AfterViewInit, OnDe
         else if (response.success) {
           this.FetchStudents();
           // this.submitInterval = setInterval(() => {
-            this.FetchStudentAssignment();
+            // this.FetchStudentAssignment();
+            this.callVerifyStudentAfter20s()
           // }, 3600)
           this.ngxLoader.stop();
           this.questionShuffled = "true";
@@ -255,6 +293,42 @@ export class ControllerDashboardComponent implements OnInit, AfterViewInit, OnDe
           this.Stepper2FetchStudentTableRefresh();
           this.ngxLoader.stop();
           var statusHold = [];
+          if(this.isProctored){
+            this.stepper2Valid = true;
+            this.studentAssignmentExamDetails.forEach(masterElement => {
+              if (masterElement['studentList']['data']) {
+                var studentStatusCheck = masterElement['studentList']['data'].map(s =>
+                  (s['status'] == 'online' && (s['isVerified'] == true || s['faceRecognitionStatus'] == true)) 
+                );
+              }
+              else {
+                var studentStatusCheck = masterElement['studentList'].map(s =>
+                  (s['status'] == 'online' && (s['isVerified'] == true || s['faceRecognitionStatus'] == true))
+                );
+              }
+              statusHold.push(studentStatusCheck)
+            });
+          var validAny=(statusHold[0].includes(true));
+            var valid = statusHold[0].every(s => s == true);
+            if (validAny) {
+              // this.stepper2Valid = true;
+              if(!valid){
+                // this.FetchStudentAssignment()
+                this.callVerifyStudentAfter20s()
+              }
+              // clearInterval(this.pageInitInterval);
+              // clearInterval(this.stepperInterval);
+              // clearInterval(this.submitInterval);
+            }
+            else {
+              // this.stepper2Valid = false;
+              // this.FetchStudentAssignment()
+              this.callVerifyStudentAfter20s()
+            }
+          }
+          else{
+
+          
           this.studentAssignmentExamDetails.forEach(masterElement => {
             if (masterElement['studentList']['data']) {
               var studentStatusCheck = masterElement['studentList']['data'].every(s =>
@@ -270,8 +344,8 @@ export class ControllerDashboardComponent implements OnInit, AfterViewInit, OnDe
             }
             statusHold.push(studentStatusCheck)
           });
-          var valid = statusHold.every(s => s == true);
-          if (valid) {
+          var valid1 = statusHold.every(s => s == true);
+          if (valid1) {
             this.stepper2Valid = true;
             // clearInterval(this.pageInitInterval);
             // clearInterval(this.stepperInterval);
@@ -279,20 +353,27 @@ export class ControllerDashboardComponent implements OnInit, AfterViewInit, OnDe
           }
           else {
             this.stepper2Valid = false;
-            this.FetchStudentAssignment()
+            // this.FetchStudentAssignment()
+            this.callVerifyStudentAfter20s()
           }
         }
+          
+         
+        }
         else {
-          this.FetchStudentAssignment()
+          // this.FetchStudentAssignment()
+          this.callVerifyStudentAfter20s()
           this.toastrService.error(response.message);
         }
       }, error => {
-        this.FetchStudentAssignment()
+        // this.FetchStudentAssignment()
+        this.callVerifyStudentAfter20s()
         this.toastrService.error(error.message);
       })
     }
     catch (e) {
-      this.FetchStudentAssignment()
+      // this.FetchStudentAssignment()
+      this.callVerifyStudentAfter20s()
       this.toastrService.error(e);
     }
   }
@@ -302,12 +383,14 @@ export class ControllerDashboardComponent implements OnInit, AfterViewInit, OnDe
     rowData['verified'] = rowData['isVerified'];
     const dialogRef = this.dialog.open(InvigilatorPageStudentVerificationPopupComponent, {
       width: '45%',
-      height: '80%',
+      height: '90%',
       data: { student: rowData, exam: this.studentAssignmentExamDetails[index] }
     })
     dialogRef.afterClosed().subscribe(response => {
       var submit = dialogRef.componentInstance.isSubmit;
       if (submit) {
+        this.refresh()
+
         this.StudentAssignmentCheckSingleStudentVerification(dialogRef.componentInstance.data.student['verified'], index, rowIndex);
       }
     })
@@ -323,7 +406,8 @@ export class ControllerDashboardComponent implements OnInit, AfterViewInit, OnDe
         this.studentAssignmentExamDetails[index]['studentList']['data'].sort = this.sort.toArray()[index];
       }, 10);
       this.ngxLoader.stop();
-      this.FetchStudentAssignment()
+      // this.FetchStudentAssignment()
+      this.callVerifyStudentAfter20s()
     }
     catch (e) {
       this.toastrService.error(e);
@@ -382,5 +466,17 @@ export class ControllerDashboardComponent implements OnInit, AfterViewInit, OnDe
     // clearInterval(this.pageInitInterval);
     // clearInterval(this.stepperInterval);
     // clearInterval(this.submitInterval);
+  }
+
+  refresh(){
+    this.router.navigateByUrl('landing/invigilator/refresh', { skipLocationChange: true }).then(() => {
+      this.router.navigate(['landing/invigilator/dashboard']);
+  });
+  }
+  callVerifyStudentAfter20s() {
+    setTimeout(()=>
+    { 
+      this.FetchStudentAssignment();
+  }, 20000);
   }
 }

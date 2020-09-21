@@ -54,4 +54,18 @@ export class ExamAPIService {
     return this.http.post(this.URLService.baseURL + this.URLService.checkStudentEarlyExamSubmitStatusURL, this.dataService.studentCredentials.value);
   }
 
+  RandomImageCapture(body: any): any{
+    body = Object.assign(body, this.dataService.studentCredentials.value);
+    return this.http.post(this.URLService.baseURL + this.URLService.randomImageCaptureURL, body);
+  }
+  SMPCodeFetch(body: any): any {
+    // body = Object.assign(body);
+    return this.http.post(this.URLService.baseURL + this.URLService.SMPCodeFetchURL, body);
+  }
+
+  StudentStatusVerification(body: any): any {
+    // body = Object.assign(body);
+    return this.http.post(this.URLService.baseURL + this.URLService.studentStatusVerification, body);
+  }
+
 }

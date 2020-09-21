@@ -34,6 +34,8 @@ export class InvigilatorEarlyExamResponsePopupComponent implements OnInit, After
         }
         else if (response.success) {
           this.result = response.data;
+          this.result['name']=this.data.name
+          this.result['hallTicketNumber']=this.data.hallTicketNumber
           this.ngxLoader.stop();
         }
         else {

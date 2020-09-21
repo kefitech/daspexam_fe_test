@@ -15,6 +15,7 @@ import { InvigilatorExamSummaryComponent } from 'src/app/Popup/invigilator-exam-
 import {NgxPrintModule} from 'ngx-print';
 import { InvigilatorInstructionPopupComponent } from 'src/app/Popup/invigilator-instruction-popup/invigilator-instruction-popup.component';
 import { InvigilatorEarlyExamResponsePopupComponent } from 'src/app/Popup/invigilator-early-exam-response-popup/invigilator-early-exam-response-popup.component';
+import { RandomImagePopupComponent } from 'src/app/Popup/random-image-popup/random-image-popup.component';
 
 @NgModule({
   declarations: [
@@ -37,7 +38,8 @@ import { InvigilatorEarlyExamResponsePopupComponent } from 'src/app/Popup/invigi
     ConfirmationPopupComponent,
     InvigilatorExamSummaryComponent,
     InvigilatorInstructionPopupComponent,
-    InvigilatorEarlyExamResponsePopupComponent
+    InvigilatorEarlyExamResponsePopupComponent,
+    RandomImagePopupComponent
   ],
 })
 export class ControllerLoginModule { }
