@@ -10,9 +10,8 @@ const routes: Routes = [
       loadChildren: () => import ("../controller-login/controller-login.module").then(m => m.ControllerLoginModule) },
     { path: 'student', 
       loadChildren: () => import ("../student-login/student-login.module").then(m => m.StudentLoginModule) },
-      {path: 'notfound', component: PageNotFoundComponent},
-      { path: '', redirectTo: 'notfound', pathMatch: 'full' },
-    { path: '**', redirectTo: 'notfound', pathMatch: 'full' }
+      { path: '', redirectTo: 'student', pathMatch: 'full' },
+    { path: '**', redirectTo: 'student', pathMatch: 'full' }
   ]
 }
 ];

@@ -52,6 +52,8 @@ export class URLService {
 
   public individualStudentSMPBlockURL = "api/conduct_exam/student_exam_block";
 
+  public individualStudentSMPAllowURL = "api/conduct_exam/exam_allow";
+
   public lateComerTimeConfigURL = "api/conduct_exam/late_comers_student_list";
 
   public examSummaryURL = "api/conduct_exam/exam_summary";
@@ -60,8 +62,9 @@ export class URLService {
 
   public invigilatorStudentExamSummaryURL = "api/conduct_exam/student_exam_summary";
 
-public invigilatorStudentEarlyExamSubmitURL = "api/conduct_exam/early_submission_verification"
+public invigilatorStudentEarlyExamSubmitURL = "api/conduct_exam/early_submission_verification";
 
+ public studentRandomImageUrl="api/conduct_exam/student_audit_image_fetch";
   //Student 
   public checkValidStudentURL = "api/conduct_exam/session_verification";
 
@@ -87,6 +90,11 @@ public invigilatorStudentEarlyExamSubmitURL = "api/conduct_exam/early_submission
 
   public checkStudentEarlyExamSubmitStatusURL = "api/conduct_exam/early_submission_status_check";
 
+  public randomImageCaptureURL="api/conduct_exam/random-image-capture";
+
+  public SMPCodeFetchURL = "api/conduct_exam/student_smp_code_fetch";
+
+  public studentStatusVerification = "api/conduct_exam/student_verification_status_fetch";
 
   public headers = new HttpHeaders({ 'Content-Type': 'application/json; charset=utf-8' });
 

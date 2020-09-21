@@ -18,7 +18,7 @@ export class InvigilatorSMPPopupComponent implements OnInit, AfterViewInit {
     private ngxLoader: NgxUiLoaderService, private toastrService: ToastrService,
     private service: ControllerAPIService) { }
 
-  studentDetails: object = {};
+  studentDetails :any;
 
   isBlock: boolean = false;
 
@@ -34,9 +34,8 @@ export class InvigilatorSMPPopupComponent implements OnInit, AfterViewInit {
   StudentSMPCheck(): void {
     try {
       this.ngxLoader.start();
-      var body = {
-        examStudentId: this.data.student.examStudentId
-      }
+      var body = this.dataService.controllerData.value;
+      body["examStudentId"] = this.data.student.examStudentId;
       this.service.IndividualStudentSMPList(body).subscribe(response => {
         if(response.errorCode && (response.errorCode == this.dataService.unAuthorizedCode)){
           this.dataService.LogOut();
@@ -94,5 +93,34 @@ export class InvigilatorSMPPopupComponent implements OnInit, AfterViewInit {
       this.ngxLoader.stop();
     }
   }
-
+  allow(){
+    try {
+      this.ngxLoader.start();
+      var body = {
+        examStudentId: this.data.student.examStudentId,
+        
+      }
+      this.service.StudentSMPAllow(body).subscribe(response => {
+        if(response.errorCode && (response.errorCode == this.dataService.unAuthorizedCode)){
+          this.dataService.LogOut();
+        }
+        else if (response.success) {
+          this.toastrService.success(response.message);
+          this.ngxLoader.stop();
+          this.dialogScreen.close();
+        }
+        else {
+          this.toastrService.error(response.message);
+          this.ngxLoader.stop();
+        }
+      }, error => {
+        this.toastrService.error(error.message);
+        this.ngxLoader.stop();
+      })
+    }
+    catch (e) {
+      this.toastrService.error(e);
+      this.ngxLoader.stop();
+    }
+  }
 }

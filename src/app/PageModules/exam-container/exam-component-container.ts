@@ -9,7 +9,8 @@ import { ExamSummaryComponent } from 'src/app/Popup/exam-summary/exam-summary.co
 import { StudentInstructionPopupComponent } from 'src/app/Popup/student-instruction-popup/student-instruction-popup.component';
 import { CalculatorComponent } from 'src/app/Components/Calculator/calculator/calculator.component';
 import { StudentEarlyExamSubmitPopupComponent } from 'src/app/Popup/student-early-exam-submit-popup/student-early-exam-submit-popup.component';
-
+import { ConfirmPopupComponent } from 'src/app/Popup/confirm-popup/confirm-popup.component';
+import { CancelPopupComponent } from 'src/app/Popup/cancel-popup/cancel-popup.component';
 export const ExamComponentContainer = [
     CommonInstructionsComponent, 
     CommonPanelComponent, 
@@ -20,5 +21,7 @@ export const ExamComponentContainer = [
     ExamSummaryComponent,
     StudentInstructionPopupComponent,
     CalculatorComponent,
-    StudentEarlyExamSubmitPopupComponent
+    StudentEarlyExamSubmitPopupComponent,
+    ConfirmPopupComponent,
+    CancelPopupComponent
 ];

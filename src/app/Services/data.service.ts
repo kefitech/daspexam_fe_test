@@ -3,13 +3,14 @@ import { BehaviorSubject } from 'rxjs';
 import { HttpClient } from '@angular/common/http';
 import { ControllerAuthService } from './controller-auth.service';
 import { Router } from '@angular/router';
+import { NgxUiLoaderService } from 'ngx-ui-loader';
 
 @Injectable({
   providedIn: 'root'
 })
 export class DataService {
 
-  constructor(private auth: ControllerAuthService, private router: Router) {
+  constructor(private auth: ControllerAuthService, private router: Router, private ngxLoader: NgxUiLoaderService) {
   }
 
   public PATTERN = {
@@ -19,6 +20,7 @@ export class DataService {
   }
 
   public encrypetionToken = "DASTP@mgu@*1234*";
+  public smpcount1 = new BehaviorSubject<any>(null);
 
   //common
 
@@ -48,6 +50,8 @@ export class DataService {
 
   public questionsData = new BehaviorSubject<any>([]);
 
+  public earlySubmitData = new BehaviorSubject<boolean>(false);
+
   public timer = new BehaviorSubject<number>(null);
 
   public examStartAndTimer = new BehaviorSubject<any>(null);
@@ -72,6 +76,13 @@ export class DataService {
     }
   }
 
+
+  playAudio(){
+    let audio = new Audio();
+    audio.src = "../../../assets/mp3/click.mp3";
+    audio.load();
+    audio.play();
+  }
 
   RemoveMatTableSource(tableSource: any, tableSourceField: Array<string>): any {
     var table = Object.assign([], tableSource);
@@ -111,6 +122,8 @@ export class DataService {
     sessionStorage.removeItem("examStudentId");
     sessionStorage.removeItem("studentCommonInstruction");
     sessionStorage.removeItem('studentExamStart');
+    sessionStorage.removeItem("isProctored");
+    sessionStorage.removeItem("imageVerified");
     this.controllerLogin.next(false);
     this.controllerData.next(null);
     this.auth.controllerLogoutAuth();

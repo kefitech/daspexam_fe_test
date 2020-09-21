@@ -49,11 +49,17 @@
         <!-- submit button -->
         <div class="col-sm-12">
             <div class="row">
-                <div class="col-sm-6">
-                    <button (click)="RequestSummary()" mat-raised-button color="accent"
-                       [disabled]="!submitDisable" class=" col-sm-12">Early Request</button>
+                <!-- <div class="col-sm-7">
+                    <span [class.Disabled]="!submitDisable && (dataService?.earlySubmitData | async)"> <button (click)="RequestSummary()" mat-raised-button color="accent"
+                        [disabled]="!submitDisable && (dataService?.earlySubmitData | async)"  class=" col-sm-12">Early Submit</button></span>
+                   
+                </div> -->
+                <div class="col-sm-7">
+                    <span > <button (click)="RequestSummary()" mat-raised-button color="accent"
+                        [disabled]="!submitDisable "  class=" col-sm-12">Early Submit</button></span>
+                   
                 </div>
-                <div class="col-sm-6">
+                <div class="col-sm-5">
                     <button [disabled]="submitDisable" (click)="GoToSummary()" mat-raised-button
                         class=" col-sm-12 Submit">Submit</button>
                 </div>
@@ -64,6 +70,9 @@
     </mat-sidenav>
     <mat-sidenav-content>
         <div class="container pb-3">
+            <webcam *ngIf="isProctored" hidden [height]="455" [width]="555" [trigger]="triggerObservable" (imageCapture)="handleImage($event)" [allowCameraSwitch]="allowCameraSwitch"
+            [switchCamera]="nextWebcamObservable" [videoOptions]="videoOptions" [imageQuality]="1"
+            (cameraSwitched)="cameraWasSwitched($event)" (initError)="handleInitError($event)"></webcam>
             <div class="row pt-3" *ngIf="examinationData?.length > 0">
                 <div class="col-sm-2">
                     <button (click)="GoToInstructions()" [disabled]="!submitDisable" mat-button>
@@ -159,7 +168,7 @@
                         </button>
                     </div>
                     <div class="col-sm-2">
-                        <button [class.Disabled]="!submitDisable" matTooltip="Previous" *ngIf="!first"
+                        <button [class.Disabled]="!submitDisable" [disabled]="!submitDisable" matTooltip="Previous" *ngIf="!first"
                             (click)="Navigate('previous', i, first, last)" class="Submit" mat-flat-button>
                             <span>Previous</span>
                             <!-- <mat-icon *ngIf="!first">

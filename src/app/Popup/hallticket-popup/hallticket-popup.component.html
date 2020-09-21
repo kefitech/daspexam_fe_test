@@ -20,7 +20,7 @@
                 <div class="col-sm-12 py-1" (click)="$event.stopPropagation();">
                     <div class="row">
                         <div class="col-sm-3 py-1 d-flex justify-content-center" *ngFor="let value of keyboardValue">
-                            <button (click)="InputChange(value) && $event.stopPropagation()" type="button"
+                            <button (click)="InputChange(value) ; $event.stopPropagation()" type="button"
                                 mat-stroked-button>{{value}}</button>
                         </div>
                     </div>

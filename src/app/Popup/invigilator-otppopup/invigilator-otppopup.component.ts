@@ -12,14 +12,15 @@ import { ToastrService } from 'ngx-toastr';
 export class InvigilatorOTPPopupComponent implements OnInit {
 
   constructor(private formbuilder: FormBuilder, private dialogScreen: MatDialogRef<InvigilatorOTPPopupComponent>, 
-    @Inject(MAT_DIALOG_DATA) public data: any, private dataService: DataService, private toastrService: ToastrService) { }
+    @Inject(MAT_DIALOG_DATA) public data: any, public dataService: DataService, private toastrService: ToastrService) { }
 
   otpForm: FormGroup;
-  otpFormData: object = {};
+  otpFormData = {};
+  otp:any;
 
   isSubmit: boolean = false;
 
-  ERROR: object = {
+  ERROR = {
     required: "Please fill out this!"
   };
 

@@ -55,13 +55,14 @@
                     be debarred from this Test and/or to disciplinary action, which may include ban from future Tests /
                     Examinations.
                 </small>
+                <div class="row p-2 d-flex justify-content-center">
+                    <button [disabled]="!checked || !((dataService?.examStartAndTimer | async)?.isProgress)" (click)="Proceed()" matTooltip="Start Examination" mat-raised-button
+                        class="Submit">
+                        I am ready to begin
+                    </button>
+                </div>
             </mat-card>
         </div>
-        <div class="row p-2 d-flex justify-content-center">
-            <button [disabled]="!checked || !((dataService?.examStartAndTimer | async)?.isProgress)" (click)="Proceed()" matTooltip="Start Examination" mat-raised-button
-                class="Submit">
-                I am ready to begin
-            </button>
-        </div>
+        
     </div>
 </div>

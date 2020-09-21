@@ -1,5 +1,6 @@
-<div class="container">
+<div style="margin-left: 10px;" class="container">
     <div class="col-sm-12 pb-3" *ngIf="examList.length > 0">
+        <mat-card style="border: 1px solid rgb(103 56 183 / 1);margin-top: 10px;margin-bottom: 10px;" class="wid" >
         <div class="row pt-2 d-flex justify-content-end">
             <button (click)="GoToInstructions()" mat-button>
                 <u>
@@ -9,7 +10,10 @@
                 </u>
             </button>
         </div>
-        <!-- Timer heading protion -->
+        <!-- Timer heading protion --> 
+                
+                
+           
         <div class="col-sm-12 row mt-3">
             <div class="col-sm-9 d-flex justify-content-center MasterTimer">
                 <span *ngIf="!isExamStarted">Time remaining to start exam &nbsp;&nbsp;</span>
@@ -22,15 +26,15 @@
                 </button>
             </div>
             <div class="col-sm-1 pt-2">
-                <button matTooltip="Refresh" color="primary" (click)="Reload()" mat-raised-button>
+                <button matTooltip="Refresh" color="primary" (click)="refresh()" mat-raised-button>
                     Refresh
                 </button>
             </div>
         </div>
-
+ </mat-card>
         <!-- Tab portion -->
 
-        <mat-tab-group mat-stretch-tabs class="mat-elevation-z4 Table">
+        <mat-tab-group mat-stretch-tabs class="mat-elevation-z4 wid Table">
             <mat-tab class="w-100" *ngFor="let exam of examList; let index=index;" [label]="exam?.examName">
 
                 <mat-table class="mt-2" [dataSource]="exam?.studentList" matSort>
@@ -139,18 +143,32 @@
                                 <mat-icon>bug_report</mat-icon>
                             </button>
                             <button (click)="Submit('student', index, i, exam?.examId, element)" [class.DefaultButton]="element?.status == 2 || element?.status == 6 
-                            || !isExamStarted || element?.isVerified == 0 || element?.status == 1 || 
-                            (element?.status == 3 && !element?.timerCompleted)" [disabled]="element?.status == 2 || element?.status == 6 || 
+                            || !isExamStarted || element?.isVerified == 0 || element?.status == 1 ||  element?.studentSmpStatus ||
+                            (element?.status == 3 && !element?.timerCompleted)" [disabled]="element?.status == 2 || element?.status == 6 || element?.studentSmpStatus ||
                             !isExamStarted || element?.isVerified == 0 || element?.status == 1 || 
                             (element?.status == 3 && !element?.timerCompleted)" class="SuccessIcon" matTooltip="Save"
                                 mat-icon-button>
                                 <mat-icon>save</mat-icon>
                             </button>
+
+                           
+
                             <button [class.DefaultButton]="element?.earlyTerminationRequest  != 2" matTooltip="Early Request"
                             [disabled]="element?.earlyTerminationRequest  != 2" style="color: orange"
                             (click)="EarlySubmitResponse(element)" mat-icon-button>
                                 <mat-icon>settings_applications</mat-icon>
                             </button>
+                            <button (click)="StudentPic(element, index, i)"
+                            [disabled]="element?.status == 1"  matTooltip="View Picture"
+                            mat-icon-button>
+                            <mat-icon>picture_in_picture</mat-icon>
+                         </button>
+
+                         <!-- <button [disabled]="element?.status != 5" matTooltip="See Result" (click)="SeeResult(element, index, i)"
+                                color="primary" 
+                                mat-icon-button>
+                                <mat-icon>assessment</mat-icon>
+                            </button> -->
                             <button *ngIf="element?.isVerified == 1"
                                 [disabled]="element?.isVerified == 1 || element?.status == 1" style="color: green"
                                 mat-icon-button>

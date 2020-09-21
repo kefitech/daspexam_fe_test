@@ -12,7 +12,7 @@ import { Router } from '@angular/router';
 import { InvigilatorInstructionPopupComponent } from 'src/app/Popup/invigilator-instruction-popup/invigilator-instruction-popup.component';
 import { DataService } from 'src/app/Services/data.service';
 import { InvigilatorEarlyExamResponsePopupComponent } from 'src/app/Popup/invigilator-early-exam-response-popup/invigilator-early-exam-response-popup.component';
-
+import { RandomImagePopupComponent } from 'src/app/Popup/random-image-popup/random-image-popup.component';
 @Component({
   selector: 'app-controller-start-exam',
   templateUrl: './controller-start-exam.component.html',
@@ -26,6 +26,7 @@ export class ControllerStartExamComponent implements OnInit, AfterViewInit, OnDe
 
   masterTimerConfig: any;
   masterSubmitValid: boolean = false;
+  element:any;
 
   totalStableDuration: any;
 
@@ -34,20 +35,14 @@ export class ControllerStartExamComponent implements OnInit, AfterViewInit, OnDe
   private allStudentsExamCompletedInterval: any = null;
 
   studentTimerPauseResumeCaption: string = "Do you want to Pause/Resume this student?"
-
+  isProctored=JSON.parse(sessionStorage.getItem("isProctored"))
   isExamStarted: boolean;
   examList: Array<object> = [];
   examListCopy: Array<object>;
   backupSystems: Array<object>;
-  displayedColumns: any = ['sno', 'name', 'hallTicketNumber', 'systemNo', 'timer', 'action'];
-  headerCaption: object = JSON.parse(JSON.stringify({// stepper 1
-    caption1: "S/No",
-    caption2: "Name",
-    caption3: "Hall TicketNo",
-    caption4: "System No",
-    caption5: "Timer",
-    caption6: "Action"
-  }))
+  displayedColumns: any;
+  headerCaption:any; 
+  islate:boolean=false;
   @ViewChildren(MatPaginator) paginator = new QueryList<MatPaginator>();
   @ViewChildren(MatSort) sort = new QueryList<MatSort>();// stepper 1
   @ViewChildren('myPaginator') studentListPaginator: QueryList<ElementRef>;
@@ -59,12 +54,38 @@ export class ControllerStartExamComponent implements OnInit, AfterViewInit, OnDe
   examTimerCompleted: boolean = false;
 
   ngOnInit() {
+    if(!this.isProctored){
+      this.displayedColumns = ['sno', 'name', 'hallTicketNumber', 'systemNo', 'timer', 'action'];
+      this.headerCaption = JSON.parse(JSON.stringify({// stepper 1
+        caption1: "S/No",
+        caption2: "Name",
+        caption3: "Hall TicketNo",
+        caption4: "System No",
+        caption5: "Timer",
+        caption6: "Action"
+      }))
+    }
+    else{
+      this.displayedColumns = ['sno', 'name', 'hallTicketNumber', 'phoneNumber', 'timer', 'action'];
+      this.headerCaption = JSON.parse(JSON.stringify({// stepper 1
+        caption1: "S/No",
+        caption2: "Name",
+        caption3: "Hall TicketNo",
+        caption4: "Phone Number",
+        caption5: "Timer",
+        caption6: "Action"
+      }))
+    }
+
   }
 
   ngAfterViewInit() {
     this.FetchExamList();
     // this.lateComerObservableOnPageLoad = setInterval(() => {
-      this.LateComersTimeConfiguration();
+      if(!this.isProctored){
+        this.LateComersTimeConfiguration();
+      }
+      
     // }, 1000);
   }
 
@@ -79,6 +100,7 @@ export class ControllerStartExamComponent implements OnInit, AfterViewInit, OnDe
       this.toastrService.warning("You have " + timeLeft + " minutes left");
     }
     else if (event.action == "done") {
+      this.islate=true
       if (!this.isExamStarted) {
         this.ngxLoader.start();
         setTimeout(() => {
@@ -136,6 +158,7 @@ export class ControllerStartExamComponent implements OnInit, AfterViewInit, OnDe
           this.examList = response.data.studentList;
           this.examListCopy = this.examList.map(x => Object.assign({}, x));
           this.masterTimerConfig = { leftTime: response.data.examDuration * 60 };//, notify: [2 * 60, 9 * 60]
+          
           this.TableRefresh();
           setTimeout(() => {
             this.CheckAllStudentTimer();
@@ -155,6 +178,7 @@ export class ControllerStartExamComponent implements OnInit, AfterViewInit, OnDe
       this.toastrService.error(e);
       this.ngxLoader.stop();
     }
+    
   }
 
   FetchReservedSystems(): void {
@@ -212,10 +236,14 @@ export class ControllerStartExamComponent implements OnInit, AfterViewInit, OnDe
             }
           }
           this.ngxLoader.start();
-          var body = {
-            type: status == 3 || status == 2 ? 'pause' : status == 4 ? 'resume' : '',
-            examStudentId: this.examList[index]['studentList']['data'][rowIndex]['examStudentId']
-          }
+          // var body = {
+          //   type: status == 3 || status == 2 ? 'pause' : status == 4 ? 'resume' : '',
+          //   examStudentId: this.examList[index]['studentList']['data'][rowIndex]['examStudentId']
+          // }
+
+          var body = this.dataService.controllerData.value;
+          body["examStudentId"] = this.examList[index]['studentList']['data'][rowIndex]['examStudentId']
+          body["type"]= status == 3 || status == 2 ? 'pause' : status == 4 ? 'resume' : '',
 
           this.service.TimePauseresume(body).subscribe(response => {
             if(response.errorCode && (response.errorCode == this.dataService.unAuthorizedCode)){
@@ -337,10 +365,12 @@ export class ControllerStartExamComponent implements OnInit, AfterViewInit, OnDe
         this.examList[index]['studentList']['data'][rowIndex]['status'] = 5;
         this.examList[index]['studentList']['data'][rowIndex]['timeLeft'] = { leftTime: 0 };
       }
+      
+    this.refresh()
     })
   }
 
-  Submit(type: string, examIndex?: number, rowIndex?: number, examId?: number, data?: object): void {
+  Submit(type: string, examIndex?: number, rowIndex?: any, examId?: number, data?: object): void {
     var title = type == 'student' ? "Do you want to submit exam for this student?" : type == 'exam' ? "Do you want to submit all students in this exam?" : "Do you want to submit all exams?";
     const dialogRef = this.dialog.open(ConfirmationPopupComponent, {
       width: '40%',
@@ -385,9 +415,11 @@ export class ControllerStartExamComponent implements OnInit, AfterViewInit, OnDe
               this.dataService.LogOut();
             }
             else if (response.success) {
+              
               this.SaveFunctionalitiesOnTable(type, examIndex, rowIndex);
 
               this.ngxLoader.stop();
+              // this.refresh()
             }
             else {
               this.toastrService.error(response.message);
@@ -461,15 +493,18 @@ export class ControllerStartExamComponent implements OnInit, AfterViewInit, OnDe
 
     const dialogRef = this.dialog.open(InvigilatorPageStudentVerificationPopupComponent, {
       width: '45%',
-      height: '80%',
+      height: '90%',
       data: { student: rowData, exam: this.examList[index] }
     })
     dialogRef.afterClosed().subscribe(response => {
       var submit = dialogRef.componentInstance.isSubmit;
       if (submit) {
+        this.refresh()
         this.CheckSingleStudentVerification(dialogRef.componentInstance.data.student['verified'], index, rowIndex);
         // this.lateComerObservable = setInterval(() => {
-          this.LateComersTimeConfiguration();
+          if(!this.isProctored){
+            this.LateComersTimeConfiguration();
+          }
         // }, 1000);
       }
     })
@@ -516,7 +551,7 @@ export class ControllerStartExamComponent implements OnInit, AfterViewInit, OnDe
             }
           });
           var isAllStarted = mergeAll.every(d => d.isExamStarted == 1);
-          if (mergeAll.length == 0 || !isAllStarted){
+          if ((mergeAll.length == 0 || !isAllStarted) && !this.islate ){
             this.LateComersTimeConfiguration();
           }
         }
@@ -535,7 +570,7 @@ export class ControllerStartExamComponent implements OnInit, AfterViewInit, OnDe
   }
 
   ExamSummary(): void{
-    this.router.navigate(['/initial']);
+    // this.router.navigate(['/initial']);
     const dialogRef = this.dialog.open(InvigilatorExamSummaryComponent, {
       width: '80%',
       height: '80%',
@@ -545,7 +580,7 @@ export class ControllerStartExamComponent implements OnInit, AfterViewInit, OnDe
   }
 
   Reload(): void{
-    window.location.reload();
+    // window.location.reload();
   }
 
   GoToInstructions(): void{
@@ -563,6 +598,18 @@ export class ControllerStartExamComponent implements OnInit, AfterViewInit, OnDe
         width: '35%',
         data: data
       });
+      dialogRef.afterClosed().subscribe(response => {
+       this.refresh()
+      })
+  }
+
+  StudentPic(data: object, index: number, rowIndex: number){
+const dialogRef = this.dialog.open(RandomImagePopupComponent,
+  {
+    width: '80%',
+    height: '80%',
+    data: data
+  });
   }
 
   ngOnDestroy() {
@@ -570,5 +617,10 @@ export class ControllerStartExamComponent implements OnInit, AfterViewInit, OnDe
     // clearInterval(this.lateComerObservableOnPageLoad);
     // clearInterval(this.allStudentsExamCompletedInterval);
   }
-
+  refresh(){
+    this.router.navigateByUrl('landing/invigilator/refresh', { skipLocationChange: true }).then(() => {
+      this.router.navigate(['landing/invigilator/examstart']);
+  });
+  }
+   
 }

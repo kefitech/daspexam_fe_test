@@ -8,10 +8,12 @@ import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
 import { ToastrModule } from 'ngx-toastr';
 import { NgxUiLoaderModule } from 'ngx-ui-loader';
 import { InvigilatorInterceptor } from './Components/Interceptors/InvigilatorInterceptor';
+import { DeviceDetectorModule } from 'ngx-device-detector';
+
 
 @NgModule({
   declarations: [
-    AppComponent
+    AppComponent,
   ],
   imports: [
     BrowserModule,
@@ -23,6 +25,7 @@ import { InvigilatorInterceptor } from './Components/Interceptors/InvigilatorInt
       positionClass: 'toast-top-right',
       preventDuplicates: true,
     }),
+    DeviceDetectorModule.forRoot(),
     NgxUiLoaderModule
   ],
   providers: [

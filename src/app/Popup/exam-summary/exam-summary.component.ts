@@ -58,12 +58,13 @@ export class ExamSummaryComponent implements OnInit, AfterViewInit {
     }
   }
 
-  // Done(): void {
-  //   // this.router.navigate(["/landing/student/initial"]);
-  //   this.dialogScreen.close();
-  //   // setTimeout(() => {
-  //   //   window.location.reload();
-  //   // }, 100);
-  // }
+  Done(): void {
+    // this.router.navigate(["/landing/student/initial"]);
+    this.dialogScreen.close();
+    this.dataService.LogOut();
+    setTimeout(() => {
+      window.location.reload();
+    }, 100);
+  }
 
 }

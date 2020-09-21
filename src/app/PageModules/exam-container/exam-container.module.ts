@@ -11,6 +11,10 @@ import { ExamSummaryComponent } from 'src/app/Popup/exam-summary/exam-summary.co
 import { ConfirmationPopoverModule } from 'angular-confirmation-popover';
 import { StudentInstructionPopupComponent } from 'src/app/Popup/student-instruction-popup/student-instruction-popup.component';
 import { StudentEarlyExamSubmitPopupComponent } from 'src/app/Popup/student-early-exam-submit-popup/student-early-exam-submit-popup.component';
+import { WebcamModule } from 'ngx-webcam';
+
+import { ConfirmPopupComponent } from 'src/app/Popup/confirm-popup/confirm-popup.component';
+import { CancelPopupComponent } from 'src/app/Popup/cancel-popup/cancel-popup.component';
 
 @NgModule({
   declarations: [
@@ -21,12 +25,14 @@ import { StudentEarlyExamSubmitPopupComponent } from 'src/app/Popup/student-earl
     AngularMaterial,
     CountdownModule,
     ExamContainerRoutingModule,
+    WebcamModule,
     DeviceDetectorModule.forRoot(),
     ConfirmationPopoverModule.forRoot({
       confirmButtonType: 'danger' // set defaults here
     })
   ],
   entryComponents: [WarningComponent, ExamSummaryComponent, StudentInstructionPopupComponent,
-  StudentEarlyExamSubmitPopupComponent]
+  StudentEarlyExamSubmitPopupComponent,CancelPopupComponent,
+  ConfirmPopupComponent]
 })
 export class ExamContainerModule { }

@@ -18,16 +18,16 @@ import { QuestionService } from 'src/app/Services/question.service';
 })
 export class LandingComponent implements OnInit, AfterViewInit, OnDestroy {
 
-  constructor(private dataService: DataService, private router: Router, private authHallTicket: HallticketAuthService,
+  constructor(public dataService: DataService, private router: Router, private authHallTicket: HallticketAuthService,
     private deviceService: DeviceDetectorService, private auth: ControllerAuthService, private service: ControllerAPIService,
     private ngxLoader: NgxUiLoaderService, private toastrService: ToastrService, private studentService: StudentLoginAPIService,
     private encryptionService: EncryptionService, private questionService: QuestionService) { }
 
-  logo: object = {
+  logo = {
     img: "../../../assets/Images/Logo.png",
     alt: "logo"
   }
-  user: object;
+  user: any;
 
   sideNavVisible: boolean = false;
 
@@ -116,18 +116,18 @@ export class LandingComponent implements OnInit, AfterViewInit, OnDestroy {
             }
             else {
               this.router.navigate(["/landing/invigilator/login"]);
-              this.toastrService.error(response.message);
+             //this.toastrService.error(response.message);
               this.ngxLoader.stop();
             }
           }, error => {
             this.router.navigate(["/landing/invigilator/login"]);
-            this.toastrService.error(error.message);
+           //this.toastrService.error(error.message);
             this.ngxLoader.stop();
           })
         }
         catch (e) {
           this.router.navigate(["/landing/invigilator/login"]);
-          this.toastrService.error(e);
+         //this.toastrService.error(e);
           this.ngxLoader.stop();
         }
       }
@@ -153,18 +153,18 @@ export class LandingComponent implements OnInit, AfterViewInit, OnDestroy {
             }
             else {
               this.router.navigate(["/landing/invigilator/login"]);
-              this.toastrService.error(response.message);
+             //this.toastrService.error(response.message);
               this.ngxLoader.stop();
             }
           }, error => {
             this.router.navigate(["/landing/invigilator/login"]);
-            this.toastrService.error(error.message);
+           //this.toastrService.error(error.message);
             this.ngxLoader.stop();
           })
         }
         catch (e) {
           this.router.navigate(["/landing/invigilator/login"]);
-          this.toastrService.error(e);
+         //this.toastrService.error(e);
           this.ngxLoader.stop();
         }
       }
@@ -190,18 +190,18 @@ export class LandingComponent implements OnInit, AfterViewInit, OnDestroy {
             }
             else {
               this.router.navigate(["/landing/invigilator/login"]);
-              this.toastrService.error(response.message);
+             //this.toastrService.error(response.message);
               this.ngxLoader.stop();
             }
           }, error => {
             this.router.navigate(["/landing/invigilator/login"]);
-            this.toastrService.error(error.message);
+           //this.toastrService.error(error.message);
             this.ngxLoader.stop();
           })
         }
         catch (e) {
           this.router.navigate(["/landing/invigilator/login"]);
-          this.toastrService.error(e);
+         //this.toastrService.error(e);
           this.ngxLoader.stop();
         }
       }
@@ -211,7 +211,7 @@ export class LandingComponent implements OnInit, AfterViewInit, OnDestroy {
       }
     }
     catch (e) {
-      this.toastrService.error(e);
+     //this.toastrService.error(e);
       this.ngxLoader.stop();
     }
   }
@@ -238,18 +238,18 @@ export class LandingComponent implements OnInit, AfterViewInit, OnDestroy {
             }
             else {
               this.router.navigate(["/landing/student"]);
-              this.toastrService.error(response.message);
+             //this.toastrService.error(response.message);
               this.ngxLoader.stop();
             }
           }, error => {
             this.router.navigate(["/landing/student"]);
-            this.toastrService.error(error.message);
+           //this.toastrService.error(error.message);
             this.ngxLoader.stop();
           })
         }
         catch (e) {
           this.router.navigate(["/landing/student"]);
-          this.toastrService.error(e);
+         //this.toastrService.error(e);
           this.ngxLoader.stop();
         }
       }
@@ -266,22 +266,22 @@ export class LandingComponent implements OnInit, AfterViewInit, OnDestroy {
               this.authHallTicket.hallTicketValid();
               // this.dataService.toggleFullScreen();
               this.dataService.isNotLoginScreen.next(true);
-              this.router.navigate(["/landing/student/exam"]);
+              this.router.navigate(["/landing/student/initial"]);
             }
             else {
               this.router.navigate(["/landing/student/initial"]);
-              this.toastrService.error(response.message);
+             //this.toastrService.error(response.message);
               this.ngxLoader.stop();
             }
           }, error => {
             this.router.navigate(["/landing/student/initial"]);
-            this.toastrService.error(error.message);
+           //this.toastrService.error(error.message);
             this.ngxLoader.stop();
           })
         }
         catch (e) {
           this.router.navigate(["/landing/student/initial"]);
-          this.toastrService.error(e);
+         //this.toastrService.error(e);
           this.ngxLoader.stop();
         }
       }
@@ -298,22 +298,22 @@ export class LandingComponent implements OnInit, AfterViewInit, OnDestroy {
               this.authHallTicket.hallTicketValid();
               // this.dataService.toggleFullScreen();
               this.dataService.isNotLoginScreen.next(true);
-              this.router.navigate(["/landing/student/exam/subjectspecificinstructions"]);
+              this.router.navigate(["/landing/student/initial"]);
             }
             else {
-              this.router.navigate(["/landing/student/exam"]);
-              this.toastrService.error(response.message);
+              this.router.navigate(["/landing/student/initial"]);
+             //this.toastrService.error(response.message);
               this.ngxLoader.stop();
             }
           }, error => {
-            this.router.navigate(["/landing/student/exam"]);
-            this.toastrService.error(error.message);
+            this.router.navigate(["/landing/student/initial"]);
+           //this.toastrService.error(error.message);
             this.ngxLoader.stop();
           })
         }
         catch (e) {
-          this.router.navigate(["/landing/student/exam"]);
-          this.toastrService.error(e);
+          this.router.navigate(["/landing/student/initial"]);
+         //this.toastrService.error(e);
           this.ngxLoader.stop();
         }
       }
@@ -330,22 +330,22 @@ export class LandingComponent implements OnInit, AfterViewInit, OnDestroy {
               this.authHallTicket.hallTicketValid();
               // this.dataService.toggleFullScreen();
               this.dataService.isNotLoginScreen.next(true);
-              this.router.navigate(["/landing/student/exam/progress"]);
+              this.router.navigate(["/landing/student/initial"]);
             }
             else {
-              this.router.navigate(["/landing/student/exam/commoninstructions"]);
-              this.toastrService.error(response.message);
+              this.router.navigate(["/landing/student/initial"]);
+             //this.toastrService.error(response.message);
               this.ngxLoader.stop();
             }
           }, error => {
-            this.router.navigate(["/landing/student/exam/commoninstructions"]);
-            this.toastrService.error(error.message);
+            this.router.navigate(["/landing/student/initial"]);
+           //this.toastrService.error(error.message);
             this.ngxLoader.stop();
           })
         }
         catch (e) {
-          this.router.navigate(["/landing/student/exam/commoninstructions"]);
-          this.toastrService.error(e);
+          this.router.navigate(["/landing/student/initial"]);
+         //this.toastrService.error(e);
           this.ngxLoader.stop();
         }
       }
@@ -355,7 +355,7 @@ export class LandingComponent implements OnInit, AfterViewInit, OnDestroy {
       }
     }
     catch (e) {
-      this.toastrService.error(e);
+     //this.toastrService.error(e);
       this.ngxLoader.stop();
     }
   }
@@ -369,21 +369,22 @@ export class LandingComponent implements OnInit, AfterViewInit, OnDestroy {
         else if (response.success) {
           sessionStorage.setItem('questionFetch', 'true');
           this.dataService.questionsData.next(response.data.questionList);
+          this.dataService.earlySubmitData.next(response.data.earlyTerminationStatus)
 
             // this.CheckExamStarts();
         }
         else {
           this.fetchQuestions();
-          // this.toastrService.error(response.message);
+          ////this.toastrService.error(response.message);
         }
       }, error => {
         this.fetchQuestions();
-        this.toastrService.error(error.message);
+       //this.toastrService.error(error.message);
       })
     }
     catch (e) {
       this.fetchQuestions();
-      this.toastrService.error(e.message);
+     //this.toastrService.error(e.message);
     }
   }
 
@@ -400,16 +401,16 @@ export class LandingComponent implements OnInit, AfterViewInit, OnDestroy {
         else {
           this.CheckExamStarts();
           // sessionStorage.removeItem('studentExamStart');
-          // this.toastrService.error(response.message);
+          ////this.toastrService.error(response.message);
         }
       }, error => {
         this.CheckExamStarts();
-        this.toastrService.error(error.message);
+       //this.toastrService.error(error.message);
       })
     }
     catch (e) {
       this.CheckExamStarts();
-      this.toastrService.error(e.message);
+     //this.toastrService.error(e.message);
     }
   }
 
@@ -420,7 +421,7 @@ export class LandingComponent implements OnInit, AfterViewInit, OnDestroy {
       this.dataService.studentData.next(JSON.parse(JSON.parse(dec)));
     }
     catch (e) {
-      this.toastrService.error(e);
+     //this.toastrService.error(e);
     }
   }
 

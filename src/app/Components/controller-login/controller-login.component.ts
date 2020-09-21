@@ -29,15 +29,15 @@ export class ControllerLoginComponent implements OnInit, AfterViewInit {
   // captchaValid: boolean = false;
 
   loginForm: FormGroup;
-  loginFormCaption: object = {
+  loginFormCaption = {
     caption1: "Email",
     caption2: "Password"
   };
-  loginFormData: object = {
+  loginFormData = {
     email: ['', [Validators.required, Validators.pattern(this.dataService.PATTERN.email)]],
     password: ['', [Validators.required]]
   };
-  ERROR: object = {
+  ERROR = {
     required: "Please fill out this!",
     emailPattern: "Please enter valid email!"
   };
@@ -75,7 +75,7 @@ export class ControllerLoginComponent implements OnInit, AfterViewInit {
               sessionId: response.data.sessionId
             });
             this.ngxLoader.stop();
-            this.OpenOTPPopup(response.data.email, response.data.userId, response.data.sessionId);
+            this.OpenOTPPopup(response.data.email, response.data.userId, response.data.sessionId,response.data.isProctored);
           }
           else {
             this.toastrService.error(response.message);
@@ -101,7 +101,7 @@ export class ControllerLoginComponent implements OnInit, AfterViewInit {
     }
   }
 
-  OpenOTPPopup(email: string, userId: string, sessionId: string): void {
+  OpenOTPPopup(email: string, userId: string, sessionId: string,isProctored:boolean): void {
     const dialogRef = this.dialog.open(InvigilatorOTPPopupComponent, {
       minWidth: '20%'
     })
@@ -109,7 +109,7 @@ export class ControllerLoginComponent implements OnInit, AfterViewInit {
       var isSubmit = dialogRef.componentInstance.isSubmit;
       var otp = dialogRef.componentInstance.otpForm.value.otp;
       if (isSubmit)
-        this.CheckOTP(otp, email, userId, sessionId);
+        this.CheckOTP(otp, email, userId, sessionId,isProctored);
     })
   }
 
@@ -165,7 +165,7 @@ export class ControllerLoginComponent implements OnInit, AfterViewInit {
   //   });
   // }
 
-  CheckOTP(otp: number, email: string, userId: string, sessionId: string): void {
+  CheckOTP(otp: number, email: string, userId: string, sessionId: string,isProctored:any): void {
     try {
       this.ngxLoader.start();
       var body = {
@@ -183,6 +183,7 @@ export class ControllerLoginComponent implements OnInit, AfterViewInit {
           sessionStorage.setItem("email", email);
           sessionStorage.setItem("userId", userId);
           sessionStorage.setItem("sessionId", sessionId);
+          sessionStorage.setItem("isProctored", isProctored);
           sessionStorage.setItem("loginUser", 'invigilator');
           sessionStorage.setItem('invigilatorinstruction', 'normal');
           this.router.navigate(["/landing/invigilator/instruction"]);

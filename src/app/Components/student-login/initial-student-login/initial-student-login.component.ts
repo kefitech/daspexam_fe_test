@@ -9,7 +9,7 @@ import { ToastrService } from 'ngx-toastr';
 import { NgxUiLoaderService } from 'ngx-ui-loader';
 import { HallticketPopupComponent } from 'src/app/Popup/hallticket-popup/hallticket-popup.component';
 import { EncryptionService } from 'src/app/Services/encryption.service';
-
+import { StudentverificationpopupComponent } from 'src/app/Popup/studentverificationpopup/studentverificationpopup.component';
 @Component({
   selector: 'app-initial-student-login',
   templateUrl: './initial-student-login.component.html',
@@ -22,9 +22,10 @@ export class InitialStudentLoginComponent implements OnInit, AfterViewInit {
     private router: Router, private auth: HallticketAuthService, private toastrService: ToastrService,
     private ngxLoader: NgxUiLoaderService, private encryptionService: EncryptionService) { }
 
-  caption: object;
-  studentData: object;
+  caption: any;
+  studentData: any;
   int: any;
+  isProctored:any;
 
   valid: boolean = false;
 
@@ -35,12 +36,20 @@ export class InitialStudentLoginComponent implements OnInit, AfterViewInit {
   }
 
   ngAfterViewInit() {
+    this.isProctored=JSON.parse(sessionStorage.getItem('isProctored'))
     var studentData = sessionStorage.getItem('studentData');
+    var imageVerified=JSON.parse(sessionStorage.getItem('imageVerified'))
     if (studentData) {
       var dec = this.encryptionService.decryptUsingAES256(studentData);
       this.studentData = JSON.parse(JSON.parse(dec));
+      if(this.isProctored ){
+        if(!imageVerified){
+        this.SingleStudentVerification(this.studentData)
+        }
+      }
     }
     else
+    
       this.EnterHallticket();
     this.loadData();
   }
@@ -54,7 +63,7 @@ export class InitialStudentLoginComponent implements OnInit, AfterViewInit {
       batchName: "Batch Name",
       courseName: "Course Name",
       studentName: "Student Name",
-      studyCentre: "Exam Center",
+      studyCentre: "Exam Centre",
       duration: "Exam Duration",
       hallTicketNumber: "Hall Ticket",
       studyCentreCode: "Exam Centre Code"
@@ -63,10 +72,12 @@ export class InitialStudentLoginComponent implements OnInit, AfterViewInit {
 
   Submit(): void {
     try {
+      this.dataService.toggleFullScreen()
       sessionStorage.setItem('instruction', 'normal');
       this.auth.hallTicketValid();
       this.dataService.isNotLoginScreen.next(true);
-      this.router.navigate(['/landing/student/exam']);
+      
+      this.router.navigate(['/landing/student/exam/commoninstructions']);
       this.ngxLoader.stop();
     }
     catch (e) {
@@ -83,8 +94,13 @@ export class InitialStudentLoginComponent implements OnInit, AfterViewInit {
         disableClose: true
       });
     dialog.afterClosed().subscribe(response => {
+    
+    
+     
       this.valid = dialog.componentInstance.submit;
       if (this.valid) {
+        
+
         var studentLoginResponse = dialog.componentInstance.studentData;
         this.toastrService.success(studentLoginResponse.message);
         this.studentData = studentLoginResponse.data.examInfo[0];
@@ -94,10 +110,27 @@ export class InitialStudentLoginComponent implements OnInit, AfterViewInit {
         this.studentData["duration"] = this.studentData["duration"];
         this.dataService.studentData.next(this.studentData);
         sessionStorage.setItem("loginUser", 'student');
+        this.isProctored=JSON.parse(sessionStorage.getItem('isProctored'))
+        if(this.isProctored){
+          this.SingleStudentVerification(this.studentData)
+        }
       }
     }, error => {
       this.toastrService.error(error);
     })
   }
+  SingleStudentVerification(data: object): void {// stepper 1
+    var rowData = Object.assign({}, data);
 
+    const dialogRef = this.dialog.open(StudentverificationpopupComponent, {
+      width: '45%',
+      height: '90%',
+      disableClose: true,
+      data: { student: rowData }
+    })
+    dialogRef.afterClosed().subscribe(response => {
+      
+     
+    })
+  }
 }
