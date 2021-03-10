@@ -1,4 +1,4 @@
-import { Component, OnInit, Inject } from '@angular/core';
+import { Component, OnInit, Inject,HostListener } from '@angular/core';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material';
 import { FormGroup, FormBuilder, Validators } from '@angular/forms';
 import { ToastrService } from 'ngx-toastr';
@@ -259,6 +259,11 @@ export class WarningComponent implements OnInit {
       this.ngxLoader.stop();
     }
 
+  }
+
+  @HostListener('contextmenu', ['$event'])
+  onRightClick(event) {
+    event.preventDefault();
   }
 
 }

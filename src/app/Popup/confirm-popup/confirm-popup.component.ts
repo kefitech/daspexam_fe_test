@@ -1,4 +1,4 @@
-import { Component, OnInit, Inject } from '@angular/core';
+import { Component, OnInit, Inject,HostListener } from '@angular/core';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material';
 @Component({
   selector: 'app-confirm-popup',
@@ -22,5 +22,9 @@ export class ConfirmPopupComponent implements OnInit {
   Submit(): void{
     this.isSubmit = true;
     this.dialogScreen.close();
+  }
+  @HostListener('contextmenu', ['$event'])
+  onRightClick(event) {
+    event.preventDefault();
   }
 }

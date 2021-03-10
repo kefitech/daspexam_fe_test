@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit,HostListener } from '@angular/core';
 import { MatDialogRef } from '@angular/material';
 
 @Component({
@@ -16,5 +16,8 @@ export class InvigilatorInstructionPopupComponent implements OnInit {
   Close(): void{
     this.dialogScreen.close();
   }
-
+  @HostListener('contextmenu', ['$event'])
+  onRightClick(event) {
+    event.preventDefault();
+  }
 }

@@ -54,6 +54,7 @@ export class CommonPanelComponent implements OnInit {
   handleKeyboardEvent(event: KeyboardEvent) {
     event.returnValue = false;
     event.preventDefault();
+    
   }
 
   // *mouse click event
@@ -63,10 +64,11 @@ export class CommonPanelComponent implements OnInit {
   //   this.fullScreen();
   // }
 
-  @HostListener('document:keydown', ['$event']) onKeydownHandler(event: KeyboardEvent) {
-    event.returnValue = false;
-    event.preventDefault();
-  }
+  // @HostListener('document:keydown', ['$event']) 
+  // onKeydownHandler(event: KeyboardEvent) {
+  //   event.returnValue = false;
+  //   event.preventDefault();
+  // }
 
   sendWarning(): void {
     try {

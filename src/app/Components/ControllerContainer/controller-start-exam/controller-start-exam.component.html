@@ -102,7 +102,7 @@
                                 [disabled]="element?.status == 1 || 
                             element?.status == 5 || element?.status == 6 || !isExamStarted || element?.isVerified == 0 || element?.timerCompleted"
                                 [ngClass]="{
-                                'Pause': element?.status == 4, 
+                                'Pause': element?.status == 4 , 
                                 'Resume': element?.status == 2 || element?.status == 3, 
                                 'Stop': element?.status == 5 || element?.status == 6 || element?.status == 1 || element?.timerCompleted}"
                                 [matTooltip]="(element?.status == 3 || element?.status == 2)?'Pause Time!':'Resume Time!'"
@@ -114,13 +114,13 @@
                                     *ngIf="((element?.status == 2 || element?.status == 3) && isExamStarted) && !element?.timerCompleted">
                                     pause
                                 </mat-icon>
-                                <mat-icon *ngIf="element?.status == 4">play_arrow
+                                <mat-icon *ngIf="element?.status == 4  && !element?.timerCompleted">play_arrow
                                 </mat-icon>
                             </button>
                             <button
                                 [disabled]="element?.status == 2 || element?.status == 3 
                             || element?.status == 5 || element?.status == 1
-                            || element?.status == 6 || !isExamStarted || element?.isVerified == 0 || element?.timerCompleted"
+                            || element?.status == 6 || !isExamStarted || element?.isVerified == 0 || element?.timerCompleted || element?.earlyTerminationRequest==2||element?.studentSmpStatus"
                                 color="primary" [matMenuTriggerFor]="systems" matTooltip="Reallocate" mat-icon-button>
                                 <mat-icon>shuffle</mat-icon>
                             </button>
@@ -138,15 +138,15 @@
                             <button (click)="StudentSMP(element, index, i)"
                                 [disabled]="element?.status == 2 
                             || element?.status == 3 || element?.status == 5 || element?.status == 1
-                                || element?.status == 6 || !isExamStarted || element?.isVerified == 0 || element?.timerCompleted" color="warn" matTooltip="SMP"
+                                || element?.status == 6 || !isExamStarted || element?.isVerified == 0 || element?.timerCompleted || element?.earlyTerminationRequest==2||!element?.studentSmpStatus" color="warn" matTooltip="SMP"
                                 mat-icon-button>
                                 <mat-icon>bug_report</mat-icon>
                             </button>
                             <button (click)="Submit('student', index, i, exam?.examId, element)" [class.DefaultButton]="element?.status == 2 || element?.status == 6 
                             || !isExamStarted || element?.isVerified == 0 || element?.status == 1 ||  element?.studentSmpStatus ||
-                            (element?.status == 3 && !element?.timerCompleted)" [disabled]="element?.status == 2 || element?.status == 6 || element?.studentSmpStatus ||
+                            (element?.status == 3 && !element?.timerCompleted)||element?.status==4" [disabled]="element?.status == 2 || element?.status == 6 || element?.studentSmpStatus ||
                             !isExamStarted || element?.isVerified == 0 || element?.status == 1 || 
-                            (element?.status == 3 && !element?.timerCompleted)" class="SuccessIcon" matTooltip="Save"
+                            (element?.status == 3 && !element?.timerCompleted)|| element?.status==4" class="SuccessIcon" matTooltip="Save"
                                 mat-icon-button>
                                 <mat-icon>save</mat-icon>
                             </button>

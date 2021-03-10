@@ -1,5 +1,7 @@
 import { Component, OnInit, Inject } from '@angular/core';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material';
+import {   ViewChild, ElementRef, HostListener, OnDestroy, AfterViewInit } from '@angular/core';
+
 @Component({
   selector: 'app-cancel-popup',
   templateUrl: './cancel-popup.component.html',
@@ -15,7 +17,10 @@ export class CancelPopupComponent implements OnInit {
   ngOnInit() {
   }
 
-  
+  @HostListener('contextmenu', ['$event'])
+  onRightClick(event) {
+    event.preventDefault();
+  }
 
   Submit(): void{
     this.isSubmit = true;

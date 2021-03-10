@@ -140,6 +140,7 @@ export class CommonInstructionsComponent implements OnInit, AfterViewInit, OnDes
   @HostListener('contextmenu', ['$event'])
   onRightClick(event) {
     event.preventDefault();
+    
   }
 
   @HostListener('document:keypress', ['$event'])

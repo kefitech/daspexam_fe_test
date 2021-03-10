@@ -1,4 +1,4 @@
-import { Component, OnInit, Inject, AfterViewInit, OnDestroy } from '@angular/core';
+import { Component, OnInit, Inject, AfterViewInit, OnDestroy,HostListener } from '@angular/core';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material';
 import { DataService } from 'src/app/Services/data.service';
 import { Router } from '@angular/router';
@@ -89,5 +89,8 @@ export class StudentEarlyExamSubmitPopupComponent implements OnInit, AfterViewIn
   ngOnDestroy(){
     clearInterval(this.checkStatus);
   }
-
+  @HostListener('contextmenu', ['$event'])
+  onRightClick(event) {
+    event.preventDefault();
+  }
 }

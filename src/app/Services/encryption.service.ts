@@ -35,10 +35,14 @@ export class EncryptionService {
     return decrypted.toString();
   }
 
-  DecryptEncryption(array: any, masterElementFields: string[], subElementFields: string[]): any {
+  DecryptEncryption(array: any, masterElementFields: string[], subElementFields: string[] ,imgField:string[]): any {
     if (array.length > 0) {
       array.forEach(masterElement => {
         masterElementFields.forEach(masterField => {
+          masterElement[masterField] = this.decryptUsingAES256(masterElement[masterField]).replace(/"/g,'');
+        });
+
+        imgField.forEach(masterField => {
           masterElement[masterField] = this.decryptUsingAES256(masterElement[masterField]).replace(/"/g,'');
         });
         masterElement.options.forEach(subElement => {

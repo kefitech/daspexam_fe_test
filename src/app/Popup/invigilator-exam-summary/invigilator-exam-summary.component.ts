@@ -1,4 +1,4 @@
-import { Component, OnInit, Inject, AfterViewInit } from '@angular/core';
+import { Component, OnInit, Inject, AfterViewInit,HostListener } from '@angular/core';
 import { FormBuilder } from '@angular/forms';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material';
 import { DataService } from 'src/app/Services/data.service';
@@ -72,5 +72,8 @@ export class InvigilatorExamSummaryComponent implements OnInit, AfterViewInit {
     this.router.navigate(["/landing/invigilator/login"]);
     window.location.reload();
   }
-
+  @HostListener('contextmenu', ['$event'])
+  onRightClick(event) {
+    event.preventDefault();
+  }
 }
