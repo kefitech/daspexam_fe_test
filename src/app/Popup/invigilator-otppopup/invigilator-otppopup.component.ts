@@ -1,4 +1,4 @@
-import { Component, OnInit, Inject } from '@angular/core';
+import { Component, OnInit, Inject,HostListener } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material';
 import { DataService } from 'src/app/Services/data.service';
@@ -43,6 +43,11 @@ export class InvigilatorOTPPopupComponent implements OnInit {
     else{
       this.toastrService.error("Mandatory data missing!");
     }
+  }
+
+  @HostListener('contextmenu', ['$event'])
+  onRightClick(event) {
+    event.preventDefault();
   }
 
 }

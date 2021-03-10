@@ -1,4 +1,4 @@
-import { Component, OnInit, Inject, AfterViewInit } from '@angular/core';
+import { Component, OnInit, Inject, AfterViewInit,HostListener } from '@angular/core';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material';
 import { DataService } from 'src/app/Services/data.service';
 import { Router } from '@angular/router';
@@ -161,6 +161,9 @@ export class HallticketPopupComponent implements OnInit, AfterViewInit {
     this.upperCase = false;
     this.inputType = "abc";
   }
-
+  @HostListener('contextmenu', ['$event'])
+  onRightClick(event) {
+    event.preventDefault();
+  }
 
 }

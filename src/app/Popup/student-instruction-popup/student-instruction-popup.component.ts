@@ -18,6 +18,7 @@ export class StudentInstructionPopupComponent implements OnInit {
     event.returnValue = false;
     event.preventDefault();
   }
+  
 
   @HostListener('document:keydown', ['$event']) onKeydownHandler(event: KeyboardEvent) {
     event.returnValue = false;

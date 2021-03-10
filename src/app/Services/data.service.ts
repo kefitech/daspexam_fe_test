@@ -128,7 +128,11 @@ export class DataService {
     this.controllerData.next(null);
     this.auth.controllerLogoutAuth();
     if (loginType == 'invigilator') {
-      this.router.navigate(["/landing/invigilator/login"]);
+      window.location.reload();
+      // this.router.navigateByUrl('landing/invigilator/refresh', { skipLocationChange: true }).then(() => {
+      //   this.router.navigate(['landing/invigilator/login']);
+    // });
+      
       // window.location.reload();
     }
     else {

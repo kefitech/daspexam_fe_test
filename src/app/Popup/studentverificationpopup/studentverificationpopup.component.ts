@@ -1,4 +1,4 @@
-import { Component, OnInit, Inject } from '@angular/core';
+import { Component, OnInit, Inject,HostListener } from '@angular/core';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material';
 import { DataService } from 'src/app/Services/data.service';
 import { WebcamInitError, WebcamImage, WebcamUtil } from 'ngx-webcam';
@@ -237,6 +237,11 @@ export class StudentverificationpopupComponent implements OnInit {
       // this.ngxLoader.stop();
     }
 
+  }
+
+  @HostListener('contextmenu', ['$event'])
+  onRightClick(event) {
+    event.preventDefault();
   }
 
 }

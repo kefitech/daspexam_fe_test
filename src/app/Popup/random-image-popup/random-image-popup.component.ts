@@ -1,4 +1,4 @@
-import { Component, OnInit, Inject, AfterViewInit } from '@angular/core';
+import { Component, OnInit, Inject, AfterViewInit,HostListener } from '@angular/core';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material';
 import { DataService } from 'src/app/Services/data.service';
 import { Router } from '@angular/router';
@@ -53,6 +53,11 @@ export class RandomImagePopupComponent implements OnInit,AfterViewInit {
       this.toastrService.error(e.message);
       this.ngxLoader.stop();
     }
+  }
+
+  @HostListener('contextmenu', ['$event'])
+  onRightClick(event) {
+    event.preventDefault();
   }
 
 }

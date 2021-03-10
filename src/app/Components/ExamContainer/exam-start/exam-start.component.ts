@@ -39,8 +39,9 @@ export class ExamStartComponent implements OnInit, AfterViewInit, OnDestroy {
     imgVerified: boolean = false;
   
     public showWebcam = false;
-    public allowCameraSwitch = true;
+    public allowCameraSwitch = false;
     public multipleWebcamsAvailable = false;
+    public mirrorImage='always'
     public deviceId: string;
     public isEarly:boolean;
     public videoOptions: MediaTrackConstraints = {
@@ -94,10 +95,10 @@ export class ExamStartComponent implements OnInit, AfterViewInit, OnDestroy {
       this.intervalTime=(this.duration/5)*60000;
     }
     if(this.isProctored){
-    WebcamUtil.getAvailableVideoInputs()
-      .then((mediaDevices: MediaDeviceInfo[]) => {
-        this.multipleWebcamsAvailable = mediaDevices && mediaDevices.length > 1;
-      });
+    // WebcamUtil.getAvailableVideoInputs()
+    //   .then((mediaDevices: MediaDeviceInfo[]) => {
+    //     this.multipleWebcamsAvailable = mediaDevices && mediaDevices.length > 1;
+    //   });
     }
     sessionStorage.setItem('studentExamStart', 'true');
     this.dataService.sideNavButton.next(true);
@@ -119,12 +120,11 @@ export class ExamStartComponent implements OnInit, AfterViewInit, OnDestroy {
 
     this.questionSubscription = this.dataService.questionsData.subscribe(response => {
       if (response.length > 0) {
-        this.examinationData = this.encryptionService.DecryptEncryption(response, ['question'], ['option']);
+        this.examinationData = this.encryptionService.DecryptEncryption(response, ['question'], ['option'],['imgUrl']);
         this.examinationData = this.examinationData.map(({ shuffleStatus, options, ...rest }) =>
           ({ shuffleStatus: shuffleStatus, options: shuffleStatus ? this.dataService.shuffle(options) : options, ...rest }));
 
         var checkFirstQuestion = this.examinationData.every(m => m.status == 0);
-
         if (checkFirstQuestion) {
           this.examinationData[0]["status"] = 1;
           this.answers.push({
@@ -199,6 +199,7 @@ interval(){
   handleKeyboardEvent(event: KeyboardEvent) {
     event.returnValue = false;
     event.preventDefault();
+    
   }
 
 
@@ -595,7 +596,7 @@ interval(){
           }
 
           else if (response.data.earlySubmissionStatus == 3) {
-            // this.Submit();
+            this.Submit();
             this.countdown.pause();
             this.submitDisable = false;
           }
