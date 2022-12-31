@@ -46,10 +46,12 @@ export class InvigilatorPageStudentVerificationPopupComponent implements OnInit 
   private nextWebcam: Subject<boolean | string> = new Subject<boolean | string>();
 
   ngOnInit() {
-    this.ngxLoader.start()
+    
     this.isProctored=JSON.parse(sessionStorage.getItem("isProctored"))
     if(this.isProctored){
+      this.ngxLoader.start()
       try {
+        
         this.service.ExaminationInfoForVerifiedStudents().subscribe(response => {
           if(response.errorCode && (response.errorCode == this.dataService.unAuthorizedCode)){
             this.dataService.LogOut();

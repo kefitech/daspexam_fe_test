@@ -49,7 +49,7 @@ export class WarningComponent implements OnInit {
   public abc;
 
   ngOnInit() {
-
+    console.log(this.data);
     if(this.data<0){
       this.isRemaining=false
     }
@@ -66,6 +66,13 @@ export class WarningComponent implements OnInit {
     this.Approval_Code;``
     this.keyboardValue = this.numKeyboard;
     this.isProctored = JSON.parse(sessionStorage.getItem("isProctored"))
+
+    if(this.isProctored)
+      this.isshow= false;
+    else
+      this.isshow= true;
+    
+     console.log(this.Approval_Code);
     this.formSetup();
     
     this.ngxLoader.stopBackgroundLoader('loader-02')
@@ -75,6 +82,7 @@ export class WarningComponent implements OnInit {
     this.lockForm = this.formBuilder.group({
       smpOtp: ['', [Validators.required]]
     })
+    console.log(this.lockForm)
   }
 
   Submit(): void {
