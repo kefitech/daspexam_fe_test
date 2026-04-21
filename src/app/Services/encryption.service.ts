@@ -45,11 +45,16 @@ export class EncryptionService {
         imgField.forEach(masterField => {
           masterElement[masterField] = this.decryptUsingAES256(masterElement[masterField]).replace(/"/g,'');
         });
-        masterElement.options.forEach(subElement => {
-          subElementFields.forEach(subElementField => {
-            subElement[subElementField] = this.decryptUsingAES256(subElement[subElementField]).replace(/"/g,'');
+
+        // Skip option decryption for descriptive questions (questionType == 21)
+        // as their options are not encrypted
+        if (masterElement.questionType != 21) {
+          masterElement.options.forEach(subElement => {
+            subElementFields.forEach(subElementField => {
+              subElement[subElementField] = this.decryptUsingAES256(subElement[subElementField]).replace(/"/g,'');
+            });
           });
-        });
+        }
       });
 
       return array;

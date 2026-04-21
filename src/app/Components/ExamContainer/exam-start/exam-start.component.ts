@@ -10,6 +10,7 @@ import { Subscription } from 'rxjs';
 import { EncryptionService } from 'src/app/Services/encryption.service';
 import { ExamAPIService } from 'src/app/Services/exam-api.service';
 import { QuestionService } from 'src/app/Services/question.service';
+import { URLService } from 'src/app/Services/url.service';
 import { StudentInstructionPopupComponent } from 'src/app/Popup/student-instruction-popup/student-instruction-popup.component';
 import { WarningComponent } from 'src/app/Popup/warning/warning.component';
 import { StudentEarlyExamSubmitPopupComponent } from 'src/app/Popup/student-early-exam-submit-popup/student-early-exam-submit-popup.component';
@@ -32,7 +33,7 @@ export class ExamStartComponent implements OnInit, AfterViewInit, OnDestroy {
 
   constructor(private toastrService: ToastrService, private router: Router, private dataService: DataService,
     private dialog: MatDialog, private encryptionService: EncryptionService, private examService: ExamAPIService,
-    private ngxLoader: NgxUiLoaderService, private questionService: QuestionService) { }
+    private ngxLoader: NgxUiLoaderService, private questionService: QuestionService, private urlService: URLService) { }
 
 
     imgComparison: boolean = false;
@@ -292,6 +293,27 @@ interval(){
   }
 
   Navigate(type: string, index: number, first: boolean, last: boolean): void {
+    // For descriptive questions (questionType == 21), mark current question as Answered before navigating
+    const currentIndex = this.activeIndex;
+    if (this.examinationData[currentIndex]["questionType"] == 21) {
+      // Mark as Answered (status = 2) for descriptive questions
+      if (this.examinationData[currentIndex]["status"] != 3) {
+        this.examinationData[currentIndex]["status"] = 2;
+      }
+      // Update answers array for current descriptive question
+      var currentExists = this.answers.filter(q => q.std_res_id == this.examinationData[currentIndex].studentResponseId);
+      if (currentExists.length == 0) {
+        this.answers.push({
+          std_res_id: this.examinationData[currentIndex]["studentResponseId"],
+          status: this.examinationData[currentIndex]["status"],
+          option_id: 0
+        });
+      } else {
+        var currentOptIndex = this.answers.findIndex(q => q.std_res_id == currentExists[0].std_res_id);
+        this.answers[currentOptIndex]["status"] = this.examinationData[currentIndex]["status"];
+      }
+    }
+
     if (!last && type.toLowerCase() == 'next') {
       index = index + 1;
       this.activeIndex = index;
@@ -699,6 +721,20 @@ interval(){
 
   public get nextWebcamObservable(): Observable<boolean | string> {
     return this.nextWebcam.asObservable();
+  }
+
+  // Build full upload URL for QR code (descriptive questions)
+  getUploadUrl(uploadLink: string): string {
+    if (!uploadLink) {
+      return '';
+    }
+    // Get base URL and remove /api/v1 if present since uploadLink already has /api/
+    const baseUrl = this.urlService.baseURL.replace('/api/v1', '');
+
+    // Remove leading slash from uploadLink since baseUrl already has trailing /
+    const path = uploadLink.startsWith('/') ? uploadLink.substring(1) : uploadLink;
+
+    return baseUrl + path;
   }
 
 }

@@ -72,11 +72,11 @@ export class InitialStudentLoginComponent implements OnInit, AfterViewInit {
 
   Submit(): void {
     try {
-      this.dataService.toggleFullScreen()
+      // this.dataService.toggleFullScreen() // Commented out for development/testing
       sessionStorage.setItem('instruction', 'normal');
       this.auth.hallTicketValid();
       this.dataService.isNotLoginScreen.next(true);
-      
+
       this.router.navigate(['/landing/student/exam/commoninstructions']);
       this.ngxLoader.stop();
     }

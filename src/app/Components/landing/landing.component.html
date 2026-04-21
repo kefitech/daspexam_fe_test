@@ -12,11 +12,12 @@
                             <mat-icon>power_settings_new</mat-icon>
                         </button> -->
                     </span>
-                    <button matTooltip="Full Screen" *ngIf="(dataService?.warning | async)" 
+                    <!-- Commented out for development/testing -->
+                    <!-- <button matTooltip="Full Screen" *ngIf="(dataService?.warning | async)"
                     (click)="dataService.toggleFullScreen()" class="mt-2"
                         mat-icon-button color="accent">
                         <mat-icon>settings_overscan</mat-icon>
-                    </button>
+                    </button> -->
                 </span>
                 <!-- <button *ngIf="(dataService?.isNotLoginScreen | async) && (dataService?.sideNavButton | async) && !(dataService?.warning | async)"
                  class="float-right" matTooltip="Show/Hide"

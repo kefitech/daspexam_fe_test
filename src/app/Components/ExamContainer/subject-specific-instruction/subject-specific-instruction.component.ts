@@ -84,7 +84,7 @@ export class SubjectSpecificInstructionComponent implements OnInit, AfterViewIni
           this.dataService.LogOut();
         }
         else if (response.success) {
-          this.dataService.toggleFullScreen();
+          // this.dataService.toggleFullScreen();
           this.router.navigate(["/landing/student/exam/progress"]);
           this.ngxLoader.stop();
         }

@@ -12,6 +12,7 @@ import { ConfirmationPopoverModule } from 'angular-confirmation-popover';
 import { StudentInstructionPopupComponent } from 'src/app/Popup/student-instruction-popup/student-instruction-popup.component';
 import { StudentEarlyExamSubmitPopupComponent } from 'src/app/Popup/student-early-exam-submit-popup/student-early-exam-submit-popup.component';
 import { WebcamModule } from 'ngx-webcam';
+import { QRCodeModule } from 'angularx-qrcode';
 
 import { ConfirmPopupComponent } from 'src/app/Popup/confirm-popup/confirm-popup.component';
 import { CancelPopupComponent } from 'src/app/Popup/cancel-popup/cancel-popup.component';
@@ -26,6 +27,7 @@ import { CancelPopupComponent } from 'src/app/Popup/cancel-popup/cancel-popup.co
     CountdownModule,
     ExamContainerRoutingModule,
     WebcamModule,
+    QRCodeModule,
     DeviceDetectorModule.forRoot(),
     ConfirmationPopoverModule.forRoot({
       confirmButtonType: 'danger' // set defaults here

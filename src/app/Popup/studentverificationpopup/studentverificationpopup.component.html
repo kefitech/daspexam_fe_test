@@ -76,14 +76,25 @@
 
         <img *ngIf="webcamImage && !imgComparison" class="w-100 h-75" [src]="webcamImage.imageAsDataUrl" />
         <span *ngIf="errors.length > 0 && showWebcam">
-            <!-- <h4>Messages:</h4> -->
+          
             <p style="color: red;"> Camera access was not allowed by user!</p>
            
-            <!-- <ul *ngFor="let error of errors">
-                <li>{{error | json}}</li>
-            </ul> -->
+          
         </span>
     </div>
+    <!-- <webcam 
+    *ngIf="false"
+    [height]="455"
+    [width]="555"
+    [trigger]="triggerObservable"
+    (imageCapture)="handleImage($event)"
+    [allowCameraSwitch]="allowCameraSwitch"
+    [switchCamera]="nextWebcamObservable"
+    [videoOptions]="videoOptions"
+    [imageQuality]="1"
+    (cameraSwitched)="cameraWasSwitched($event)"
+    (initError)="handleInitError($event)">
+</webcam> -->
 
     <div class="row p-2" *ngIf="showWebcam && !imgComparison && !errors.length > 0">
         <div class="col-sm-1">
@@ -105,7 +116,7 @@
             </button>
         </div>
         <div class="col-sm-4">
-            <button [disabled]="!webcamImage" (click)="SnapDone()" class="Submit w-100" mat-raised-button>
+            <button [disabled]="false" (click)="SnapDone()" class="Submit w-100" mat-raised-button>
                 <mat-icon>done</mat-icon>
                 Done
             </button>
