@@ -97,6 +97,7 @@ public invigilatorStudentEarlyExamSubmitURL = "api/conduct_exam/early_submission
   public studentStatusVerification = "api/conduct_exam/student_verification_status_fetch";
 
   public headers = new HttpHeaders({ 'Content-Type': 'application/json; charset=utf-8' });
+  public checkAnswerUploadedURL = "api/conduct_exam/check_answer_uploaded";
 
   constructor(private http: HttpClient) {
     this.setBaseURL();
