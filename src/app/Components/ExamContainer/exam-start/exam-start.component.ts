@@ -793,6 +793,7 @@ export class ExamStartComponent implements OnInit, AfterViewInit, OnDestroy {
   
     // latest snapshot
     public webcamImage: WebcamImage = null;
+    private heartbeatInterval: any = null;
   
     // webcam snapshot trigger
     private trigger: Subject<void> = new Subject<void>();
@@ -903,6 +904,7 @@ export class ExamStartComponent implements OnInit, AfterViewInit, OnDestroy {
   ngAfterViewInit() {
     // this.statusInitInterval = setInterval(() => {
     this.EarlyExamStatusCheck();
+    this.startHeartbeat(); // 
     // }, 3600)
     if(this.isProctored){
 
@@ -967,6 +969,18 @@ interval(){
       }
     }
   }
+  startHeartbeat(): void {
+    this.heartbeatInterval = setInterval(() => {
+        this.examService.SendHeartbeat({}).subscribe();
+    }, 30000);
+}
+
+stopHeartbeat(): void {
+    if (this.heartbeatInterval) {
+        clearInterval(this.heartbeatInterval);
+        this.heartbeatInterval = null;
+    }
+}
 
   GotoQuestion(index: number): void {
     this.activeIndex = index;
@@ -1404,7 +1418,45 @@ Navigate(type: string, index: number, first: boolean, last: boolean): void {
   }
     })
   }
-
+RequestReattempt(): void {
+    const dialogRef = this.dialog.open(ConfirmPopupComponent, {
+        width: '40%',
+        data: { 
+            title: "Do you want to request a re-attempt?",
+            title2: "Please describe your reason for re-attempt request."
+        }
+    })
+    dialogRef.afterClosed().subscribe(response => {
+        var isSubmit = dialogRef.componentInstance.isSubmit;
+        if (isSubmit) {
+            try {
+                this.ngxLoader.start();
+                this.examService.RequestReattempt({
+                    reason: "Technical issue"
+                }).subscribe(response => {
+                    if (response.errorCode && (response.errorCode == this.dataService.unAuthorizedCode)) {
+                        this.dataService.LogOut();
+                    }
+                    else if (response.success) {
+                        this.toastrService.success("Re-attempt request sent to invigilator successfully");
+                        this.ngxLoader.stop();
+                    }
+                    else {
+                        this.toastrService.error(response.message);
+                        this.ngxLoader.stop();
+                    }
+                }, error => {
+                    this.toastrService.error(error.message);
+                    this.ngxLoader.stop();
+                })
+            }
+            catch (e) {
+                this.toastrService.error(e);
+                this.ngxLoader.stop();
+            }
+        }
+    })
+}
   EarlyExamStatusCheck(): void {
     try {
       this.ngxLoader.start();
@@ -1468,7 +1520,15 @@ stopUploadCheck(): void {
         this.uploadCheckInterval = null;
     }
 }
+  // ngOnDestroy() {
+  //   this.sideNavSubscription.unsubscribe();
+  //   this.timerSubscription.unsubscribe();
+  //   this.questionSubscription.unsubscribe();
+  //   // clearInterval(this.statusInitInterval);
+  // }
   ngOnDestroy() {
+    this.stopUploadCheck();
+    this.stopHeartbeat();
     this.sideNavSubscription.unsubscribe();
     this.timerSubscription.unsubscribe();
     this.questionSubscription.unsubscribe();

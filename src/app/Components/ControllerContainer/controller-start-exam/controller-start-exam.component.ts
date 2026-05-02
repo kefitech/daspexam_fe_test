@@ -156,6 +156,7 @@ export class ControllerStartExamComponent implements OnInit, AfterViewInit, OnDe
           this.FetchReservedSystems();
           this.isExamStarted = response.data.isExamStarted;
           this.examList = response.data.studentList;
+          console.log("isDisconnected value:", response.data.studentList[0]['studentList'][0]['isDisconnected']);
           this.examListCopy = this.examList.map(x => Object.assign({}, x));
           this.masterTimerConfig = { leftTime: response.data.examDuration * 60 };//, notify: [2 * 60, 9 * 60]
           
@@ -617,6 +618,47 @@ const dialogRef = this.dialog.open(RandomImagePopupComponent,
     // clearInterval(this.lateComerObservableOnPageLoad);
     // clearInterval(this.allStudentsExamCompletedInterval);
   }
+
+
+  AllowReattempt(examStudentId: number, index: number, rowIndex: number): void {
+    const dialogRef = this.dialog.open(ConfirmationPopupComponent, {
+        width: '40%',
+        data: { title: "Do you want to allow re-attempt for this student?" }
+    })
+    dialogRef.afterClosed().subscribe(response => {
+        var isSubmit = dialogRef.componentInstance.isSubmit;
+        if (isSubmit) {
+            try {
+                this.ngxLoader.start();
+                var body = {
+                    examStudentId: examStudentId
+                }
+                this.service.AllowReattempt(body).subscribe(response => {
+                    if (response.errorCode && (response.errorCode == this.dataService.unAuthorizedCode)) {
+                        this.dataService.LogOut();
+                    }
+                    else if (response.success) {
+                        this.toastrService.success("Re-attempt allowed successfully");
+                        this.examList[index]['studentList']['data'][rowIndex]['status'] = 3;
+                        this.ngxLoader.stop();
+                          this.refresh();
+                    }
+                    else {
+                        this.toastrService.error(response.message);
+                        this.ngxLoader.stop();
+                    }
+                }, error => {
+                    this.toastrService.error(error.message);
+                    this.ngxLoader.stop();
+                })
+            }
+            catch (e) {
+                this.toastrService.error(e);
+                this.ngxLoader.stop();
+            }
+        }
+    })
+}
   refresh(){
     this.router.navigateByUrl('landing/invigilator/refresh', { skipLocationChange: true }).then(() => {
       this.router.navigate(['landing/invigilator/examstart']);

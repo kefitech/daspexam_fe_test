@@ -121,5 +121,9 @@ export class ControllerAPIService {
   InvigilatorStudentEarlyExamSubmit(body: any): any{
     return this.http.post(this.URLService.baseURL + this.URLService.invigilatorStudentEarlyExamSubmitURL, body);
   }
+   AllowReattempt(body: any): any{
+    body = Object.assign(body, this.dataService.controllerData.value);
+    return this.http.post(this.URLService.baseURL + this.URLService.allowReattemptURL, body);
+  }
 
 }

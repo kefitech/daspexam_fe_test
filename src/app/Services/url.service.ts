@@ -98,6 +98,12 @@ public invigilatorStudentEarlyExamSubmitURL = "api/conduct_exam/early_submission
 
   public headers = new HttpHeaders({ 'Content-Type': 'application/json; charset=utf-8' });
   public checkAnswerUploadedURL = "api/conduct_exam/check_answer_uploaded";
+public allowReattemptURL = "api/conduct_exam/allow_reattempt";
+public requestReattemptURL = "api/conduct_exam/request_reattempt";
+public studentHeartbeatURL = "api/conduct_exam/student_heartbeat";
+
+
+
 
   constructor(private http: HttpClient) {
     this.setBaseURL();

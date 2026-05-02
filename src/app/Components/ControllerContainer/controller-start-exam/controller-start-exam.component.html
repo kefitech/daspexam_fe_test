@@ -1,37 +1,37 @@
 <div style="margin-left: 10px;" class="container">
     <div class="col-sm-12 pb-3" *ngIf="examList.length > 0">
-        <mat-card style="border: 1px solid rgb(103 56 183 / 1);margin-top: 10px;margin-bottom: 10px;" class="wid" >
-        <div class="row pt-2 d-flex justify-content-end">
-            <button (click)="GoToInstructions()" mat-button>
-                <u>
-                    <span class="font-weight-bold">
-                        Instructions
-                    </span>
-                </u>
-            </button>
-        </div>
-        <!-- Timer heading protion --> 
-                
-                
-           
-        <div class="col-sm-12 row mt-3">
-            <div class="col-sm-9 d-flex justify-content-center MasterTimer">
-                <span *ngIf="!isExamStarted">Time remaining to start exam &nbsp;&nbsp;</span>
-                <countdown #masterTimer [config]="masterTimerConfig" (event)="handleMasterTimerEvent($event)">
-                </countdown>
-            </div>
-            <div class="col-sm-2 pt-2">
-                <button (click)="Submit('all')" [disabled]="!masterSubmitValid" mat-raised-button class="Submit">
-                    Submit All
+        <mat-card style="border: 1px solid rgb(103 56 183 / 1);margin-top: 10px;margin-bottom: 10px;" class="wid">
+            <div class="row pt-2 d-flex justify-content-end">
+                <button (click)="GoToInstructions()" mat-button>
+                    <u>
+                        <span class="font-weight-bold">
+                            Instructions
+                        </span>
+                    </u>
                 </button>
             </div>
-            <div class="col-sm-1 pt-2">
-                <button matTooltip="Refresh" color="primary" (click)="refresh()" mat-raised-button>
-                    Refresh
-                </button>
+            <!-- Timer heading protion -->
+
+
+
+            <div class="col-sm-12 row mt-3">
+                <div class="col-sm-9 d-flex justify-content-center MasterTimer">
+                    <span *ngIf="!isExamStarted">Time remaining to start exam &nbsp;&nbsp;</span>
+                    <countdown #masterTimer [config]="masterTimerConfig" (event)="handleMasterTimerEvent($event)">
+                    </countdown>
+                </div>
+                <div class="col-sm-2 pt-2">
+                    <button (click)="Submit('all')" [disabled]="!masterSubmitValid" mat-raised-button class="Submit">
+                        Submit All
+                    </button>
+                </div>
+                <div class="col-sm-1 pt-2">
+                    <button matTooltip="Refresh" color="primary" (click)="refresh()" mat-raised-button>
+                        Refresh
+                    </button>
+                </div>
             </div>
-        </div>
- </mat-card>
+        </mat-card>
         <!-- Tab portion -->
 
         <mat-tab-group mat-stretch-tabs class="mat-elevation-z4 wid Table">
@@ -51,14 +51,25 @@
                     </ng-container>
 
                     <!-- name Column -->
-                    <ng-container [matColumnDef]="displayedColumns[1]">
+                    <!-- <ng-container [matColumnDef]="displayedColumns[1]">
                         <mat-header-cell class="tableHeader" *matHeaderCellDef mat-sort-header>
                             {{headerCaption?.caption2}} </mat-header-cell>
                         <mat-cell *matCellDef="let element">
                             {{element[displayedColumns[1]]}}
                         </mat-cell>
-                    </ng-container>
-
+                    </ng-container> -->
+<!-- name Column -->
+<ng-container [matColumnDef]="displayedColumns[1]">
+    <mat-header-cell class="tableHeader" *matHeaderCellDef mat-sort-header>
+        {{headerCaption?.caption2}} </mat-header-cell>
+    <mat-cell *matCellDef="let element">
+        {{element[displayedColumns[1]]}}
+        <span *ngIf="element?.isDisconnected" 
+              style="color:red; font-size:11px; font-weight:bold; margin-left:5px;">
+            ⚠️
+        </span>
+    </mat-cell>
+</ng-container>
                     <!-- hall ticket no Column -->
                     <ng-container [matColumnDef]="displayedColumns[2]">
                         <mat-header-cell class="tableHeader" *matHeaderCellDef mat-sort-header>
@@ -138,33 +149,40 @@
                             <button (click)="StudentSMP(element, index, i)"
                                 [disabled]="element?.status == 2 
                             || element?.status == 3 || element?.status == 5 || element?.status == 1
-                                || element?.status == 6 || !isExamStarted || element?.isVerified == 0 || element?.timerCompleted || element?.earlyTerminationRequest==2||!element?.studentSmpStatus" color="warn" matTooltip="SMP"
-                                mat-icon-button>
+                                || element?.status == 6 || !isExamStarted || element?.isVerified == 0 || element?.timerCompleted || element?.earlyTerminationRequest==2||!element?.studentSmpStatus"
+                                color="warn" matTooltip="SMP" mat-icon-button>
                                 <mat-icon>bug_report</mat-icon>
                             </button>
                             <button (click)="Submit('student', index, i, exam?.examId, element)" [class.DefaultButton]="element?.status == 2 || element?.status == 6 
                             || !isExamStarted || element?.isVerified == 0 || element?.status == 1 ||  element?.studentSmpStatus ||
                             (element?.status == 3 && !element?.timerCompleted)||element?.status==4" [disabled]="element?.status == 2 || element?.status == 6 || element?.studentSmpStatus ||
                             !isExamStarted || element?.isVerified == 0 || element?.status == 1 || 
-                            (element?.status == 3 && !element?.timerCompleted)|| element?.status==4" class="SuccessIcon" matTooltip="Save"
-                                mat-icon-button>
+                            (element?.status == 3 && !element?.timerCompleted)|| element?.status==4"
+                                class="SuccessIcon" matTooltip="Save" mat-icon-button>
                                 <mat-icon>save</mat-icon>
                             </button>
 
-                           
 
-                            <button [class.DefaultButton]="element?.earlyTerminationRequest  != 2" matTooltip="Early Request"
-                            [disabled]="element?.earlyTerminationRequest  != 2" style="color: orange"
-                            (click)="EarlySubmitResponse(element)" mat-icon-button>
+
+                            <button [class.DefaultButton]="element?.earlyTerminationRequest  != 2"
+                                matTooltip="Early Request" [disabled]="element?.earlyTerminationRequest  != 2"
+                                style="color: orange" (click)="EarlySubmitResponse(element)" mat-icon-button>
                                 <mat-icon>settings_applications</mat-icon>
                             </button>
-                            <button (click)="StudentPic(element, index, i)"
-                            [disabled]="element?.status == 1"  matTooltip="View Picture"
-                            mat-icon-button>
-                            <mat-icon>picture_in_picture</mat-icon>
-                         </button>
-
-                         <!-- <button [disabled]="element?.status != 5" matTooltip="See Result" (click)="SeeResult(element, index, i)"
+                            <button (click)="StudentPic(element, index, i)" [disabled]="element?.status == 1"
+                                matTooltip="View Picture" mat-icon-button>
+                                <mat-icon>picture_in_picture</mat-icon>
+                            </button>
+                            <button (click)="AllowReattempt(element?.examStudentId, index, i)"
+                                [disabled]="element?.status == 1 || element?.status == 6" matTooltip="Allow Re-attempt"
+                                color="warn" mat-icon-button>
+                                <mat-icon>replay</mat-icon>
+                            </button>
+                            <span *ngIf="element?.isDisconnected" 
+      style="color:red; font-size:11px; font-weight:bold;">
+    ⚠️ Disconnected
+</span>
+                            <!-- <button [disabled]="element?.status != 5" matTooltip="See Result" (click)="SeeResult(element, index, i)"
                                 color="primary" 
                                 mat-icon-button>
                                 <mat-icon>assessment</mat-icon>

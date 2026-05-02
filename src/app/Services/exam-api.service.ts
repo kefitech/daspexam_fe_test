@@ -71,5 +71,13 @@ export class ExamAPIService {
     body = Object.assign(body, this.dataService.studentCredentials.value);
     return this.http.post(this.URLService.baseURL + this.URLService.checkAnswerUploadedURL, body);
 }
+RequestReattempt(body: any): any {
+    body = Object.assign(body, this.dataService.studentCredentials.value);
+    return this.http.post(this.URLService.baseURL + this.URLService.requestReattemptURL, body);
+}
+SendHeartbeat(body: any): any {
+    body = Object.assign(body, this.dataService.studentCredentials.value);
+    return this.http.post(this.URLService.baseURL + this.URLService.studentHeartbeatURL, body);
+}
 
 }
