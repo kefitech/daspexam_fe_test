@@ -850,7 +850,7 @@ export class ExamStartComponent implements OnInit, AfterViewInit, OnDestroy {
     // }
     this.fullScr = true;
     this.winHeight = window.innerHeight;
-
+this.dataService.toggleFullScreen();
     this.timerSubscription = this.dataService.examStartAndTimer.subscribe(response => {
       if (response) {
         response['time']['leftTime'] = response['time']['leftTime'] * 60;
