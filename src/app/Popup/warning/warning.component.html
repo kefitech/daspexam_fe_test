@@ -78,7 +78,7 @@
                         <div class="col-md-6">
                             <mat-form-field appearance="outline" class="FormField">
                                 <mat-label>{{formCaption}}</mat-label>
-                                <input readonly type="text" formControlName="smpOtp" matInput [placeholder]="formCaption">
+<input readonly type="text" formControlName="smpOtp" matInput [placeholder]="formCaption" style="min-width: 200px;">
                                 <button style="outline: none !important;" (click)="ResetMenu()" matTooltip="Virtual Keyboard" 
                                 matSuffix type="button" [matMenuTriggerFor]="menu" mat-icon-button>
                                     <mat-icon>keyboard</mat-icon>
