@@ -26,6 +26,13 @@ export class ExamAPIService {
     // body['timeRemains'] = Math.round(parseInt(localStorage.getItem('freq'))/6000);
     return this.http.post(this.URLService.baseURL + this.URLService.markStudentSMPURL, this.dataService.studentCredentials.value);
   }
+ CheckReattemptStatus(body: any): any {
+    body = Object.assign(body, this.dataService.studentCredentials.value);
+    return this.http.post(
+        this.URLService.baseURL + 'api/conduct_exam/check_reattempt_status',
+        body
+    );
+}
 
   StudentResponseSubmit(body: any): any {
     var data = Object.assign({}, {responseList: body}, this.dataService.studentCredentials.value);

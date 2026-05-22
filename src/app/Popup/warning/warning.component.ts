@@ -74,8 +74,33 @@ export class WarningComponent implements OnInit {
     
      console.log(this.Approval_Code);
     this.formSetup();
-    
-    this.ngxLoader.stopBackgroundLoader('loader-02')
+
+// Poll every 3 seconds to check if reattempt approved
+const reattemptCheck = interval(3000).subscribe(() => {
+    this.apiService.CheckReattemptStatus({
+        examStudentId: sessionStorage.getItem("examStudentId")
+    }).subscribe((response: any) => {
+      if (response.success && response.data.isReattemptApproved) {
+    reattemptCheck.unsubscribe();
+    // Re-enter fullscreen before navigating
+    document.documentElement.requestFullscreen().then(() => {
+        this.dialogScreen.close();
+        this.dialog.closeAll();
+        this.dataService.warning.next(false);
+        localStorage.removeItem('SMP');
+        this.router.navigate(['/landing/student/exam']);
+    }).catch(() => {
+        this.dialogScreen.close();
+        this.dialog.closeAll();
+        this.dataService.warning.next(false);
+        localStorage.removeItem('SMP');
+        this.router.navigate(['/landing/student/exam']);
+    });
+}
+    });
+});
+
+this.ngxLoader.stopBackgroundLoader('loader-02')
   }
 
   formSetup(): void {
