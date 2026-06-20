@@ -19,21 +19,21 @@ import { RandomImagePopupComponent } from 'src/app/Popup/random-image-popup/rand
   styleUrls: ['./controller-start-exam.component.scss']
 })
 export class ControllerStartExamComponent implements OnInit, AfterViewInit, OnDestroy {
-
+ 
   constructor(private toastrService: ToastrService, private ngxLoader: NgxUiLoaderService,
     private dialog: MatDialog, private service: ControllerAPIService, private router: Router,
     private dataService: DataService) { }
-
+ 
   masterTimerConfig: any;
   masterSubmitValid: boolean = false;
   element:any;
-
+ 
   totalStableDuration: any;
-
+ 
   private lateComerObservable: any = null;
   private lateComerObservableOnPageLoad: any = null;
   private allStudentsExamCompletedInterval: any = null;
-
+ 
   studentTimerPauseResumeCaption: string = "Do you want to Pause/Resume this student?"
   isProctored=JSON.parse(sessionStorage.getItem("isProctored"))
   isExamStarted: boolean;
@@ -41,18 +41,18 @@ export class ControllerStartExamComponent implements OnInit, AfterViewInit, OnDe
   examListCopy: Array<object>;
   backupSystems: Array<object>;
   displayedColumns: any;
-  headerCaption:any; 
+  headerCaption:any;
   islate:boolean=false;
   @ViewChildren(MatPaginator) paginator = new QueryList<MatPaginator>();
   @ViewChildren(MatSort) sort = new QueryList<MatSort>();// stepper 1
   @ViewChildren('myPaginator') studentListPaginator: QueryList<ElementRef>;
   @ViewChildren('masterTimer') masterTimer: CountdownComponent;
   @ViewChildren('studentTimer') studentTimer: QueryList<ElementRef>;
-
+ 
   @ViewChildren('systems') systems: QueryList<ElementRef>;
-
+ 
   examTimerCompleted: boolean = false;
-
+ 
   ngOnInit() {
     if(!this.isProctored){
       this.displayedColumns = ['sno', 'name', 'hallTicketNumber', 'systemNo', 'timer', 'action'];
@@ -76,9 +76,9 @@ export class ControllerStartExamComponent implements OnInit, AfterViewInit, OnDe
         caption6: "Action"
       }))
     }
-
+ 
   }
-
+ 
   ngAfterViewInit() {
     this.FetchExamList();
     // this.lateComerObservableOnPageLoad = setInterval(() => {
@@ -88,10 +88,10 @@ export class ControllerStartExamComponent implements OnInit, AfterViewInit, OnDe
       
     // }, 1000);
   }
-
+ 
   handleMasterTimerEvent(event): void {
     var timeLeft = event.left / 60000;
-
+ 
     if (event.action == "start") {
       if (this.isExamStarted && timeLeft != 0)
         this.toastrService.success("Examination started");
@@ -116,7 +116,7 @@ export class ControllerStartExamComponent implements OnInit, AfterViewInit, OnDe
       }
     }
   }
-
+ 
   CheckAllStudentsExamCompleted(): void {
     try {
       this.service.CheckAllStudentExamCompleted().subscribe(response => {
@@ -143,8 +143,8 @@ export class ControllerStartExamComponent implements OnInit, AfterViewInit, OnDe
       this.toastrService.error(e);
     }
   }
-
-
+ 
+ 
   FetchExamList(): void {
     try {
       this.ngxLoader.start();
@@ -181,7 +181,7 @@ export class ControllerStartExamComponent implements OnInit, AfterViewInit, OnDe
     }
     
   }
-
+ 
   FetchReservedSystems(): void {
     try {
       this.ngxLoader.start();
@@ -207,7 +207,7 @@ export class ControllerStartExamComponent implements OnInit, AfterViewInit, OnDe
       this.ngxLoader.stop();
     }
   }
-
+ 
   TableRefresh(): void {
     this.examList.forEach((element, index) => {
       element['studentList'] = new MatTableDataSource<any>(element['studentList']);
@@ -215,12 +215,12 @@ export class ControllerStartExamComponent implements OnInit, AfterViewInit, OnDe
         element['studentList'].paginator = this.paginator.toArray()[index];
         element['studentList'].sort = this.sort.toArray()[index];
       }, 10);
-
+ 
       element['studentList']['data'] = element['studentList']['data'].map(({ timeLeft, ...rest }) =>
         ({ timeLeft: { leftTime: !this.isExamStarted ? 0 : timeLeft == 'null' ? 0 : timeLeft * 60 }, ...rest }));
     });
   }
-
+ 
   StudentTimerPauseResume(index: number, rowIndex: number, status: number, check?: any): void {
     const dialogRef = this.dialog.open(ConfirmationPopupComponent, {
       width: '40%',
@@ -241,11 +241,12 @@ export class ControllerStartExamComponent implements OnInit, AfterViewInit, OnDe
           //   type: status == 3 || status == 2 ? 'pause' : status == 4 ? 'resume' : '',
           //   examStudentId: this.examList[index]['studentList']['data'][rowIndex]['examStudentId']
           // }
-
-          var body = this.dataService.controllerData.value;
-          body["examStudentId"] = this.examList[index]['studentList']['data'][rowIndex]['examStudentId']
-          body["type"]= status == 3 || status == 2 ? 'pause' : status == 4 ? 'resume' : '',
-
+ 
+          var body = {
+            examStudentId: this.examList[index]['studentList']['data'][rowIndex]['examStudentId'],
+            type: status == 3 || status == 2 ? 'pause' : status == 4 ? 'resume' : ''
+          };
+ 
           this.service.TimePauseresume(body).subscribe(response => {
             if(response.errorCode && (response.errorCode == this.dataService.unAuthorizedCode)){
               this.dataService.LogOut();
@@ -270,7 +271,7 @@ export class ControllerStartExamComponent implements OnInit, AfterViewInit, OnDe
       }
     })
   }
-
+ 
   StudentTimePauseResumeConfig(index: number, rowIndex: number, status: number, check?: any): void {
     var length = 0;
     if (index > 0) {
@@ -289,7 +290,7 @@ export class ControllerStartExamComponent implements OnInit, AfterViewInit, OnDe
         (this.studentTimer['_results'][length + rowIndex]['i']['value'] / 1000);
     }
   }
-
+ 
   CheckAllStudentTimer(): void {
     var pauseIndex = [];
     this.examList.forEach((examList, examIndex) => {
@@ -302,7 +303,7 @@ export class ControllerStartExamComponent implements OnInit, AfterViewInit, OnDe
       this.StudentTimePauseResumeConfig(element.parent, element.row, 3, true);
     });
   }
-
+ 
   SystemChange(oldSystemId: number, oldSystemValue: string, reservedSystemId: number,
     reservedSystemValue: string, index: number, rowIndex: number, optIndex: number, examStudentId: number): void {
     try {
@@ -337,9 +338,9 @@ export class ControllerStartExamComponent implements OnInit, AfterViewInit, OnDe
       this.ngxLoader.stop();
     }
   }
-
+ 
   handleStudentTimerEvent(event: any, index: number, rowIndex: number): void {
-
+ 
     if (event.action == "done") {
       var length = 0;
       if (index > 0) {
@@ -353,7 +354,7 @@ export class ControllerStartExamComponent implements OnInit, AfterViewInit, OnDe
         this.examList[index]['studentList']['data'][rowIndex]['timerCompleted'] = true;
     }
   }
-
+ 
   StudentSMP(data: object, index: number, rowIndex: number): void {
     const dialogRef = this.dialog.open(InvigilatorSMPPopupComponent, {
       width: '40%',
@@ -370,7 +371,7 @@ export class ControllerStartExamComponent implements OnInit, AfterViewInit, OnDe
     this.refresh()
     })
   }
-
+ 
   Submit(type: string, examIndex?: number, rowIndex?: any, examId?: number, data?: object): void {
     var title = type == 'student' ? "Do you want to submit exam for this student?" : type == 'exam' ? "Do you want to submit all students in this exam?" : "Do you want to submit all exams?";
     const dialogRef = this.dialog.open(ConfirmationPopupComponent, {
@@ -410,7 +411,7 @@ export class ControllerStartExamComponent implements OnInit, AfterViewInit, OnDe
         }
         try {
           this.ngxLoader.start();
-
+ 
           this.service.SubmitExam(body).subscribe(response => {
             if(response.errorCode && (response.errorCode == this.dataService.unAuthorizedCode)){
               this.dataService.LogOut();
@@ -418,7 +419,7 @@ export class ControllerStartExamComponent implements OnInit, AfterViewInit, OnDe
             else if (response.success) {
               
               this.SaveFunctionalitiesOnTable(type, examIndex, rowIndex);
-
+ 
               this.ngxLoader.stop();
               // this.refresh()
             }
@@ -438,7 +439,7 @@ export class ControllerStartExamComponent implements OnInit, AfterViewInit, OnDe
       }
     })
   }
-
+ 
   SaveFunctionalitiesOnTable(type: string, examIndex?: number, rowIndex?: number): void {
     if (type == 'student') {
       this.examList[examIndex]['studentList']['data'][rowIndex]['status'] = 6;
@@ -481,17 +482,17 @@ export class ControllerStartExamComponent implements OnInit, AfterViewInit, OnDe
         element['studentList']['data'] = element['studentList']['data']
           .map(({ status, isVerified, timeLeft, ...rest }) =>
             ({ status: isVerified == 1 ? 6 : status, isVerified, timeLeft: isVerified == 1 ? { leftTime: 0 } : timeLeft, ...rest }));
-
+ 
       });
-
+ 
       this.masterSubmitValid = false;
       this.ExamSummary();
     }
   }
-
+ 
   SingleStudentVerification(data: object, index: number, rowIndex: number): void {// stepper 1
     var rowData = Object.assign({}, data);
-
+ 
     const dialogRef = this.dialog.open(InvigilatorPageStudentVerificationPopupComponent, {
       width: '45%',
       height: '90%',
@@ -510,12 +511,12 @@ export class ControllerStartExamComponent implements OnInit, AfterViewInit, OnDe
       }
     })
   }
-
+ 
   CheckSingleStudentVerification(verified: boolean, index: number, rowIndex: number): void {
     try {
       this.ngxLoader.start();
       this.examList[index]['studentList']['data'][rowIndex]['isVerified'] = verified;
-
+ 
       setTimeout(() => {
         this.examList[index]['studentList']['data'].paginator = this.paginator.toArray()[index];
         this.examList[index]['studentList']['data'].sort = this.sort.toArray()[index];
@@ -527,7 +528,7 @@ export class ControllerStartExamComponent implements OnInit, AfterViewInit, OnDe
       this.ngxLoader.stop();
     }
   }
-
+ 
   LateComersTimeConfiguration(): void {
     try {
       // this.ngxLoader.start();
@@ -569,7 +570,7 @@ export class ControllerStartExamComponent implements OnInit, AfterViewInit, OnDe
       // this.ngxLoader.stop();
     }
   }
-
+ 
   ExamSummary(): void{
     // this.router.navigate(['/initial']);
     const dialogRef = this.dialog.open(InvigilatorExamSummaryComponent, {
@@ -579,11 +580,11 @@ export class ControllerStartExamComponent implements OnInit, AfterViewInit, OnDe
       // data: { }
     })
   }
-
+ 
   Reload(): void{
     // window.location.reload();
   }
-
+ 
   GoToInstructions(): void{
     sessionStorage.setItem('invigilatorinstruction', 'popup');
     this.dialog.open(InvigilatorInstructionPopupComponent,
@@ -592,7 +593,7 @@ export class ControllerStartExamComponent implements OnInit, AfterViewInit, OnDe
         height: '80%'
       });
   }
-
+ 
   EarlySubmitResponse(data: any): void{
     const dialogRef = this.dialog.open(InvigilatorEarlyExamResponsePopupComponent,
       {
@@ -603,7 +604,7 @@ export class ControllerStartExamComponent implements OnInit, AfterViewInit, OnDe
        this.refresh()
       })
   }
-
+ 
   StudentPic(data: object, index: number, rowIndex: number){
 const dialogRef = this.dialog.open(RandomImagePopupComponent,
   {
@@ -612,14 +613,14 @@ const dialogRef = this.dialog.open(RandomImagePopupComponent,
     data: data
   });
   }
-
+ 
   ngOnDestroy() {
     // clearInterval(this.lateComerObservable);
     // clearInterval(this.lateComerObservableOnPageLoad);
     // clearInterval(this.allStudentsExamCompletedInterval);
   }
-
-
+ 
+ 
   AllowReattempt(examStudentId: number, index: number, rowIndex: number): void {
     const dialogRef = this.dialog.open(ConfirmationPopupComponent, {
         width: '40%',
