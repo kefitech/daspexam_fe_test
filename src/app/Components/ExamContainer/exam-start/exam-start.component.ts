@@ -348,17 +348,22 @@ stopHeartbeat(): void {
 
 startPauseStatusCheck(): void {
     this.pauseStatusInterval = setInterval(() => {
-        this.examService.CheckExamStatus({}).subscribe(response => {
+        this.questionService.CheckExamStarts().subscribe(response => {
             if (response.success) {
-                const currentStatus = response.data.status;
-                if (currentStatus == 4 && !this.isPausedByInvigilator) {
-                    this.countdown.pause();
-                    this.isPausedByInvigilator = true;
-                    this.toastrService.warning("Your exam has been paused by the invigilator");
-                } else if (currentStatus != 4 && this.isPausedByInvigilator) {
+                if (this.isPausedByInvigilator) {
                     this.countdown.resume();
                     this.isPausedByInvigilator = false;
                     this.toastrService.success("Your exam has resumed");
+                }
+                if (response.data && response.data.time && response.data.time.leftTime <= 0 && !this.submitDisable) {
+                    this.toastrService.warning("Your exam time has ended. Submitting automatically.");
+                    this.Submit();
+                }
+            } else if (response.message == "Exam paused") {
+                if (!this.isPausedByInvigilator) {
+                    this.countdown.pause();
+                    this.isPausedByInvigilator = true;
+                    this.toastrService.warning("Your exam has been paused by the invigilator");
                 }
             }
         });
