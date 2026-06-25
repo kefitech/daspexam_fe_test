@@ -49,7 +49,7 @@ export class CommonInstructionsComponent implements OnInit, AfterViewInit, OnDes
     sessionStorage.setItem('studentCommonInstruction', 'true');
     setTimeout(() => {
       // this.pageInitInterval = setInterval(() => {
-        this.dataService.examStartAndTimer.next('');
+        // this.dataService.examStartAndTimer.next('');
         this.fetchQuestions();
         this.CheckExamStarts();
       // }, 3600)

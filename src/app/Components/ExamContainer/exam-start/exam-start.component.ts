@@ -759,8 +759,32 @@ Navigate(type: string, index: number, first: boolean, last: boolean): void {
       this.ngxLoader.stop();
     }
   }
+RequestSummary(): void {
+  this.stopPauseStatusCheck(); 
 
-  RequestSummary(): void {
+    // Save current question status to DB before early submit
+    const currentIndex = this.activeIndex;
+    if (this.examinationData[currentIndex]) {
+        if (this.examinationData[currentIndex]["status"] == 0) {
+            this.examinationData[currentIndex]["status"] = 1;
+        }
+        var exists = this.answers.filter(q => q.std_res_id ==
+            this.examinationData[currentIndex].studentResponseId);
+        if (exists.length == 0) {
+            this.answers.push({
+                std_res_id: this.examinationData[currentIndex]["studentResponseId"],
+                status: this.examinationData[currentIndex]["status"],
+                option_id: this.examinationData[currentIndex]["answeredOption"] || 0
+            });
+        } else {
+            var optIndex = this.answers.findIndex(q =>
+                q.std_res_id == exists[0].std_res_id);
+            this.answers[optIndex]["status"] = this.examinationData[currentIndex]["status"];
+            this.answers[optIndex]["option_id"] =
+                this.examinationData[currentIndex]["answeredOption"] || 0;
+        }
+        this.StudentResponseSubmit();
+    }
 
     const dialogRef = this.dialog.open(ConfirmPopupComponent, {
       width: '40%',

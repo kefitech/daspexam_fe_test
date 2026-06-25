@@ -55,7 +55,7 @@ export class LandingComponent implements OnInit, AfterViewInit, OnDestroy {
     if (loggedInUser == 'student') {
       setTimeout(() => {
         // this.pageInitInterval = setInterval(() => {
-          this.dataService.examStartAndTimer.next('');
+          // this.dataService.examStartAndTimer.next('');
           this.fetchQuestions();
           this.CheckExamStarts();
         // }, 3600)
