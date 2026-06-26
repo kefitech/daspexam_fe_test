@@ -10,6 +10,7 @@ import { interval } from 'rxjs';
 import { MatDialog } from '@angular/material';
 import { ExamSummaryComponent } from 'src/app/Popup/exam-summary/exam-summary.component';
 import {Subscriber,BehaviorSubject} from 'rxjs';
+import { QuestionService } from 'src/app/Services/question.service';
 @Component({
   selector: 'app-warning',
   templateUrl: './warning.component.html',
@@ -19,7 +20,7 @@ export class WarningComponent implements OnInit {
 
   constructor(private dialogScreen: MatDialogRef<WarningComponent>, private dataService: DataService,
     @Inject(MAT_DIALOG_DATA) public data: any, private formBuilder: FormBuilder, private toastrService: ToastrService,
-    private router: Router, private ngxLoader: NgxUiLoaderService, private apiService: ExamAPIService,  private dialog: MatDialog) { }
+    private router: Router, private ngxLoader: NgxUiLoaderService, private apiService: ExamAPIService,private questionService: QuestionService,  private dialog: MatDialog) { }
 
   formCaption: string = "Enter the Key";
   lockForm: FormGroup;
@@ -120,19 +121,27 @@ this.ngxLoader.stopBackgroundLoader('loader-02')
               this.dataService.LogOut();
             }
             else if (response.success) {
-              this.ngxLoader.stop();
-              this.Approval_Code="";
-              this.isshow = false;
-              this.dataService.isNotLoginScreen.next(false);
-              this.dataService.sideNavButton.next(false);
-              this.dataService.warning.next(false);
-              // this.dataService.toggleFullScreen();
-              localStorage.removeItem('SMP');
-              sessionStorage.removeItem('studentExamStart');
-              this.dialogScreen.close();
-              this.toastrService.success(response.message);
-              sessionStorage.setItem('instruction', 'normal');
-              // this.router.navigate(['/landing/student']);
+                this.ngxLoader.stop();
+                this.Approval_Code="";
+                this.isshow = false;
+                this.dataService.isNotLoginScreen.next(false);
+                this.dataService.sideNavButton.next(false);
+                this.dataService.warning.next(false);
+                // this.dataService.toggleFullScreen();
+                localStorage.removeItem('SMP');
+                sessionStorage.removeItem('studentExamStart');
+                this.dialogScreen.close();
+                this.toastrService.success(response.message);
+                sessionStorage.setItem('instruction', 'normal');
+                this.questionService.CheckExamStarts().subscribe((timerResponse: any) => {
+                    if (timerResponse.success && timerResponse.data) {
+                        timerResponse.data.time.leftTime = timerResponse.data.time.leftTime * 60;
+                        this.dataService.examStartAndTimer.next(timerResponse.data);
+                    }
+                    this.router.navigate(['/landing/student/exam']);
+                }, () => {
+                    this.router.navigate(['/landing/student/exam']);
+                });
             }
             else {
               this.toastrService.error(response.message);
