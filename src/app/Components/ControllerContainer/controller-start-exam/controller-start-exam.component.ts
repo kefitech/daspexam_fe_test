@@ -27,6 +27,7 @@ export class ControllerStartExamComponent implements OnInit, AfterViewInit, OnDe
   masterTimerConfig: any;
   masterSubmitValid: boolean = false;
   element:any;
+  private studentStatusInterval: any = null;
  
   totalStableDuration: any;
  
@@ -85,7 +86,7 @@ export class ControllerStartExamComponent implements OnInit, AfterViewInit, OnDe
       if(!this.isProctored){
         this.LateComersTimeConfiguration();
       }
-      
+       this.startStudentStatusPolling(); 
     // }, 1000);
   }
  
@@ -613,11 +614,48 @@ const dialogRef = this.dialog.open(RandomImagePopupComponent,
     data: data
   });
   }
- 
+ startStudentStatusPolling(): void {
+    this.studentStatusInterval = setInterval(() => {
+        this.service.ExaminationInfoForVerifiedStudents().subscribe(response => {
+            if (response.success) {
+                response.data.studentList.forEach((exam) => {
+                    exam.studentList.forEach((freshStudent) => {
+
+                        var examIdx = this.examList.findIndex(e => e['examTableId'] == exam.examTableId);
+                        if (examIdx == -1) return;
+
+                        var studentIdx = this.examList[examIdx]['studentList']['data']
+                            .findIndex(s => s.examStudentId == freshStudent.examStudentId);
+                        if (studentIdx == -1) return;
+
+                        var currentStudent = this.examList[examIdx]['studentList']['data'][studentIdx];
+
+                        // Student SMP triggered — pause timer
+                        if (freshStudent.status == 4 && currentStudent.status == 3) {
+                            currentStudent.status = 4;
+                            this.StudentTimePauseResumeConfig(examIdx, studentIdx, 3, true);
+                        }
+
+                        // Student entered OTP — resume timer
+                        else if (freshStudent.status == 3 && currentStudent.status == 4) {
+                            currentStudent.status = 3;
+                            currentStudent.timeLeft = { leftTime: freshStudent.timeLeft * 60 };
+                            this.StudentTimePauseResumeConfig(examIdx, studentIdx, 4, true);
+                        }
+
+                    });
+                });
+            }
+        });
+    }, 10000);
+}
   ngOnDestroy() {
     // clearInterval(this.lateComerObservable);
     // clearInterval(this.lateComerObservableOnPageLoad);
     // clearInterval(this.allStudentsExamCompletedInterval);
+       if (this.studentStatusInterval) {
+        clearInterval(this.studentStatusInterval);
+    }
   }
  
  

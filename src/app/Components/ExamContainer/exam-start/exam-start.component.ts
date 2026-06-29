@@ -125,74 +125,12 @@ this.dataService.toggleFullScreen();
 
       }
     })
-
     this.questionSubscription = this.dataService.questionsData.subscribe(response => {
       if (response.length > 0) {
         this.examinationData = this.encryptionService.DecryptEncryption(response, ['question'], ['option'],['imgUrl']);
         this.examinationData = this.examinationData.map(({ shuffleStatus, options, ...rest }) =>
           ({ shuffleStatus: shuffleStatus, options: shuffleStatus ? this.dataService.shuffle(options) : options, ...rest }));
 
-// Check answer uploaded for descriptive questions on load so frontend apper green after reattempt
-// this.examinationData.forEach((question, index) => {
-//     if (question.questionType == 21) {
-//         this.examService.CheckAnswerUploaded({
-//             questionId: question.questionId
-//         }).subscribe(response => {
-//             if (response.success && response.data.isUploaded) {
-//                 this.examinationData[index]["answeredOption"] = -1;
-//                 this.examinationData[index]["status"] = 2;
-//                 this.status = {
-//                     notVisited: this.examinationData.filter(d => d.status == 0).length,
-//                     visited: this.examinationData.filter(d => d.status == 1).length,
-//                     answered: this.examinationData.filter(d => d.status == 2).length,
-//                     reviewed: this.examinationData.filter(d => d.status == 3).length
-//                 }
-//             }
-//         });
-//     }
-// });
-
-
-
-//         var checkFirstQuestion = this.examinationData.every(m => m.status == 0);
-//         if (checkFirstQuestion) {
-//           this.examinationData[0]["status"] = 1;
-//           this.answers.push({
-//             std_res_id: this.examinationData[0]["studentResponseId"],
-//             status: this.examinationData[0]["status"],
-//             option_id: this.examinationData[0]["answeredOption"]
-//           })
-//         }
-//         else {
-//           var answeredQuestions = this.examinationData.filter(f => f.answeredOption != 0);
-//           answeredQuestions.forEach(element => {
-//             this.answers.push({
-//               std_res_id: element["studentResponseId"],
-//               status: element["status"],
-//               option_id: element["answeredOption"]
-//             })
-//           });
-//         }
-//     //     this.status = {
-//     //       notVisited: this.examinationData.filter(d => d.status == 0).length,
-//     //       visited: this.examinationData.filter(d => d.status == 1).length,
-//     //       answered: this.examinationData.filter(d => d.status == 2).length,
-//     //       reviewed: this.examinationData.filter(d => d.status == 3).length
-//     //     }
-//     //   }
-//     // })
-//     // window.onpopstate = function (e) { window.history.forward(); }
-//     setTimeout(() => {
-//             this.status = {
-//                 notVisited: this.examinationData.filter(d => d.status == 0).length,
-//                 visited: this.examinationData.filter(d => d.status == 1).length,
-//                 answered: this.examinationData.filter(d => d.status == 2).length,
-//                 reviewed: this.examinationData.filter(d => d.status == 3).length
-//             }
-//         }, 2000);
-//       }
-//     })
-//     window.onpopstate = function (e) { window.history.forward(); }
 
 
 
@@ -268,16 +206,21 @@ if (this.examinationData[this.activeIndex] &&
     // this.statusInitInterval = setInterval(() => {
     this.EarlyExamStatusCheck();
     this.startHeartbeat(); // 
-     this.startPauseStatusCheck();
+    //  this.startPauseStatusCheck();
     // }, 3600)
+        this.questionService.CheckExamStarts().subscribe(response => {
+        if (response.success && response.data && response.data.time) {
+            this.timerConfig = {
+                leftTime: response.data.time.leftTime * 60
+            };
+        }
+    });
     if(this.isProctored){
 
       setTimeout( ()=>{
         this.triggerSnapshot()
         },  30000)
     }
-    
-    
   }
 interval(){
   setTimeout( ()=>{
