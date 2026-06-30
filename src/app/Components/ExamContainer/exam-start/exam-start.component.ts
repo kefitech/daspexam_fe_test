@@ -206,7 +206,7 @@ if (this.examinationData[this.activeIndex] &&
     // this.statusInitInterval = setInterval(() => {
     this.EarlyExamStatusCheck();
     this.startHeartbeat(); // 
-    //  this.startPauseStatusCheck();
+     this.startPauseStatusCheck();
     // }, 3600)
         this.questionService.CheckExamStarts().subscribe(response => {
         if (response.success && response.data && response.data.time) {

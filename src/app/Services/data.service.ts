@@ -10,7 +10,11 @@ import { NgxUiLoaderService } from 'ngx-ui-loader';
 })
 export class DataService {
 
-  constructor(private auth: ControllerAuthService, private router: Router, private ngxLoader: NgxUiLoaderService) {
+constructor(private auth: ControllerAuthService, private router: Router, private ngxLoader: NgxUiLoaderService) {
+    var storedUserId = sessionStorage.getItem("userId");
+    if (storedUserId) {
+      this.controllerData.next({ userId: storedUserId });
+    }
   }
 
   public PATTERN = {
