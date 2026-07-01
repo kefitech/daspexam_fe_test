@@ -131,17 +131,14 @@ export class ControllerStartExamComponent implements OnInit, AfterViewInit, OnDe
           }
         }
         else {
-          this.CheckAllStudentsExamCompleted();
-          this.toastrService.error(response.message);
+          setTimeout(() => this.CheckAllStudentsExamCompleted(), 5000);
         }
       }, error => {
-        this.CheckAllStudentsExamCompleted();
-        this.toastrService.error(error.message);
+        setTimeout(() => this.CheckAllStudentsExamCompleted(), 5000);
       })
     }
     catch (e) {
-      this.CheckAllStudentsExamCompleted();
-      this.toastrService.error(e);
+      setTimeout(() => this.CheckAllStudentsExamCompleted(), 5000);
     }
   }
  
