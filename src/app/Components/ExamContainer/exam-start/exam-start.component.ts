@@ -22,6 +22,7 @@ import { ConfirmPopupComponent } from 'src/app/Popup/confirm-popup/confirm-popup
 import { CancelPopupComponent } from 'src/app/Popup/cancel-popup/cancel-popup.component';
 // 0 not visited
 //   // 1 Visited but not answered
+
 //   // 2 Answered
 //   // 3 Review
 
@@ -416,7 +417,7 @@ Navigate(type: string, index: number, first: boolean, last: boolean): void {
             this.examinationData[currentIndex]["status"] = 2; // green
           } else {
             console.log("❌ Not uploaded — setting ORANGE");
-            this.examinationData[currentIndex]["status"] = 1; // orange
+            this.examinationData[currentIndex]["status"] = 1; 
           }
           // update answers array after backend response
           var currentExists = this.answers.filter(q => q.std_res_id == this.examinationData[currentIndex].studentResponseId);

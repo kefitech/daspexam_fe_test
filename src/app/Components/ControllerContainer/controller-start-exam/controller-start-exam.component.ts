@@ -83,9 +83,9 @@ export class ControllerStartExamComponent implements OnInit, AfterViewInit, OnDe
   ngAfterViewInit() {
     this.FetchExamList();
     // this.lateComerObservableOnPageLoad = setInterval(() => {
-      if(!this.isProctored){
-        this.LateComersTimeConfiguration();
-      }
+      // if(!this.isProctored){
+      //   this.LateComersTimeConfiguration();
+      // }
        this.startStudentStatusPolling(); 
     // }, 1000);
   }
@@ -143,7 +143,43 @@ export class ControllerStartExamComponent implements OnInit, AfterViewInit, OnDe
   }
  
  
-  FetchExamList(): void {
+  // FetchExamList(): void {
+  //   try {
+  //     this.ngxLoader.start();
+  //     this.service.ExaminationInfoForVerifiedStudents().subscribe(response => {
+  //       if(response.errorCode && (response.errorCode == this.dataService.unAuthorizedCode)){
+  //         this.dataService.LogOut();
+  //       }
+  //       else if (response.success) {
+  //         this.FetchReservedSystems();
+  //         this.isExamStarted = response.data.isExamStarted;
+  //         this.examList = response.data.studentList;
+  //         console.log("isDisconnected value:", response.data.studentList[0]['studentList'][0]['isDisconnected']);
+  //         this.examListCopy = this.examList.map(x => Object.assign({}, x));
+  //         this.masterTimerConfig = { leftTime: response.data.examDuration * 60 };//, notify: [2 * 60, 9 * 60]
+          
+  //         this.TableRefresh();
+  //         setTimeout(() => {
+  //           this.CheckAllStudentTimer();
+  //         }, 10);
+  //         this.ngxLoader.stop();
+  //       }
+  //       else {
+  //         this.toastrService.error(response.message);
+  //         this.ngxLoader.stop();
+  //       }
+  //     }, error => {
+  //       this.toastrService.error(error.message);
+  //       this.ngxLoader.stop();
+  //     })
+  //   }
+  //   catch (e) {
+  //     this.toastrService.error(e);
+  //     this.ngxLoader.stop();
+  //   }
+    
+  // }
+ FetchExamList(): void {
     try {
       this.ngxLoader.start();
       this.service.ExaminationInfoForVerifiedStudents().subscribe(response => {
@@ -156,7 +192,7 @@ export class ControllerStartExamComponent implements OnInit, AfterViewInit, OnDe
           this.examList = response.data.studentList;
           console.log("isDisconnected value:", response.data.studentList[0]['studentList'][0]['isDisconnected']);
           this.examListCopy = this.examList.map(x => Object.assign({}, x));
-          this.masterTimerConfig = { leftTime: response.data.examDuration * 60 };//, notify: [2 * 60, 9 * 60]
+          this.masterTimerConfig = { leftTime: response.data.examDuration * 60 };
           
           this.TableRefresh();
           setTimeout(() => {
@@ -165,21 +201,19 @@ export class ControllerStartExamComponent implements OnInit, AfterViewInit, OnDe
           this.ngxLoader.stop();
         }
         else {
-          this.toastrService.error(response.message);
+          console.log('Silent fail:', response.message);
           this.ngxLoader.stop();
         }
       }, error => {
-        this.toastrService.error(error.message);
+        console.log('Silent error:', error);
         this.ngxLoader.stop();
       })
     }
     catch (e) {
-      this.toastrService.error(e);
+      console.log('Silent catch:', e);
       this.ngxLoader.stop();
     }
-    
   }
- 
   FetchReservedSystems(): void {
     try {
       this.ngxLoader.start();
