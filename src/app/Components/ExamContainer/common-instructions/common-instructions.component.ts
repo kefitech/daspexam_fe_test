@@ -101,16 +101,16 @@ export class CommonInstructionsComponent implements OnInit, AfterViewInit, OnDes
             this.ngxLoader.stopBackgroundLoader('loader-02')
           }
           // this.toastrService.error(response.message);
-          this.CheckExamStarts();
+          this.retryLater(() => this.CheckExamStarts(), 2000);
         }
       }, error => {
        
-        this.CheckExamStarts();
+        this.retryLater(() => this.CheckExamStarts(), 2000);
         // this.toastrService.error(error.message);
       })
     }
     catch (e) {
-      this.CheckExamStarts();
+      this.retryLater(() => this.CheckExamStarts(), 2000);
       // this.toastrService.error(e.message);
     }
   }
@@ -119,7 +119,14 @@ export class CommonInstructionsComponent implements OnInit, AfterViewInit, OnDes
     this.router.navigate(['/landing/student/exam/subjectspecificinstructions']);
   }
 
+  private destroyed = false;
+  // Retry a failed/pending request after a delay (was an immediate, endless retry loop)
+  private retryLater(fn: () => void, delay: number): void {
+    setTimeout(() => { if (!this.destroyed) { fn(); } }, delay);
+  }
+
   ngOnDestroy() {
+    this.destroyed = true;
     // clearInterval(this.pageInitInterval);
     // this.subscription.unsubscribe();
   }

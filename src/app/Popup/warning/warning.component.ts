@@ -135,7 +135,7 @@ this.ngxLoader.stopBackgroundLoader('loader-02')
                 sessionStorage.setItem('instruction', 'normal');
                 this.questionService.CheckExamStarts().subscribe((timerResponse: any) => {
                     if (timerResponse.success && timerResponse.data) {
-                        timerResponse.data.time.leftTime = timerResponse.data.time.leftTime * 60;
+                        // minutes -> seconds is done once, in exam-start's timer subscription (was applied twice)
                         this.dataService.examStartAndTimer.next(timerResponse.data);
                     }
                     this.router.navigate(['/landing/student/exam']);

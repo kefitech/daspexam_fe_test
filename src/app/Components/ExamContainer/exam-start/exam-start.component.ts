@@ -119,9 +119,8 @@ private isPausedByInvigilator: boolean = false;
 this.dataService.toggleFullScreen();
     this.timerSubscription = this.dataService.examStartAndTimer.subscribe(response => {
       if (response) {
-        response['time']['leftTime'] = response['time']['leftTime'] * 60;
-        response['time']['notify'] = 30*60
-        this.timerConfig = response["time"]; //, notify: [2 * 60, 9 * 60] 
+        // copy instead of mutating the shared BehaviorSubject value: every re-subscription used to multiply it by 60 again
+        this.timerConfig = { ...response["time"], leftTime: Math.round(response["time"]["leftTime"] * 60), notify: 30 * 60 };
 
 
       }
@@ -212,7 +211,7 @@ if (this.examinationData[this.activeIndex] &&
         this.questionService.CheckExamStarts().subscribe(response => {
         if (response.success && response.data && response.data.time) {
             this.timerConfig = {
-                leftTime: response.data.time.leftTime * 60
+                leftTime: Math.round(response.data.time.leftTime * 60)
             };
         }
     });
@@ -278,6 +277,9 @@ interval(){
     }
   }
   startHeartbeat(): void {
+    this.stopHeartbeat();
+    // send one immediately so a freshly started/resumed student is never considered stale
+    this.examService.SendHeartbeat({}).subscribe();
     this.heartbeatInterval = setInterval(() => {
         this.examService.SendHeartbeat({}).subscribe();
     }, 30000);

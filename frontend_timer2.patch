@@ -1,0 +1,61 @@
+--- a/src/app/Components/ControllerContainer/controller-start-exam/controller-start-exam.component.html
++++ b/src/app/Components/ControllerContainer/controller-start-exam/controller-start-exam.component.html
+@@ -228,6 +228,9 @@
+                             <span *ngIf="element?.isDisconnected" style="color:red; font-size:11px; font-weight:bold;">
+                                 ⚠️ Disconnected
+                             </span>
++                            <span *ngIf="element?.smpCount > 3 && element?.studentSmpStatus" style="color:#b71c1c; font-size:11px; font-weight:bold;">
++                                ⚠️ SMP limit reached - use SMP (Allow / Block)
++                            </span>
+                             <!-- <button [disabled]="element?.status != 5" matTooltip="See Result" (click)="SeeResult(element, index, i)"
+                                 color="primary"
+                                 mat-icon-button>
+--- a/src/app/Components/ControllerContainer/controller-start-exam/controller-start-exam.component.ts
++++ b/src/app/Components/ControllerContainer/controller-start-exam/controller-start-exam.component.ts
+@@ -249,7 +249,7 @@
+       }, 10);
+  
+       element['studentList']['data'] = element['studentList']['data'].map(({ timeLeft, ...rest }) =>
+-        ({ timeLeft: { leftTime: !this.isExamStarted ? 0 : timeLeft == 'null' ? 0 : timeLeft * 60 }, ...rest }));
++        ({ timeLeft: { leftTime: !this.isExamStarted ? 0 : timeLeft == 'null' ? 0 : Math.round(timeLeft * 60) }, ...rest }));
+     });
+   }
+  
+@@ -579,7 +579,7 @@
+               var examIndex = this.examList.findIndex(e => e['examTableId'] == data.examId);
+               var rowIndex = this.examList[examIndex]['studentList']['data'].findIndex(st => st.examStudentId == data.examStudentId);
+               if (this.examList[examIndex]['studentList']['data'][rowIndex]['timeLeft']['leftTime'] == 0) {
+-                this.examList[examIndex]['studentList']['data'][rowIndex]['timeLeft'] = { leftTime: data.timeLeft * 60 };
++                this.examList[examIndex]['studentList']['data'][rowIndex]['timeLeft'] = { leftTime: Math.round(data.timeLeft * 60) };
+                 this.examList[examIndex]['studentList']['data'][rowIndex]['status'] = data.status;
+               }
+             }
+@@ -670,7 +670,7 @@
+                         // Student entered OTP — resume timer
+                         else if (freshStudent.status == 3 && currentStudent.status == 4) {
+                             currentStudent.status = 3;
+-                            currentStudent.timeLeft = { leftTime: freshStudent.timeLeft * 60 };
++                            currentStudent.timeLeft = { leftTime: Math.round(freshStudent.timeLeft * 60) };
+                             this.StudentTimePauseResumeConfig(examIdx, studentIdx, 4, true);
+                         }
+ 
+--- a/src/app/Components/ExamContainer/exam-start/exam-start.component.ts
++++ b/src/app/Components/ExamContainer/exam-start/exam-start.component.ts
+@@ -120,7 +120,7 @@
+     this.timerSubscription = this.dataService.examStartAndTimer.subscribe(response => {
+       if (response) {
+         // copy instead of mutating the shared BehaviorSubject value: every re-subscription used to multiply it by 60 again
+-        this.timerConfig = { ...response["time"], leftTime: response["time"]["leftTime"] * 60, notify: 30 * 60 };
++        this.timerConfig = { ...response["time"], leftTime: Math.round(response["time"]["leftTime"] * 60), notify: 30 * 60 };
+ 
+ 
+       }
+@@ -211,7 +211,7 @@
+         this.questionService.CheckExamStarts().subscribe(response => {
+         if (response.success && response.data && response.data.time) {
+             this.timerConfig = {
+-                leftTime: response.data.time.leftTime * 60
++                leftTime: Math.round(response.data.time.leftTime * 60)
+             };
+         }
+     });

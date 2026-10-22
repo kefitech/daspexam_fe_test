@@ -249,7 +249,7 @@ export class ControllerStartExamComponent implements OnInit, AfterViewInit, OnDe
       }, 10);
  
       element['studentList']['data'] = element['studentList']['data'].map(({ timeLeft, ...rest }) =>
-        ({ timeLeft: { leftTime: !this.isExamStarted ? 0 : timeLeft == 'null' ? 0 : timeLeft * 60 }, ...rest }));
+        ({ timeLeft: { leftTime: !this.isExamStarted ? 0 : timeLeft == 'null' ? 0 : Math.round(timeLeft * 60) }, ...rest }));
     });
   }
  
@@ -579,7 +579,7 @@ export class ControllerStartExamComponent implements OnInit, AfterViewInit, OnDe
               var examIndex = this.examList.findIndex(e => e['examTableId'] == data.examId);
               var rowIndex = this.examList[examIndex]['studentList']['data'].findIndex(st => st.examStudentId == data.examStudentId);
               if (this.examList[examIndex]['studentList']['data'][rowIndex]['timeLeft']['leftTime'] == 0) {
-                this.examList[examIndex]['studentList']['data'][rowIndex]['timeLeft'] = { leftTime: data.timeLeft * 60 };
+                this.examList[examIndex]['studentList']['data'][rowIndex]['timeLeft'] = { leftTime: Math.round(data.timeLeft * 60) };
                 this.examList[examIndex]['studentList']['data'][rowIndex]['status'] = data.status;
               }
             }
@@ -670,7 +670,7 @@ const dialogRef = this.dialog.open(RandomImagePopupComponent,
                         // Student entered OTP — resume timer
                         else if (freshStudent.status == 3 && currentStudent.status == 4) {
                             currentStudent.status = 3;
-                            currentStudent.timeLeft = { leftTime: freshStudent.timeLeft * 60 };
+                            currentStudent.timeLeft = { leftTime: Math.round(freshStudent.timeLeft * 60) };
                             this.StudentTimePauseResumeConfig(examIdx, studentIdx, 4, true);
                         }
 

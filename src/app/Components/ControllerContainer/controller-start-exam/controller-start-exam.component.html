@@ -228,6 +228,9 @@
                             <span *ngIf="element?.isDisconnected" style="color:red; font-size:11px; font-weight:bold;">
                                 ⚠️ Disconnected
                             </span>
+                            <span *ngIf="element?.smpCount > 3 && element?.studentSmpStatus" style="color:#b71c1c; font-size:11px; font-weight:bold;">
+                                ⚠️ SMP limit reached - use SMP (Allow / Block)
+                            </span>
                             <!-- <button [disabled]="element?.status != 5" matTooltip="See Result" (click)="SeeResult(element, index, i)"
                                 color="primary"
                                 mat-icon-button>

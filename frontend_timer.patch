@@ -1,0 +1,25 @@
+--- a/src/app/Popup/warning/warning.component.ts
++++ b/src/app/Popup/warning/warning.component.ts
+@@ -135,7 +135,7 @@
+                 sessionStorage.setItem('instruction', 'normal');
+                 this.questionService.CheckExamStarts().subscribe((timerResponse: any) => {
+                     if (timerResponse.success && timerResponse.data) {
+-                        timerResponse.data.time.leftTime = timerResponse.data.time.leftTime * 60;
++                        // minutes -> seconds is done once, in exam-start's timer subscription (was applied twice)
+                         this.dataService.examStartAndTimer.next(timerResponse.data);
+                     }
+                     this.router.navigate(['/landing/student/exam']);
+--- a/src/app/Components/ExamContainer/exam-start/exam-start.component.ts
++++ b/src/app/Components/ExamContainer/exam-start/exam-start.component.ts
+@@ -119,9 +119,8 @@
+ this.dataService.toggleFullScreen();
+     this.timerSubscription = this.dataService.examStartAndTimer.subscribe(response => {
+       if (response) {
+-        response['time']['leftTime'] = response['time']['leftTime'] * 60;
+-        response['time']['notify'] = 30*60
+-        this.timerConfig = response["time"]; //, notify: [2 * 60, 9 * 60] 
++        // copy instead of mutating the shared BehaviorSubject value: every re-subscription used to multiply it by 60 again
++        this.timerConfig = { ...response["time"], leftTime: response["time"]["leftTime"] * 60, notify: 30 * 60 };
+ 
+ 
+       }

@@ -374,16 +374,16 @@ export class LandingComponent implements OnInit, AfterViewInit, OnDestroy {
             // this.CheckExamStarts();
         }
         else {
-          this.fetchQuestions();
+          this.retryLater(() => this.fetchQuestions(), 3000);
           ////this.toastrService.error(response.message);
         }
       }, error => {
-        this.fetchQuestions();
+        this.retryLater(() => this.fetchQuestions(), 3000);
        //this.toastrService.error(error.message);
       })
     }
     catch (e) {
-      this.fetchQuestions();
+      this.retryLater(() => this.fetchQuestions(), 3000);
      //this.toastrService.error(e.message);
     }
   }
@@ -399,17 +399,17 @@ export class LandingComponent implements OnInit, AfterViewInit, OnDestroy {
           // clearInterval(this.pageInitInterval);
         }
         else {
-          this.CheckExamStarts();
+          this.retryLater(() => this.CheckExamStarts(), 2000);
           // sessionStorage.removeItem('studentExamStart');
           ////this.toastrService.error(response.message);
         }
       }, error => {
-        this.CheckExamStarts();
+        this.retryLater(() => this.CheckExamStarts(), 2000);
        //this.toastrService.error(error.message);
       })
     }
     catch (e) {
-      this.CheckExamStarts();
+      this.retryLater(() => this.CheckExamStarts(), 2000);
      //this.toastrService.error(e.message);
     }
   }
@@ -429,7 +429,14 @@ export class LandingComponent implements OnInit, AfterViewInit, OnDestroy {
    this.dataService.LogOut();
   }
 
+  private destroyed = false;
+  // Retry a failed/pending request after a delay (was an immediate, endless retry loop)
+  private retryLater(fn: () => void, delay: number): void {
+    setTimeout(() => { if (!this.destroyed) { fn(); } }, delay);
+  }
+
   ngOnDestroy() {
+    this.destroyed = true;
     // clearInterval(this.pageInitInterval);
   }
 
